@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="RS232Test::utRS232::RS232_ConnectionTest" /><Add Test="RS232Test::utRS232::RS232_SendRecvTest_NoOverlapped" /></Playlist>
