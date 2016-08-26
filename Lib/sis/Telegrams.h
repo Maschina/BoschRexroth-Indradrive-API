@@ -9,10 +9,6 @@
 #include "Telegrams_Bitfields.h"
 
 
-#define SIS_ADDR_MASTER			0x00
-#define SIS_ADDR_SLAVE			0x80
-
-
 namespace TGM
 {
 	namespace Container
@@ -36,8 +32,8 @@ namespace TGM
 		/// <summary>	Container for Telegram's payload in raw data. </summary>
 		typedef struct _container_payload_t
 		{
-			/// <summary>	The raw data. Size: 239 bytes (255 bytes - 16 bytes {Header}) </summary>
-			char	bytes[239];
+			/// <summary>	The raw data. Size: 239 bytes (255 bytes - 8 bytes {Header}) </summary>
+			char	bytes[247];
 			
 			/// <summary>	Default constructor. </summary>
 			_container_payload_t() { clear(); }
@@ -183,7 +179,7 @@ namespace TGM
 #pragma pack(pop)
 
 			/// <summary>	Default constructor. </summary>
-			Map(THeader& _header = THeader(), TPLHead& _plhead = TPLHead(), TPLDat& _pldat = TPLDat()) :
+			Map(THeader& _header = THeader(0, 0), TPLHead& _plhead = TPLHead(), TPLDat& _pldat = TPLDat()) :
 				structs(_header, _plhead, _pldat)
 			{};
 			/// <summary>	Destructor. </summary>
@@ -290,18 +286,18 @@ namespace TGM
 		/// Telegrams with AdrE = [200..255] are not answered with a response telegram.
 		/// </summary>
 		///=================================================================================================
-		BYTE AdrE = SIS_ADDR_SLAVE;
+		BYTE AdrE;
 
 		/// <summary>	Default constructor. </summary>
-		_header_t(BYTE _service = 0, TGM::Bitfields::Cntrl _cntrl = TGM::Bitfields::Cntrl()) :
+		_header_t(BYTE _addr_master, BYTE _addr_slave, BYTE _service = 0, TGM::Bitfields::Cntrl _cntrl = TGM::Bitfields::Cntrl()) :
 			StZ(0x02),
 			CS(0),
 			DatL(get_size()),
 			DatLW(get_size()),
 			Cntrl(_cntrl.toByte()),
 			Service(_service),
-			AdrS(SIS_ADDR_MASTER),
-			AdrE(SIS_ADDR_SLAVE)
+			AdrS(_addr_master),
+			AdrE(_addr_slave)
 		{}
 
 		///=================================================================================================

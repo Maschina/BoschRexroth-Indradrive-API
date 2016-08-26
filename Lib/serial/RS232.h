@@ -234,16 +234,18 @@ public:
 
 	///=================================================================================================
 	/// <summary>
-	/// Open the serial communications for a particular COM port. You need to use the full devicename (i.e. "COM1") to
-	/// open the port. It's possible to specify the size of the input/output queues.
+	/// Open the serial communications for a particular COM port. You need to use the full devicename
+	/// (i.e. "COM1") to open the port. It's possible to specify the size of the input/output queues.
 	/// </summary>
 	///
 	/// <returns>	A LONG. </returns>
 	///
-	/// <param name="lpszDevice"> 	(Optional) COM port, stated as char*. Keep in mind to state ports higher than COM9 as
-	/// 							the following: "\\\\.\\COMx". </param>
-	/// <param name="dwInQueue">  	(Optional) queue of INS. </param>
-	/// <param name="dwOutQueue"> 	(Optional) queue of outs. </param>
+	/// <param name="lpszDevice"> 	(Optional) COM port, stated as char*. Keep in mind to state ports
+	/// 							higher than COM9 as the following: "\\\\.\\COMx". </param>
+	/// <param name="dwInQueue">  	(Optional) queue of INS. Make sure that this value is neither
+	/// 							below 16 or above 254. </param>
+	/// <param name="dwOutQueue"> 	(Optional) queue of outs. Make sure that this value is neither
+	/// 							below 16 ore above 254. </param>
 	/// <param name="fOverlapped">	(Optional) true if overlapped. </param>
 	///=================================================================================================
 	virtual void Open (LPCTSTR lpszDevice = _T("COM1"), DWORD dwInQueue = 0, DWORD dwOutQueue = 0, bool fOverlapped = SERIAL_DEFAULT_OVERLAPPED);
@@ -411,7 +413,7 @@ public:
 	/// <param name="iLen">		   	Zero-based index of the length. </param>
 	/// <param name="pdwRead">	   	[in,out] (Optional) If non-null, the pdw read. </param>
 	/// <param name="lpOverlapped">	(Optional) the overlapped. </param>
-	/// <param name="dwTimeout">   	(Optional) the timeout. </param>
+	/// <param name="dwTimeout">   	(Optional) the timeout in milliseconds. </param>
 	///
 	/// <returns>	A LONG. </returns>
 	///=================================================================================================

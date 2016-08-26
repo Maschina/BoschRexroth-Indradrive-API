@@ -4,10 +4,6 @@
         "IndradriveWrapper"
     </assembly>
     <members>
-        <member name="M:SISProtocol.concat_data(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32)">
-Write
-Read
-</member>
         <member name="F:SISProtocol.ExceptionGeneric.m_status">
 =================================================================================================
 <summary>
@@ -32,6 +28,11 @@ For Win32 API commands, most likely representation of the System Error Codes:
         <member name="T:SISProtocol.ExceptionGeneric">
             <summary>	Generic exception handling for SIS Protocol. </summary>
             <summary>	Generic exceptions for SIS protocol. </summary>
+        </member>
+        <member name="T:SISProtocol">
+            <summary>	Defines address master. </summary>
+            <summary>	Defines sis address slave. '128' is used for peer-to-peer communication. </summary>
+            <summary>	Address unit. For Indradrive, this value can be found at P-0-4022. </summary>
         </member>
         <member name="T:TGM.Reactions._subservice_pl_data_t">
 =================================================================================================
@@ -161,7 +162,7 @@ the payload length (head + data).
 <summary>	Gets the sum without carry of all header bytes for checksum calculation. </summary><param name="exclude_cs">	(Optional) true to exclude checksum from calculation. </param><returns>	The sum. </returns>
 =================================================================================================
 </member>
-        <member name="M:TGM._header_t.#ctor(System.Byte,TGM.Bitfields._cntrl_t)">
+        <member name="M:TGM._header_t.#ctor(System.Byte,System.Byte,System.Byte,TGM.Bitfields._cntrl_t)">
             <summary>	Default constructor. </summary>
         </member>
         <member name="F:TGM._header_t.AdrE">
@@ -273,7 +274,7 @@ The Telegram Header contains all information required for conducting orderly tel
             <summary>	Default constructor. </summary>
         </member>
         <member name="F:TGM.Container._container_payload_t.bytes">
-            <summary>	The raw data. Size: 239 bytes (255 bytes - 16 bytes {Header}) </summary>
+            <summary>	The raw data. Size: 239 bytes (255 bytes - 8 bytes {Header}) </summary>
         </member>
         <member name="T:TGM.Container._container_payload_t">
             <summary>	Container for Telegram's payload in raw data. </summary>
@@ -451,7 +452,7 @@ For Win32 API commands, most likely representation of the System Error Codes:
 <summary>
 Read data from the serial port. Refer to the description of the 'SetupReadTimeouts' for an
 explanation about (non) blocking reads and how to use this.
-</summary><param name="pData">	   	[in,out] If non-null, the data. </param><param name="iLen">		   	Zero-based index of the length. </param><param name="pdwRead">	   	[in,out] (Optional) If non-null, the pdw read. </param><param name="lpOverlapped">	(Optional) the overlapped. </param><param name="dwTimeout">   	(Optional) the timeout. </param><returns>	A LONG. </returns>
+</summary><param name="pData">	   	[in,out] If non-null, the data. </param><param name="iLen">		   	Zero-based index of the length. </param><param name="pdwRead">	   	[in,out] (Optional) If non-null, the pdw read. </param><param name="lpOverlapped">	(Optional) the overlapped. </param><param name="dwTimeout">   	(Optional) the timeout in milliseconds. </param><returns>	A LONG. </returns>
 =================================================================================================
 </member>
         <member name="M:CSerial.Write(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)">
@@ -553,10 +554,12 @@ appropriate values.
         <member name="M:CSerial.Open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong,System.UInt32!System.Runtime.CompilerServices.IsLong,System.Boolean)">
 =================================================================================================
 <summary>
-Open the serial communications for a particular COM port. You need to use the full devicename (i.e. "COM1") to
-open the port. It's possible to specify the size of the input/output queues.
-</summary><returns>	A LONG. </returns><param name="lpszDevice"> 	(Optional) COM port, stated as char*. Keep in mind to state ports higher than COM9 as
-							the following: "\\\\.\\COMx". </param><param name="dwInQueue">  	(Optional) queue of INS. </param><param name="dwOutQueue"> 	(Optional) queue of outs. </param><param name="fOverlapped">	(Optional) true if overlapped. </param>
+Open the serial communications for a particular COM port. You need to use the full devicename
+(i.e. "COM1") to open the port. It's possible to specify the size of the input/output queues.
+</summary><returns>	A LONG. </returns><param name="lpszDevice"> 	(Optional) COM port, stated as char*. Keep in mind to state ports
+							higher than COM9 as the following: "\\\\.\\COMx". </param><param name="dwInQueue">  	(Optional) queue of INS. Make sure that this value is neither
+							below 16 or above 254. </param><param name="dwOutQueue"> 	(Optional) queue of outs. Make sure that this value is neither
+							below 16 ore above 254. </param><param name="fOverlapped">	(Optional) true if overlapped. </param>
 =================================================================================================
 </member>
         <member name="M:CSerial.CheckPort(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)">
