@@ -13,13 +13,31 @@ namespace SISProtocolTest
 	public:
 
 
-		TEST_METHOD(SIS_SercosRead)
+		TEST_METHOD(SIS_SetBaudrate)
 		{
 			SISProtocol sis;
 
-			sis.set_baudrate(SISProtocol::Baud_115200);
-			
-			
+			try
+			{
+				sis.open("COM1");
+				sis.set_baudrate(SISProtocol::Baud_19200);
+			}
+			catch (SISProtocol::ExceptionTransceiveFailed &ex)
+			{
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionGeneric &ex)
+			{
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionReceptionFailed &ex)
+			{
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionGeneric &ex)
+			{
+				Assert::Fail(char2wchar(ex.what()));
+			}			
 		}
 
 	};
