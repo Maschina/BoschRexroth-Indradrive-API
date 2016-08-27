@@ -9,6 +9,10 @@
 #include "Telegrams_Bitfields.h"
 
 
+#define TGM_SIZE_HEADER		8
+#define TGM_SIZE_HEADER_EXT	16
+#define TGM_SIZEMAX_PAYLOAD	246
+
 namespace TGM
 {
 	namespace Container
@@ -17,7 +21,7 @@ namespace TGM
 		typedef struct _container_header_t
 		{
 			/// <summary>	The raw data. </summary>
-			char	bytes[8];
+			char	bytes[TGM_SIZE_HEADER];
 			
 			/// <summary>	Default constructor. </summary>
 			_container_header_t() { clear(); }
@@ -33,7 +37,7 @@ namespace TGM
 		typedef struct _container_payload_t
 		{
 			/// <summary>	The raw data. Size: 239 bytes (255 bytes - 8 bytes {Header}) </summary>
-			char	bytes[247];
+			char	bytes[TGM_SIZEMAX_PAYLOAD];
 			
 			/// <summary>	Default constructor. </summary>
 			_container_payload_t() { clear(); }
@@ -44,154 +48,63 @@ namespace TGM
 				memset(bytes, 0, sizeof(bytes));
 			}
 		} PL_Contr;
-
-		typedef struct _container_t
-		{
-			/// <summary>	The raw data. </summary>
-			char	payload[255];
-
-			/// <summary>	Default constructor. </summary>
-			_container_t() { clear(); }
-
-			/// <summary>	Clears this object to its blank/initial state. </summary>
-			void clear()
-			{
-				memset(payload, 0, sizeof(payload));
-			}
-		} Contr;
 	}
 
 
-	namespace Maps
+	/// <summary>	Templated mapping union to transfer raw TGM data from/to specialized data class. </summary>
+	template <class THeader, class TPLHead, class TPLDat>
+	union Map
 	{
-		/// <summary>	Templated mapping union to transfer raw TGM header data from/to specialized data class. </summary>
-		template <class THeader>
-		union MapHeader
-		{
-		public:
-			/// Generic raw data
-			Container::Header_Contr raw;
-
-			/// Specialized data class
-			struct
-			{
-				THeader map;
-			};
-
-			/// <summary>	Default constructor. </summary>
-			MapHeader(THeader _head = THeader()) :
-				raw(Container::Header_Contr()),
-				map(_head)
-			{};
-			/// <summary>	Destructor. </summary>
-			~MapHeader() {};
-
-			void set(THeader& _map)
-			{
-				map = _map;
-			}
-
-			size_t getSize() 
-			{ 
-				// Standard header has size of 8 bytes
-				if (std::is_same<THeader, TGM::Header>::value) return (size_t)8;
-				// Extended header has size of up to 16 bytes
-				else return (size_t)16;
-			}
-		};
-
-		/// <summary>	Templated mapping union to transfer raw TGM payload data from/to specialized data class. </summary>
-		template <class TPLHead, class TPLDat>
-		union MapPayload
-		{
-		public:
-			/// Generic raw data
-			Container::PL_Contr raw;
-
-			/// Specialized data class
-			struct
-			{
-				TPLHead map_plhead;
-				TPLDat	map_pldat;
-			};
-			
-			/// <summary>	Default constructor. </summary>
-			MapPayload(TPLHead _head = TPLHead(0, 0), TPLDat _dat = TPLDat()) : 
-				raw(Container::PL_Contr()), 
-				map_plhead(_head),
-				map_pldat(_dat)
-			{};
-			/// <summary>	Destructor. </summary>
-			~MapPayload() {};
-
-			void set(TPLHead& _head, TPLDat& _dat)
-			{
-				map_plhead = _head;
-				map_pldat = _dat;
-			}
-
-			void setSize(size_t _size)
-			{
-				raw.size = _size;
-			}
-		};
-		
-		/// <summary>	Templated mapping union to transfer raw TGM data from/to specialized data class. </summary>
-		template <class THeader, class TPLHead, class TPLDat>
-		union Map
-		{
-		public:
-			/// Generic raw data, comprising byte arrays
+	public:
+		/// Generic raw data, comprising byte arrays
 #pragma pack(push,1)
-			struct _raw_t
-			{
-				Container::Header_Contr header;
-				Container::PL_Contr payload;
+		struct _raw_t
+		{
+			Container::Header_Contr header;
+			Container::PL_Contr payload;
 
-				_raw_t(Container::Header_Contr& _header = Container::Header_Contr(), Container::PL_Contr& _data = Container::PL_Contr()) :
-					header(_header),
-					payload(_data)
-				{}
-			} raw;		
+			_raw_t(Container::Header_Contr& _header = Container::Header_Contr(), Container::PL_Contr& _data = Container::PL_Contr()) :
+				header(_header),
+				payload(_data)
+			{}
+		} raw;		
 #pragma pack(pop)
 
-			/// Specialized data class, comprising structure payload head and data
+		/// Specialized data class, comprising structure payload head and data
 #pragma pack(push,1)
-			struct _mapping_t
+		struct _mapping_t
+		{
+			THeader header;
+
+			struct _payload_t
 			{
-				THeader header;
+				TPLHead head;
+				TPLDat data;
 
-				struct _payload_t
-				{
-					TPLHead head;
-					TPLDat data;
-
-					_payload_t(TPLHead& _head = TPLHead(), TPLDat& _data = TPLDat()) :
-						head(_head), data(_data)
-					{};
-				} payload;
-
-				_mapping_t(THeader& _header, TPLHead& _head, TPLDat& _data) :
-					header(_header),
-					payload(_head, _data)
+				_payload_t(TPLHead& _head = TPLHead(), TPLDat& _data = TPLDat()) :
+					head(_head), data(_data)
 				{};
-			} structs;
+			} payload;
+
+			_mapping_t(THeader& _header, TPLHead& _head, TPLDat& _data) :
+				header(_header),
+				payload(_head, _data)
+			{};
+		} structs;
 #pragma pack(pop)
 
-			/// <summary>	Default constructor. </summary>
-			Map(THeader& _header = THeader(0, 0), TPLHead& _plhead = TPLHead(), TPLDat& _pldat = TPLDat()) :
-				structs(_header, _plhead, _pldat)
-			{};
-			/// <summary>	Destructor. </summary>
-			~Map() {};
+		/// <summary>	Default constructor. </summary>
+		Map(THeader& _header = THeader(0, 0), TPLHead& _plhead = TPLHead(), TPLDat& _pldat = TPLDat()) :
+			structs(_header, _plhead, _pldat)
+		{};
+		/// <summary>	Destructor. </summary>
+		~Map() {};
 
-			void set(THeader& _header, TPLHead& _plhead, TPLDat& _pldat)
-			{
-				structs = _mapping_t(_header, _plhead, _pldat);	
-			}
-		};
-	}
-
+		void set(THeader& _header, TPLHead& _plhead, TPLDat& _pldat)
+		{
+			structs = _mapping_t(_header, _plhead, _pldat);	
+		}
+	};
 
 
 	///=================================================================================================
@@ -528,12 +441,6 @@ namespace TGM
 }
 
 
-
-
-
-
-
-//
 /////=================================================================================================
 ///// <summary>
 ///// Sercos Command Telegram. Used for master communication (active communicator) of Sercos

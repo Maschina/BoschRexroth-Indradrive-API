@@ -258,15 +258,6 @@ The Telegram Header contains all information required for conducting orderly tel
 </summary>
 =================================================================================================
 </member>
-        <member name="M:TGM.Container._container_t.clear">
-            <summary>	Clears this object to its blank/initial state. </summary>
-        </member>
-        <member name="M:TGM.Container._container_t.#ctor">
-            <summary>	Default constructor. </summary>
-        </member>
-        <member name="F:TGM.Container._container_t.payload">
-            <summary>	The raw data. </summary>
-        </member>
         <member name="M:TGM.Container._container_payload_t.clear">
             <summary>	Clears this object to its blank/initial state. </summary>
         </member>
