@@ -1099,7 +1099,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 			m_lLastError = lLastError;
 
 			// Issue an error and quit
-			throw ExceptionGeneric("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to read the payload");
+			throw ExceptionReceptionFailed("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to read the payload");
 		}
 
 		// We need to block if the client didn't specify an overlapped structure
@@ -1132,7 +1132,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 				m_lLastError = ::GetLastError();
 
 				// Issue an error and quit
-				throw ExceptionGeneric("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to wait until payload has been read");
+				throw ExceptionReceptionFailed("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to wait until payload has been read");
 			}
 		}
 	}

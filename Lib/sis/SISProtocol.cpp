@@ -15,7 +15,7 @@ SISProtocol::~SISProtocol()
 void SISProtocol::open(const char * _port)
 {
 	LPCTSTR cport = (LPCTSTR)char2wchar(_port);
-	CSerial::EBaudrate cbaudrate = CSerial::EBaud9600;
+	CSerial::EBaudrate cbaudrate = CSerial::EBaud19200;
 	CSerial::EDataBits cdata = CSerial::EData8;
 	CSerial::EParity cparity = CSerial::EParEven;
 	CSerial::EStopBits cstopbits = CSerial::EStop1;
@@ -25,7 +25,7 @@ void SISProtocol::open(const char * _port)
 	{
 		CSerial::CheckPort(cport);
 
-		m_serial.Open(cport, RS232_BUFFER, RS232_BUFFER, false /* no overlapped */);
+		m_serial.Open(cport, RS232_BUFFER, RS232_BUFFER, true /* overlapped */);
 		m_serial.Setup(cbaudrate, cdata, cparity, cstopbits);
 		m_serial.SetupHandshaking(chandshake);
 
@@ -53,16 +53,44 @@ void SISProtocol::close()
 	}
 }
 
-void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
+void SISProtocol::get_sisversion()
 {
-	/// Build Command Telegram	
-	// Mapping
-	TGM::Maps::Map<TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat>
+	/// Build Telegrams	
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat>
 		tx_tgm(
 			// Init header
-			TGM::Header(SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
 			// Init payload header
-			TGM::Commands::Subservice_PL_Header(SIS_ADDR_SLAVE, 0x07 /* Subservice code for baudrate setting */),
+			TGM::Commands::Subservice_PL_Header(SIS_ADDR_UNIT, 0x02 /* Subservice code for SIS Version read-out */),
+			// Init payload data
+			TGM::Commands::Subservice_PL_Dat()
+			);
+
+	// Calculate Checksum
+	size_t payload_len = tx_tgm.structs.payload.head.get_size() + tx_tgm.structs.payload.data.get_size();
+	tx_tgm.structs.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat> rx_tgm;
+
+	///  Transceive
+	// Send and receive
+	transceive<	TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat,
+		TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat >
+		(tx_tgm, rx_tgm);
+}
+
+void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
+{
+	/// Build Telegrams
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat>
+		tx_tgm(
+			// Init header
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
+			// Init payload header
+			TGM::Commands::Subservice_PL_Header(SIS_ADDR_UNIT, 0x07 /* Subservice code for baudrate setting */),
 			// Init payload data
 			TGM::Commands::Subservice_PL_Dat({ (BYTE)_baudrate })
 		);
@@ -71,13 +99,17 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 	size_t payload_len = tx_tgm.structs.payload.head.get_size() + tx_tgm.structs.payload.data.get_size();
 	tx_tgm.structs.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
 
-	/// Transceive Telegram
-	TGM::Maps::Map<TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat> rx_tgm;
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat> rx_tgm;
 
+	///  Transceive
 	// Send and receive
 	transceive<	TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat,
 				TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat >
 				(tx_tgm, rx_tgm);
+
+	int i = 0;
+	i++;
 }
 
 void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, const char * _data, size_t _data_len)
@@ -85,7 +117,7 @@ void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, const char * _da
 }
 
 template <class TCHeader, class TCPLHead, class TCPLDat, class TRHeader, class TRPLHead, class TRPLDat>
-void SISProtocol::transceive(TGM::Maps::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Maps::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm)
+void SISProtocol::transceive(TGM::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm)
 {
 	char tx_buffer[RS232_BUFFER];
 	char rx_buffer[RS232_BUFFER];
@@ -93,7 +125,10 @@ void SISProtocol::transceive(TGM::Maps::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm
 	size_t payload_len = tx_tgm.structs.payload.head.get_size() + tx_tgm.structs.payload.data.get_size();
 	size_t header_len = tx_tgm.structs.header.get_size();
 	size_t tx_len = header_len + payload_len;
+	size_t tx_header_len = tx_tgm.structs.header.get_size();
+	size_t tx_payload_len = 0;
 
+	// Copy from map to buffer
 	concat_data(tx_buffer, tx_tgm.raw.header.bytes, header_len, tx_tgm.raw.payload.bytes, payload_len);
 
 	// Clear buffers
@@ -110,7 +145,7 @@ void SISProtocol::transceive(TGM::Maps::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm
 	do
 	{
 		// Wait for an event
-		m_serial.WaitEvent();
+		m_serial.WaitEvent(0, RS232_READ_TIMEOUT);
 
 		// Save event
 		const CSerial::EEvent event = m_serial.GetEventType();
@@ -126,21 +161,26 @@ void SISProtocol::transceive(TGM::Maps::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm
 		// Handle data receive event
 		if (event & CSerial::EEventRecv)
 		{
-			// Read data, until there is nothing left
-			unsigned int idos = 0;
-			do
+			// Read header data
+			m_serial.Read(rx_buffer, RS232_BUFFER, &rcvd_cur, 0, RS232_READ_TIMEOUT);
+			
+			// Copy buffer back to map
+			split_data(rx_buffer+rcvd_rcnt, rx_tgm.raw.header.bytes, tx_header_len, rx_tgm.raw.payload.bytes, tx_payload_len);
+			rcvd_rcnt += rcvd_cur;
+
+			// It is assumed that if the number of received bytes is bigger than 4,
+			// which is the position of the payload length, the length can be read out.
+			if (rcvd_rcnt > 4)
+				tx_payload_len = rx_tgm.structs.header.DatL;
+
+			// Complete Telegram received
+			if (tx_header_len + tx_payload_len <= rcvd_rcnt)
 			{
-				// Read data from the COM-port
-				m_serial.Read(rx_buffer, rx_len_min, &rcvd_cur);
+				bContd = false;
 
-				rcvd_rcnt += rcvd_cur;
-
-				if (rcvd_rcnt >= rx_len_min) bContd = true;
-
-				if (++idos > RS232_READ_LOOPS_MAX)
-					throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, -1, sformat("Received payload is not equal to expected number of payload: %d vs %d", rcvd_rcnt, rx_len_min));
-
-			} while (rcvd_rcnt < rx_len_min);
+				if (rx_tgm.structs.payload.head.status)
+					throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.structs.payload.head.status, sformat("Telegram with status message received. Error byte: %d.", rx_tgm.structs.payload.data.error), true);
+			}
 		}
 	} while (bContd);
 }
@@ -150,6 +190,12 @@ void SISProtocol::concat_data(char * _dest, const char * _header, size_t _header
 {
 	memcpy_s(_dest, _header_len, _header, _header_len);
 	memcpy_s(_dest+_header_len, _payload_len, _payload, _payload_len);
+}
+
+void SISProtocol::split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len)
+{
+	memcpy_s(_header, _header_len, _src, _header_len);
+	memcpy_s(_payload, _payload_len, _src+_header_len, _payload_len);
 }
 
 void SISProtocol::throw_rs232_error_events(CSerial::EError _err)

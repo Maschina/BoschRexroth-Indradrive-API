@@ -8,14 +8,16 @@
 #include "helpers.h"
 
 
-#define RS232_PARITY	false
-#define RS232_DATABITS	8
-#define RS232_STOPBITS	1
-#define RS232_BAUDRATE	9600
-#define RS232_BUFFER	255
-		
+#define RS232_BUFFER			254
 #define RS232_READ_LOOPS_MAX	100
+#define RS232_READ_TIMEOUT		1000
 
+/// <summary>	Defines address master. </summary>
+#define SIS_ADDR_MASTER			0x00
+/// <summary>	Defines sis address slave. '128' is used for peer-to-peer communication. </summary>
+#define SIS_ADDR_SLAVE			0x01
+/// <summary>	Address unit. For Indradrive, this value can be found at P-0-4022. </summary>
+#define SIS_ADDR_UNIT			0x01
 
 #define SIS_SERVICE_INIT_COMM			0x03
 
@@ -54,6 +56,7 @@ public:
 	void open(const char * _port = "COM1");
 	void close();
 
+	void get_sisversion();
 	void set_baudrate(init_set_mask_baudrate _baudrate);
 	void write_parameter(TGM::Param_Variant _paramvar, const char* _data, size_t _data_len);
 
@@ -61,9 +64,10 @@ private:
 	CSerial m_serial;
 
 	template <class TCHeader, class TCPLHead, class TCPLDat, class TRHeader, class TRPLHead, class TRPLDat>
-	void transceive(TGM::Maps::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Maps::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm);
+	void transceive(TGM::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm);
 
 	void concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len);
+	void split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len);
 
 	static void throw_rs232_error_events(CSerial::EError _err);
 };
@@ -137,9 +141,9 @@ public:
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol reception failed: TRACE='%s'", m_trace_log.c_str()));
+		return str2char(sformat("SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_status, m_trace_log.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] SIS Protocol reception failed: TRACE='%s'", m_src_file, m_src_line, m_trace_log.c_str()));
+		return str2char(sformat("[%s @ line %d] SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_status, m_trace_log.c_str()));
 #endif
 	}
 };
