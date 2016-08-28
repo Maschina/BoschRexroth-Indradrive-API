@@ -63,8 +63,8 @@ public:
 private:
 	CSerial m_serial;
 
-	template <class TCHeader, class TCPLHead, class TCPLDat, class TRHeader, class TRPLHead, class TRPLDat>
-	void transceive(TGM::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm);
+	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
+	void transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
 
 	void concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len);
 	void split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len);

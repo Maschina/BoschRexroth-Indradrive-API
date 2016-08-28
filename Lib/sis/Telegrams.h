@@ -13,8 +13,55 @@
 #define TGM_SIZE_HEADER_EXT	16
 #define TGM_SIZEMAX_PAYLOAD	246
 
+
+
 namespace TGM
 {
+	///=================================================================================================
+	/// <summary>
+	/// Struct to hold payload data in a command payload. Payload data is third part of a regular Telegram: Header +
+	/// Payload data + Payload header.
+	/// </summary>
+	///=================================================================================================
+	typedef struct _data_t
+	{
+		BYTE	data[TGM_SIZEMAX_PAYLOAD];
+		size_t	size;
+
+		/// <summary>	Default constructor. </summary>
+		_data_t(std::vector<BYTE> _data = std::vector<BYTE>())
+		{
+			clear();
+
+			for (std::vector<BYTE>::iterator it = _data.begin(); it != _data.end(); ++it)
+				operator<<(*it);
+
+			size = _data.size();
+		}
+
+		BYTE at(UINT32 _idx)
+		{
+			return data[_idx];
+		}
+
+		void clear()
+		{
+			memset(data, 0, sizeof(data));
+			size = 0;
+		}
+
+		_data_t& operator<<(const BYTE& rhs)
+		{
+			data[size++] = rhs;
+			return *this;
+		}
+
+		size_t get_size() { return size; }
+		void set_size(size_t _size) { size = _size; }
+
+	} Data;
+
+
 	namespace Container
 	{
 		/// <summary>	Container for Telegram's header in raw data. </summary>
@@ -31,7 +78,7 @@ namespace TGM
 			{
 				memset(bytes, 0, sizeof(bytes));
 			}
-		} Header_Contr;
+		} Header;
 
 		/// <summary>	Container for Telegram's payload in raw data. </summary>
 		typedef struct _container_payload_t
@@ -47,12 +94,12 @@ namespace TGM
 			{
 				memset(bytes, 0, sizeof(bytes));
 			}
-		} PL_Contr;
+		} Payload;
 	}
 
 
 	/// <summary>	Templated mapping union to transfer raw TGM data from/to specialized data class. </summary>
-	template <class THeader, class TPLHead, class TPLDat>
+	template <class THeader, class TPayload>
 	union Map
 	{
 	public:
@@ -60,12 +107,12 @@ namespace TGM
 #pragma pack(push,1)
 		struct _raw_t
 		{
-			Container::Header_Contr header;
-			Container::PL_Contr payload;
+			Container::Header header;
+			Container::Payload payload;
 
-			_raw_t(Container::Header_Contr& _header = Container::Header_Contr(), Container::PL_Contr& _data = Container::PL_Contr()) :
+			_raw_t(Container::Header& _header = Container::Header(), Container::Payload& _payload = Container::Payload()) :
 				header(_header),
-				payload(_data)
+				payload(_payload)
 			{}
 		} raw;		
 #pragma pack(pop)
@@ -74,35 +121,26 @@ namespace TGM
 #pragma pack(push,1)
 		struct _mapping_t
 		{
-			THeader header;
+			THeader		header;
+			TPayload	payload;
 
-			struct _payload_t
-			{
-				TPLHead head;
-				TPLDat data;
-
-				_payload_t(TPLHead& _head = TPLHead(), TPLDat& _data = TPLDat()) :
-					head(_head), data(_data)
-				{};
-			} payload;
-
-			_mapping_t(THeader& _header, TPLHead& _head, TPLDat& _data) :
+			_mapping_t(THeader& _header, TPayload _payload) :
 				header(_header),
-				payload(_head, _data)
+				payload(_payload)
 			{};
-		} structs;
+		} mapping;
 #pragma pack(pop)
 
 		/// <summary>	Default constructor. </summary>
-		Map(THeader& _header = THeader(0, 0), TPLHead& _plhead = TPLHead(), TPLDat& _pldat = TPLDat()) :
-			structs(_header, _plhead, _pldat)
+		Map(THeader& _header = THeader(), TPayload& _payload = TPayload()) :
+			mapping(_header, _payload)
 		{};
 		/// <summary>	Destructor. </summary>
 		~Map() {};
 
-		void set(THeader& _header, TPLHead& _plhead, TPLDat& _pldat)
+		void set(THeader& _header, TPayload& _payload)
 		{
-			structs = _mapping_t(_header, _plhead, _pldat);	
+			mapping = _mapping_t(_header, _payload);
 		}
 	};
 
@@ -202,7 +240,7 @@ namespace TGM
 		BYTE AdrE;
 
 		/// <summary>	Default constructor. </summary>
-		_header_t(BYTE _addr_master, BYTE _addr_slave, BYTE _service = 0, TGM::Bitfields::Cntrl _cntrl = TGM::Bitfields::Cntrl()) :
+		_header_t(BYTE _addr_master = 0, BYTE _addr_slave = 0, BYTE _service = 0, TGM::Bitfields::Cntrl _cntrl = TGM::Bitfields::Cntrl()) :
 			StZ(0x02),
 			CS(0),
 			DatL(get_size()),
@@ -249,7 +287,7 @@ namespace TGM
 		/// <param name="_payload">	   	[in] Container of payload (head + data) with the raw data. </param>
 		/// <param name="_payload_len">	Length of the payload. </param>
 		///=================================================================================================
-		void calc_checksum(Container::PL_Contr * _payload, size_t _payload_len)
+		void calc_checksum(Container::Payload * _payload, size_t _payload_len)
 		{
 			// Set length of telegram
 			set_DatL(_payload_len);
@@ -337,15 +375,17 @@ namespace TGM
 	{
 		///=================================================================================================
 		/// <summary>
-		/// Representation of the payload header for a Subservice command. A Command Telegram is for regular subservices,
+		/// Representation of the PAYLOAD for a Subservice command. A Command Telegram is for regular subservices,
 		/// such communication init, or device identification. User for master communication (active communicator).
 		/// </summary>
 		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _subservice_head_t
+		typedef struct _subservice_payload_t
 		{
 			BYTE	address;
 			BYTE	subservice;
+
+			Data	data;
 
 			///=================================================================================================
 			/// <summary>	Constructor. </summary>
@@ -353,56 +393,20 @@ namespace TGM
 			/// <param name="_addr">	  	The recipient address. </param>
 			/// <param name="_subservice">	The subservice number. </param>
 			///=================================================================================================
-			_subservice_head_t(BYTE _addr = 0, BYTE _subservice = 0) : address(_addr), subservice(_subservice) {}
+			_subservice_payload_t(BYTE _addr = 0, BYTE _subservice = 0, Data _data = Data()) : 
+				address(_addr), 
+				subservice(_subservice),
+				data(_data)
+			{}
 
 			/// <summary>	Clears this object to its blank/initial state. </summary>
 			void clear() { address = subservice = 0; }
 
-			size_t get_size() { return sizeof(*this); }
+			size_t get_size() { return 2 + data.get_size(); }
 
-		} Subservice_Head;
+		} Subservice;
 #pragma pack(pop)
 
-
-		///=================================================================================================
-		/// <summary>
-		/// Representation of the payload data for a Subservice command. A Command Telegram is for regular subservices, such
-		/// communication init, or device identification. User for master communication (active communicator).
-		/// </summary>
-		///=================================================================================================
-#pragma pack(push,1)
-		typedef struct _subservice_data_t
-		{
-			BYTE	payload[237];
-			size_t	size;
-
-			_subservice_data_t& operator<<(const BYTE& rhs)
-			{
-				payload[size++] = rhs;
-				return *this;
-			}
-
-			/// <summary>	Default constructor. </summary>
-			_subservice_data_t(std::vector<BYTE> _dat = std::vector<BYTE>())
-			{ 
-				clear(); 
-
-				for (std::vector<BYTE>::iterator it = _dat.begin(); it != _dat.end(); ++it)
-					operator<<(*it);
-			}
-
-			/// <summary>	Clears this object to its blank/initial state. </summary>
-			void clear()
-			{
-				memset(payload, 0, sizeof(payload));
-				size = 0;
-			}
-
-			size_t get_size() { return size; }
-			void set_size(size_t _size) { size = _size; }
-
-		} Subservice_Data;
-#pragma pack(pop)
 
 
 		///=================================================================================================
@@ -461,26 +465,14 @@ namespace TGM
 		/// previous Command Telegram.
 		/// </summary>
 		///=================================================================================================
-		typedef struct _subservice_head_t
+		typedef struct _subservice_payload_t
 		{
 			BYTE	status;
 			BYTE	address;
 			BYTE	subservice;
-		} Subservice_Head;
-#pragma pack(pop)
 
-#pragma pack(push,1)
-		///=================================================================================================
-		/// <summary>
-		/// Representation of the payload data for a Subservice reaction. A Reaction Telegram is for regular subservices,
-		/// such communication init, or device identification. This telegram is responded after successful execution of
-		/// previous Command Telegram.
-		/// </summary>
-		///=================================================================================================
-		typedef struct _subservice_data_t
-		{
 			BYTE	error;
-		} Subservice_Data;
+		} Subservice;
 #pragma pack(pop)
 	}
 }
