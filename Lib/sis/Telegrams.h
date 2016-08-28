@@ -342,7 +342,7 @@ namespace TGM
 		/// </summary>
 		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _subservice_pl_head_t
+		typedef struct _subservice_head_t
 		{
 			BYTE	address;
 			BYTE	subservice;
@@ -353,14 +353,14 @@ namespace TGM
 			/// <param name="_addr">	  	The recipient address. </param>
 			/// <param name="_subservice">	The subservice number. </param>
 			///=================================================================================================
-			_subservice_pl_head_t(BYTE _addr = 0, BYTE _subservice = 0) : address(_addr), subservice(_subservice) {}
+			_subservice_head_t(BYTE _addr = 0, BYTE _subservice = 0) : address(_addr), subservice(_subservice) {}
 
 			/// <summary>	Clears this object to its blank/initial state. </summary>
 			void clear() { address = subservice = 0; }
 
 			size_t get_size() { return sizeof(*this); }
 
-		} Subservice_PL_Header;
+		} Subservice_Head;
 #pragma pack(pop)
 
 
@@ -371,19 +371,19 @@ namespace TGM
 		/// </summary>
 		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _subservice_pl_data_t
+		typedef struct _subservice_data_t
 		{
 			BYTE	payload[237];
 			size_t	size;
 
-			_subservice_pl_data_t& operator<<(const BYTE& rhs)
+			_subservice_data_t& operator<<(const BYTE& rhs)
 			{
 				payload[size++] = rhs;
 				return *this;
 			}
 
 			/// <summary>	Default constructor. </summary>
-			_subservice_pl_data_t(std::vector<BYTE> _dat = std::vector<BYTE>())
+			_subservice_data_t(std::vector<BYTE> _dat = std::vector<BYTE>())
 			{ 
 				clear(); 
 
@@ -401,7 +401,52 @@ namespace TGM
 			size_t get_size() { return size; }
 			void set_size(size_t _size) { size = _size; }
 
-		} Subservice_PL_Dat;
+		} Subservice_Data;
+#pragma pack(pop)
+
+
+		///=================================================================================================
+		/// <summary>
+		/// Sercos Command Telegram. Used for master communication (active communicator) of Sercos
+		/// parameters.
+		/// 
+		/// The common SIS services are
+		/// *   0x10: Read access on a SERCOS parameter, supporting consecutive telegrams in case
+		/// of(long) lists.
+		/// *   0x11: Read access on a list segment of SERCOS parameter, supporting no consecutive
+		/// telegram.
+		/// *   0x12: Read access on the actual SERCOS phase.
+		/// *   0x1D: Switch of the SERCOS phase(Write access).
+		/// *   0x1E: Write access on a list segment of a SERCOS parameter, supporting no consecutive
+		/// telegram.
+		/// *   0x1F: Write  access  on  a  SERCOS  parameter, supporting consecutive telegrams in case
+		/// of(long) lists.
+		/// </summary>
+		///=================================================================================================
+#pragma pack(push,1)
+		typedef struct _sercos_param_t
+		{
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by Telegrams::Sercos_Control. </summary>
+			BYTE control;
+
+			///=================================================================================================
+			/// <summary>
+			/// The unit address of a drive is read in the command telegram and copied into the response
+			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+			/// the  motion control and the unit address to the drive.
+			/// </summary>
+			///=================================================================================================
+			BYTE unit_addr;
+
+			/// <summary>	Identifier for the parameter. Size: 16 bit. Set coding by Telegrams::Sercos_Param_Ident. </summary>
+			USHORT param_ident;
+
+			/// <summary>	Payload used for user data that a specific subservice may require. </summary>
+			std::vector<BYTE> payload;
+
+
+		}  Sercos_Param;
 #pragma pack(pop)
 	}
 
@@ -416,12 +461,12 @@ namespace TGM
 		/// previous Command Telegram.
 		/// </summary>
 		///=================================================================================================
-		typedef struct _subservice_pl_head_t
+		typedef struct _subservice_head_t
 		{
 			BYTE	status;
 			BYTE	address;
 			BYTE	subservice;
-		} Subservice_PL_Header;
+		} Subservice_Head;
 #pragma pack(pop)
 
 #pragma pack(push,1)
@@ -432,62 +477,13 @@ namespace TGM
 		/// previous Command Telegram.
 		/// </summary>
 		///=================================================================================================
-		typedef struct _subservice_pl_data_t
+		typedef struct _subservice_data_t
 		{
 			BYTE	error;
-		} Subservice_PL_Dat;
+		} Subservice_Data;
 #pragma pack(pop)
 	}
 }
-
-
-/////=================================================================================================
-///// <summary>
-///// Sercos Command Telegram. Used for master communication (active communicator) of Sercos
-///// parameters.
-///// 
-///// The common SIS services are
-///// *   0x10: Read access on a SERCOS parameter, supporting consecutive telegrams in case
-///// of(long) lists.
-///// *   0x11: Read access on a list segment of SERCOS parameter, supporting no consecutive
-///// telegram.
-///// *   0x12: Read access on the actual SERCOS phase.
-///// *   0x1D: Switch of the SERCOS phase(Write access).
-///// *   0x1E: Write access on a list segment of a SERCOS parameter, supporting no consecutive
-///// telegram.
-///// *   0x1F: Write  access  on  a  SERCOS  parameter, supporting consecutive telegrams in case
-///// of(long) lists.
-///// </summary>
-/////=================================================================================================
-//typedef struct sercos_param_command_tgm_t
-//{
-//	/// <summary>	Telegram header. </summary>
-//	TGM_Header header;
-//
-//	/// <summary>	Sercos control. Size: 8 bit. Set coding by Telegrams::Sercos_Control. </summary>
-//	BYTE control;
-//
-//	///=================================================================================================
-//	/// <summary>
-//	/// The unit address of a drive is read in the command telegram and copied into the response
-//	/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
-//	/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
-//	/// the  motion control and the unit address to the drive.
-//	/// </summary>
-//	///=================================================================================================
-//	BYTE unit_addr;
-//
-//	/// <summary>	Identifier for the parameter. Size: 16 bit. Set coding by Telegrams::Sercos_Param_Ident. </summary>
-//	USHORT param_ident;
-//
-//	/// <summary>	Payload used for user data that a specific subservice may require. </summary>
-//	std::vector<BYTE> payload;
-//
-//
-//}  Sercos_Param_Cmd_TGM;
-//
-
-
 
 
 #endif /* _TELEGRAMS_H_ */

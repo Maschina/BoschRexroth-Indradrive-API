@@ -57,14 +57,14 @@ void SISProtocol::get_sisversion()
 {
 	/// Build Telegrams	
 	// Mapping for SEND Telegram
-	TGM::Map<TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat>
+	TGM::Map<TGM::Header, TGM::Commands::Subservice_Head, TGM::Commands::Subservice_Data>
 		tx_tgm(
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
 			// Init payload header
-			TGM::Commands::Subservice_PL_Header(SIS_ADDR_UNIT, 0x02 /* Subservice code for SIS Version read-out */),
+			TGM::Commands::Subservice_Head(SIS_ADDR_UNIT, 0x02 /* Subservice code for SIS Version read-out */),
 			// Init payload data
-			TGM::Commands::Subservice_PL_Dat()
+			TGM::Commands::Subservice_Data()
 			);
 
 	// Calculate Checksum
@@ -72,12 +72,12 @@ void SISProtocol::get_sisversion()
 	tx_tgm.structs.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
 
 	// Mapping for RECEPTION Telegram
-	TGM::Map<TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat> rx_tgm;
+	TGM::Map<TGM::Header, TGM::Reactions::Subservice_Head, TGM::Reactions::Subservice_Data> rx_tgm;
 
 	///  Transceive
 	// Send and receive
-	transceive<	TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat,
-		TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat >
+	transceive<	TGM::Header, TGM::Commands::Subservice_Head, TGM::Commands::Subservice_Data,
+		TGM::Header, TGM::Reactions::Subservice_Head, TGM::Reactions::Subservice_Data >
 		(tx_tgm, rx_tgm);
 }
 
@@ -85,14 +85,14 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 {
 	/// Build Telegrams
 	// Mapping for SEND Telegram
-	TGM::Map<TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat>
+	TGM::Map<TGM::Header, TGM::Commands::Subservice_Head, TGM::Commands::Subservice_Data>
 		tx_tgm(
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
 			// Init payload header
-			TGM::Commands::Subservice_PL_Header(SIS_ADDR_UNIT, 0x07 /* Subservice code for baudrate setting */),
+			TGM::Commands::Subservice_Head(SIS_ADDR_UNIT, 0x07 /* Subservice code for baudrate setting */),
 			// Init payload data
-			TGM::Commands::Subservice_PL_Dat({ (BYTE)_baudrate })
+			TGM::Commands::Subservice_Data({ (BYTE)_baudrate })
 		);
 	
 	// Calculate Checksum
@@ -100,12 +100,12 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 	tx_tgm.structs.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
 
 	// Mapping for RECEPTION Telegram
-	TGM::Map<TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat> rx_tgm;
+	TGM::Map<TGM::Header, TGM::Reactions::Subservice_Head, TGM::Reactions::Subservice_Data> rx_tgm;
 
 	///  Transceive
 	// Send and receive
-	transceive<	TGM::Header, TGM::Commands::Subservice_PL_Header, TGM::Commands::Subservice_PL_Dat,
-				TGM::Header, TGM::Reactions::Subservice_PL_Header, TGM::Reactions::Subservice_PL_Dat >
+	transceive<	TGM::Header, TGM::Commands::Subservice_Head, TGM::Commands::Subservice_Data,
+				TGM::Header, TGM::Reactions::Subservice_Head, TGM::Reactions::Subservice_Data >
 				(tx_tgm, rx_tgm);
 
 	int i = 0;
