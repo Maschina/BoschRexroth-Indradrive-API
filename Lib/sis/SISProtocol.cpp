@@ -53,31 +53,6 @@ void SISProtocol::close()
 	}
 }
 
-void SISProtocol::get_sisversion()
-{
-	/// Build Telegrams	
-	// Mapping for SEND Telegram
-	TGM::Map<TGM::Header, TGM::Commands::Subservice>
-		tx_tgm(
-			// Init header
-			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
-			// Init payload
-			TGM::Commands::Subservice(SIS_ADDR_UNIT, 0x02 /* Subservice code for SIS Version read-out */)
-			);
-
-	// Calculate Checksum
-	size_t payload_len = tx_tgm.mapping.payload.get_size();
-	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
-
-	// Mapping for RECEPTION Telegram
-	TGM::Map<TGM::Header, TGM::Reactions::Subservice> rx_tgm;
-
-	///  Transceive
-	// Send and receive
-	transceive<	TGM::Header, TGM::Commands::Subservice,
-		TGM::Header, TGM::Reactions::Subservice >
-		(tx_tgm, rx_tgm);
-}
 
 void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 {
@@ -91,23 +66,35 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 			TGM::Commands::Subservice(SIS_ADDR_UNIT, 0x07, TGM::Data({ (BYTE)_baudrate }))
 		);
 	
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Subservice> rx_tgm;
+
+	prepare_and_transceive(tx_tgm, rx_tgm);
+}
+
+
+template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
+inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
+{
 	// Calculate Checksum
 	size_t payload_len = tx_tgm.mapping.payload.get_size();
 	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
 
-	// Mapping for RECEPTION Telegram
-	TGM::Map<TGM::Header, TGM::Reactions::Subservice> rx_tgm;
+	if (check_boundaries(tx_tgm))
+		throw SISProtocol::ExceptionGeneric("SISProtocol::check_boundaries", __FILE__, __LINE__, -1, "Boundaries are out of spec. Telegram is not ready to be sent.");
 
 	///  Transceive
 	// Send and receive
 	transceive<	TGM::Header, TGM::Commands::Subservice,
-				TGM::Header, TGM::Reactions::Subservice >
-				(tx_tgm, rx_tgm);
+		TGM::Header, TGM::Reactions::Subservice >
+		(tx_tgm, rx_tgm);
 }
+
 
 void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, const char * _data, size_t _data_len)
 {
 }
+
 
 template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
@@ -181,13 +168,23 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 }
 
 
-void SISProtocol::concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len)
+template<class THeader, class TPayload>
+inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
+{
+	size_t tgm_size = _tgm.mapping.header.get_size() + _tgm.mapping.payload.get_size();
+	if (tgm_size <= RS232_BUFFER) return true;
+
+	return false;
+}
+
+
+inline void SISProtocol::concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len)
 {
 	memcpy_s(_dest, _header_len, _header, _header_len);
 	memcpy_s(_dest+_header_len, _payload_len, _payload, _payload_len);
 }
 
-void SISProtocol::split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len)
+inline void SISProtocol::split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len)
 {
 	memcpy_s(_header, _header_len, _src, _header_len);
 	memcpy_s(_payload, _payload_len, _src+_header_len, _payload_len);
