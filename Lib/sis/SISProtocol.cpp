@@ -85,14 +85,9 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 
 	///  Transceive
 	// Send and receive
-	transceive<	TGM::Header, TGM::Commands::Subservice,
-		TGM::Header, TGM::Reactions::Subservice >
-		(tx_tgm, rx_tgm);
-}
-
-
-void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, const char * _data, size_t _data_len)
-{
+	transceive<	TCHeader, TCPayload,
+				TRHeader, TRPayload >
+				(tx_tgm, rx_tgm);
 }
 
 
