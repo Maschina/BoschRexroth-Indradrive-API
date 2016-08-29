@@ -53,18 +53,22 @@ namespace SISProtocolTest
 			}
 			catch (SISProtocol::ExceptionTransceiveFailed &ex)
 			{
+				Logger::WriteMessage(ex.what());
 				Assert::Fail(char2wchar(ex.what()));
 			}
 			catch (SISProtocol::ExceptionGeneric &ex)
 			{
+				Logger::WriteMessage(ex.what());
 				Assert::Fail(char2wchar(ex.what()));
 			}
 			catch (CSerial::ExceptionReceptionFailed &ex)
 			{
+				Logger::WriteMessage(ex.what());
 				Assert::Fail(char2wchar(ex.what()));
 			}
 			catch (CSerial::ExceptionGeneric &ex)
 			{
+				Logger::WriteMessage(ex.what());
 				Assert::Fail(char2wchar(ex.what()));
 			}
 		}

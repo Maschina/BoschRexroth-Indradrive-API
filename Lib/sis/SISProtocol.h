@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <string>
 
+#include "poppydebugtools.h"
 #include "helpers.h"
 #include "RS232.h"
 #include "Telegrams.h"
@@ -90,37 +91,30 @@ public:
 	bool warning;
 
 	ExceptionGeneric(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
 		const std::string _trace_log,
 		bool _warning = false) :
 
-		m_src_func(_src_func),
-		m_src_file(_src_file),
-		m_src_line(_src_line),
 		m_status(_status),
-		m_trace_log(_trace_log),
+		m_message(_trace_log),
 		warning(_warning)
 	{}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol exception @ %s: STATUS=%d, TRACE='%s'", m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		return str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] SIS Protocol exception @ %s: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		std::string errstr = stde::GetWinErrorString(m_status);
+		const char* ex = str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%s) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, errstr.c_str(), m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 
 	int get_status() { return m_status; }
 
 protected:
-	std::string m_src_func;
-	const char* m_src_file;
-	const unsigned long m_src_line;
-
 	///=================================================================================================
 	/// <summary>
 	/// For Win32 API commands, most likely representation of the System Error Codes:
@@ -128,7 +122,8 @@ protected:
 	/// </summary>
 	///=================================================================================================
 	int m_status;
-	std::string m_trace_log;
+
+	std::string m_message;
 };
 
 
@@ -137,23 +132,23 @@ class SISProtocol::ExceptionTransceiveFailed : public SISProtocol::ExceptionGene
 {
 public:
 	ExceptionTransceiveFailed(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
-		const std::string _trace_log,
+		const std::string _message,
 		bool _warning = false) :
 
-		ExceptionGeneric(_src_func, _src_file, _src_line, _status, _trace_log, _warning)
+		ExceptionGeneric(_status, _message, _warning)
 	{}
 	~ExceptionTransceiveFailed() throw() {}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_status, m_trace_log.c_str()));
+		return str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x ### MESSAGE='%s'", m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_status, m_trace_log.c_str()));
+		std::string errstr = stde::GetWinErrorString(m_status);
+		const char* ex = str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%s) ### MESSAGE='%s'", m_status, errstr.c_str(), m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 };

@@ -14,6 +14,8 @@ SISProtocol::~SISProtocol()
 
 void SISProtocol::open(const char * _port)
 {
+	STACK;
+
 	LPCTSTR cport = (LPCTSTR)char2wchar(_port);
 	CSerial::EBaudrate cbaudrate = CSerial::EBaud19200;
 	CSerial::EDataBits cdata = CSerial::EData8;
@@ -43,6 +45,8 @@ void SISProtocol::open(const char * _port)
 
 void SISProtocol::close()
 {
+	STACK;
+
 	try
 	{
 		m_serial.Close();
@@ -56,6 +60,8 @@ void SISProtocol::close()
 
 void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 {
+	STACK;
+
 	/// Build Telegrams
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Subservice>
@@ -75,6 +81,8 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 
 void SISProtocol::read_parameter(const std::string & _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
 {
+	STACK;
+
 	TGM::Param_Variant var;
 
 	if (_paramvar == "S")
@@ -82,13 +90,15 @@ void SISProtocol::read_parameter(const std::string & _paramvar, USHORT _paramnum
 	else if (_paramvar == "P")
 		var = TGM::Param_P;
 	else
-		throw SISProtocol::ExceptionGeneric("SIS::read_parameter", __FILE__, __LINE__, -1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
+		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
 
 	read_parameter(var, _paramnum, _rcvddata);
 }
 
 void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
 {
+	STACK;
+
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
@@ -117,6 +127,8 @@ void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum,
 
 void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
 {
+	STACK;
+
 	TGM::Param_Variant var;
 
 	if (_paramvar == "S")
@@ -124,13 +136,15 @@ void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum
 	else if (_paramvar == "P")
 		var = TGM::Param_P;
 	else
-		throw SISProtocol::ExceptionGeneric("SIS::write_parameter", __FILE__, __LINE__, -1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
+		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
 
 	write_parameter(var, _paramnum, _data);
 }
 
 void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
 {
+	STACK;
+
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
@@ -155,12 +169,14 @@ void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum
 template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
 {
+	STACK;
+
 	// Calculate Checksum
 	size_t payload_len = tx_tgm.mapping.payload.get_size();
 	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw, payload_len);
 
 	if (!check_boundaries(tx_tgm))
-		throw SISProtocol::ExceptionGeneric("SISProtocol::check_boundaries", __FILE__, __LINE__, -1, "Boundaries are out of spec. Telegram is not ready to be sent.");
+		throw SISProtocol::ExceptionGeneric(-1, "Boundaries are out of spec. Telegram is not ready to be sent.");
 
 	///  Transceive
 	// Send and receive
@@ -173,6 +189,8 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
 {
+	STACK;
+
 	char rx_buffer[RS232_BUFFER];
 
 	// Transceiver lengths
@@ -204,7 +222,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 
 		// Handle Break event
 		if (event & CSerial::EEventBreak)
-			throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EEventBreak, "Break event occurred. Transceive has been aborted.", true);
+			throw SISProtocol::ExceptionTransceiveFailed(CSerial::EEventBreak, "Break event occurred. Transceive has been aborted.", true);
 
 		// Handle error event
 		if (event & CSerial::EEventError)
@@ -232,7 +250,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			{
 				bContd = false;
 
-				throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.mapping.payload.status, sformat("Telegram received without payload, but just the header."), true);
+				throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram received without payload, but just the header."), true);
 			}
 
 			// Complete Telegram received
@@ -241,7 +259,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 				bContd = false;
 
 				if (rx_tgm.mapping.payload.status)
-					throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: %d.", rx_tgm.mapping.payload.error), true);
+					throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: %d.", rx_tgm.mapping.payload.error), true);
 			}
 		}
 		
@@ -252,6 +270,8 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 template<class THeader, class TPayload>
 inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
 {
+	STACK;
+
 	size_t tgm_size = _tgm.mapping.header.get_size() + _tgm.mapping.payload.get_size();
 	if (tgm_size <= RS232_BUFFER) return true;
 
@@ -261,34 +281,36 @@ inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
 
 void SISProtocol::throw_rs232_error_events(CSerial::EError _err)
 {
+	STACK;
+
 	switch (_err)
 	{
 	case CSerial::EErrorBreak:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorBreak, "Break condition occurred. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorBreak, "Break condition occurred. Transceive has been aborted.", true);
 
 	case CSerial::EErrorFrame:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorFrame, "Framing error occurred. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorFrame, "Framing error occurred. Transceive has been aborted.", true);
 
 	case CSerial::EErrorIOE:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorIOE, "IO device error occurred. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorIOE, "IO device error occurred. Transceive has been aborted.", true);
 
 	case CSerial::EErrorMode:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorMode, "Unsupported mode detected. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorMode, "Unsupported mode detected. Transceive has been aborted.", true);
 
 	case CSerial::EErrorOverrun:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorOverrun, "Buffer overrun detected. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorOverrun, "Buffer overrun detected. Transceive has been aborted.", true);
 
 	case CSerial::EErrorRxOver:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorRxOver, "Input buffer overflow detected. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorRxOver, "Input buffer overflow detected. Transceive has been aborted.", true);
 
 	case CSerial::EErrorParity:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorParity, "Input parity occurred. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorParity, "Input parity occurred. Transceive has been aborted.", true);
 
 	case CSerial::EErrorTxFull:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorTxFull, "Output buffer full. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorTxFull, "Output buffer full. Transceive has been aborted.", true);
 
 	default:
-		throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, CSerial::EErrorBreak, "Unknown error occurred. Transceive has been aborted.", true);
+		throw SISProtocol::ExceptionTransceiveFailed(CSerial::EErrorBreak, "Unknown error occurred. Transceive has been aborted.", true);
 	}
 }
 

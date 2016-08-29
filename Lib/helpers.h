@@ -18,6 +18,30 @@
 
 namespace stde
 {
+	static std::string GetWinErrorString(DWORD _errorMessageID)
+	{
+		//Get the error message, if any.
+		DWORD errorMessageID = _errorMessageID;
+		if (errorMessageID == 0)
+			return std::string(); //No error message has been recorded
+
+		LPSTR messageBuffer = nullptr;
+		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+		// Remove trailing new line characters
+		messageBuffer[strcspn(messageBuffer, "\r\n")] = 0;
+		size -= 2;
+
+		// Convert
+		std::string message(messageBuffer, size);
+
+		//Free the buffer.
+		LocalFree(messageBuffer);
+
+		return message;
+	}
+
 	inline static char* convert_str_to_char(const std::string _in)
 	{
 		char* _in_c = new char[_in.length() + 1];
