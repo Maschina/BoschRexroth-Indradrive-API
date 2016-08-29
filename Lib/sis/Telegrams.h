@@ -443,12 +443,14 @@ namespace TGM
 			///=================================================================================================
 			BYTE unit_addr;
 
+			BYTE param_type;
+
 			///=================================================================================================
 			/// <summary>
 			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
 			/// </summary>
 			///=================================================================================================
-			USHORT param_ident;
+			USHORT param_num;
 
 			/// <summary>	Payload data. </summary>
 			Data data;
@@ -460,17 +462,21 @@ namespace TGM
 				TGM::Data _data = Data()) :
 				control(_control.toByte()),
 				unit_addr(_unit_addr),
-				param_ident(_param_ident.toByte()),
+				param_type(0),
+				param_num(_param_ident.toByte()),
 				data(_data)
 			{}
 
 			void clear() 
 			{ 
-				control = unit_addr = param_ident = 0; 
+				control = 0;
+				unit_addr = 0;
+				param_type = 0;
+				param_num = 0;
 				data.clear();
 			}
 
-			size_t get_size() { return 4 + data.get_size(); }
+			size_t get_size() { return 5 + data.get_size(); }
 
 		}  Sercos_Param;
 #pragma pack(pop)
@@ -502,7 +508,7 @@ namespace TGM
 			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
 			/// </summary>
 			///=================================================================================================
-			USHORT param_ident;
+			USHORT param_num;
 
 			///=================================================================================================
 			/// <summary>
@@ -528,7 +534,7 @@ namespace TGM
 				TGM::Data _data = Data()) :
 				control(_control.toByte()),
 				unit_addr(_unit_addr),
-				param_ident(_param_ident.toByte()),
+				param_num(_param_ident.toByte()),
 				list_offset(_list_offset),
 				element_size(_element_size),
 				data(_data)
@@ -536,7 +542,7 @@ namespace TGM
 
 			void clear()
 			{
-				control = unit_addr = param_ident = list_offset = element_size = 0;
+				control = unit_addr = param_num = list_offset = element_size = 0;
 				data.clear();
 			}
 
@@ -649,7 +655,7 @@ namespace TGM
 			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
 			/// </summary>
 			///=================================================================================================
-			USHORT param_ident;
+			USHORT param_num;
 
 			///=================================================================================================
 			/// <summary>
@@ -679,7 +685,7 @@ namespace TGM
 				TGM::Data _data = Data()) :
 				control(_control.toByte()),
 				unit_addr(_unit_addr),
-				param_ident(_param_ident.toByte()),
+				param_num(_param_ident.toByte()),
 				list_offset(_list_offset),
 				element_size(_element_size),
 				data(_data)
@@ -687,7 +693,7 @@ namespace TGM
 
 			void clear()
 			{
-				control = unit_addr = param_ident = list_offset = element_size = 0;
+				control = unit_addr = param_num = list_offset = element_size = 0;
 				data.clear();
 			}
 

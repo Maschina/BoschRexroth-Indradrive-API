@@ -91,7 +91,9 @@ void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum,
 {
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
-	TGM::Bitfields::Sercos_Param_Ident	param_ident(_paramvar, _paramnum);
+	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
+
+	USHORT foo1 = param_num.toByte();
 
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
@@ -99,7 +101,7 @@ void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum,
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_ident)
+			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_num)
 		);
 
 	// Mapping for RECEPTION Telegram
@@ -131,7 +133,7 @@ void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum
 {
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
-	TGM::Bitfields::Sercos_Param_Ident	param_ident(_paramvar, _paramnum);
+	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
 			
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
@@ -139,7 +141,7 @@ void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_ident, TGM::Data(_data))
+			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_num, TGM::Data(_data))
 		);
 
 	// Mapping for RECEPTION Telegram
@@ -157,7 +159,7 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 	size_t payload_len = tx_tgm.mapping.payload.get_size();
 	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
 
-	if (check_boundaries(tx_tgm))
+	if (!check_boundaries(tx_tgm))
 		throw SISProtocol::ExceptionGeneric("SISProtocol::check_boundaries", __FILE__, __LINE__, -1, "Boundaries are out of spec. Telegram is not ready to be sent.");
 
 	///  Transceive
@@ -228,6 +230,14 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			{
 				rx_payload_len = rx_tgm.mapping.header.DatL;
 				rx_tgm.mapping.payload.data.set_size(rx_payload_len);
+			}
+
+			// Length of payload is zero --> No payload received
+			if (rx_payload_len == 0)
+			{
+				bContd = false;
+
+				throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.mapping.payload.status, sformat("Telegram received without payload, but just the header."), true);
 			}
 				
 

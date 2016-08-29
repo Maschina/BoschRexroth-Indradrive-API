@@ -2,10 +2,12 @@
 #define _SISPROTOCOL_H_
 
 #include <Windows.h>
+#include <string>
 
+#include "helpers.h"
 #include "RS232.h"
 #include "Telegrams.h"
-#include "helpers.h"
+
 
 
 #define RS232_BUFFER			254
@@ -59,8 +61,8 @@ public:
 
 	void set_baudrate(init_set_mask_baudrate _baudrate);
 
-	void read_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata);
-	void read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata);
+	void read_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata = std::vector<BYTE>());
+	void read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata = std::vector<BYTE>());
 
 	void write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
 	void write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);

@@ -112,18 +112,18 @@ namespace TGM
 				res7(0)
 			{}
 
-			BYTE toByte() { return *(BYTE*)this; }
+			BYTE toByte() { return 0 | (tx_status << 2) | (type << 3); }
 
 		} Sercos_Control;
 
 		/// <summary>	Identification of the parameter. Size: 16 bit. </summary>
 		typedef struct sercos_param_ident_t
 		{
-			/// <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_num. </summary>
-			USHORT param_num : 12;
+			/// <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_no. </summary>
+			USHORT param_no : 12;
 
-			/// <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_block. </summary>
-			UCHAR param_block : 3;
+			/// <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_set. </summary>
+			UCHAR param_set : 3;
 
 			///=================================================================================================
 			/// <summary>
@@ -136,14 +136,23 @@ namespace TGM
 
 			/// <summary>	Default constructor. </summary>
 			sercos_param_ident_t(Param_Variant _param_variant = TGM::Param_S, USHORT _param_num = 0) :
-				param_num(_param_num),
-				param_block(0),
+				param_no(_param_num),
+				param_set(0),
 				param_variant(_param_variant)
 			{}
 
-			USHORT toByte() { return *(USHORT*)this; }
+			USHORT toByte() 
+			{
+				return (param_no | (param_set<<12) | (param_variant<<15));
+			}
 
 		} Sercos_Param_Ident;
+
+		typedef union u_Sercos_Param_Ident
+		{
+			Sercos_Param_Ident bs;
+			USHORT i;
+		} u_Sercos_Param_Ident;
 	}
 }
 
