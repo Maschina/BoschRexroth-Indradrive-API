@@ -7,13 +7,13 @@
 
 namespace TGM
 {
-	enum Type { TGM_Type_Command, TGM_Type_Reaction };
-	enum Param_Variant { TGM_Param_S, TGM_Param_P };
+	enum Type { Type_Command, Type_Reaction };
+	enum Param_Variant { Param_S, Param_P };
 
 	namespace Bitfields
 	{
 		/// <summary>	Control byte consisting of several bit fields. Size: 8 bit. </summary>
-		typedef struct _cntrl_t
+		typedef struct _header_cntrl_t
 		{
 			///=================================================================================================
 			/// <summary>
@@ -40,7 +40,7 @@ namespace TGM
 			///=================================================================================================
 			UCHAR status_react_tgm : 3;
 
-			_cntrl_t(Type _type = TGM_Type_Command) :
+			_header_cntrl_t(Type _type = Type_Command) :
 				num_sub_addresses(0),
 				num_running_tgm(0),
 				type(_type),
@@ -49,7 +49,7 @@ namespace TGM
 
 			BYTE toByte() { return *(BYTE*)this; }
 
-		} Cntrl;
+		} Header_Cntrl;
 
 		///=================================================================================================
 		/// <summary>
@@ -59,23 +59,6 @@ namespace TGM
 		///================================================================================================= 
 		typedef struct sercos_control_t
 		{
-			enum sercos_control_tx_status {
-				tx_in_progress,
-				tx_final
-			};
-
-			enum sercos_control_type {
-				type_channel_not_active,
-				type_ident_number,
-				type_name,
-				type_attribute,
-				type_unit,
-				type_minval,
-				type_maxval,
-				type_operatingdata
-			};
-
-
 			UCHAR res1 : 1;
 			UCHAR res2 : 1;
 
@@ -87,7 +70,10 @@ namespace TGM
 			/// * 1: final transmission.
 			/// </summary>
 			///=================================================================================================
-			sercos_control_tx_status tx_status : 1;
+			enum sercos_control_tx_status {
+				tx_in_progress,
+				tx_final
+			} tx_status : 1;
 
 			///=================================================================================================
 			/// <summary>
@@ -102,7 +88,16 @@ namespace TGM
 			/// * b111: operating data (write access)
 			/// </summary>
 			///=================================================================================================
-			sercos_control_type type : 3;
+			enum sercos_control_type {
+				type_channel_not_active,
+				type_ident_number,
+				type_name,
+				type_attribute,
+				type_unit,
+				type_minval,
+				type_maxval,
+				type_operatingdata
+			} type : 3;
 
 			UCHAR res6 : 1;
 			UCHAR res7 : 1;
@@ -124,10 +119,10 @@ namespace TGM
 		/// <summary>	Identification of the parameter. Size: 16 bit. </summary>
 		typedef struct sercos_param_ident_t
 		{
-			/// <summary>	Bit 0-11: The parameter number [0..4095]. </summary>
+			/// <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_num. </summary>
 			USHORT param_num : 12;
 
-			/// <summary>	Bit 12-15: The parameter block [0..7]. </summary>
+			/// <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_block. </summary>
 			UCHAR param_block : 3;
 
 			///=================================================================================================
@@ -140,7 +135,7 @@ namespace TGM
 			UCHAR param_variant : 1;
 
 			/// <summary>	Default constructor. </summary>
-			sercos_param_ident_t(Param_Variant _param_variant = TGM_Param_S, USHORT _param_num = 0) :
+			sercos_param_ident_t(Param_Variant _param_variant = TGM::Param_S, USHORT _param_num = 0) :
 				param_num(_param_num),
 				param_block(0),
 				param_variant(_param_variant)

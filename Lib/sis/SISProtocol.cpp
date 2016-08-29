@@ -61,7 +61,7 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 	TGM::Map<TGM::Header, TGM::Commands::Subservice>
 		tx_tgm(
 			// Init header
-			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Cntrl(TGM::TGM_Type_Command)),
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_INIT_COMM, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
 			TGM::Commands::Subservice(SIS_ADDR_UNIT, 0x07, TGM::Data({ (BYTE)_baudrate }))
 		);
@@ -69,6 +69,83 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Subservice> rx_tgm;
 
+	prepare_and_transceive(tx_tgm, rx_tgm);
+}
+
+
+void SISProtocol::read_parameter(const std::string & _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
+{
+	TGM::Param_Variant var;
+
+	if (_paramvar == "S")
+		var = TGM::Param_S;
+	else if (_paramvar == "P")
+		var = TGM::Param_P;
+	else
+		throw SISProtocol::ExceptionGeneric("SIS::read_parameter", __FILE__, __LINE__, -1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
+
+	read_parameter(var, _paramnum, _rcvddata);
+}
+
+void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
+{
+	/// Build Telegrams
+	TGM::Bitfields::Sercos_Control		sercos_control;
+	TGM::Bitfields::Sercos_Param_Ident	param_ident(_paramvar, _paramnum);
+
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
+		tx_tgm(
+			// Init header
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
+			// Init payload
+			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_ident)
+		);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Sercos_Param> rx_tgm;
+
+	/// Transceive
+	prepare_and_transceive(tx_tgm, rx_tgm);
+
+	/// Read back response
+	_rcvddata = rx_tgm.mapping.payload.data.toVector();
+}
+
+
+void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
+{
+	TGM::Param_Variant var;
+
+	if (_paramvar == "S")
+		var = TGM::Param_S;
+	else if (_paramvar == "P")
+		var = TGM::Param_P;
+	else
+		throw SISProtocol::ExceptionGeneric("SIS::write_parameter", __FILE__, __LINE__, -1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
+
+	write_parameter(var, _paramnum, _data);
+}
+
+void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
+{
+	/// Build Telegrams
+	TGM::Bitfields::Sercos_Control		sercos_control;
+	TGM::Bitfields::Sercos_Param_Ident	param_ident(_paramvar, _paramnum);
+			
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
+		tx_tgm(
+			// Init header
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
+			// Init payload
+			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_ident, TGM::Data(_data))
+		);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Sercos_Param> rx_tgm;
+
+	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 }
 
@@ -148,7 +225,11 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			// It is assumed that if the number of received bytes is bigger than 4,
 			// which is the position of the payload length, the length can be read out.
 			if (rcvd_rcnt > 4)
+			{
 				rx_payload_len = rx_tgm.mapping.header.DatL;
+				rx_tgm.mapping.payload.data.set_size(rx_payload_len);
+			}
+				
 
 			// Complete Telegram received
 			if (rx_header_len + rx_payload_len <= rcvd_rcnt)

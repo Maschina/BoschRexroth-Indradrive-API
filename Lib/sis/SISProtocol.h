@@ -58,7 +58,11 @@ public:
 
 	void set_baudrate(init_set_mask_baudrate _baudrate);
 
-	void write_parameter(TGM::Param_Variant _paramvar, const char* _data, size_t _data_len);
+	void read_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata);
+	void read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata);
+
+	void write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
+	void write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
 
 private:
 	CSerial m_serial;

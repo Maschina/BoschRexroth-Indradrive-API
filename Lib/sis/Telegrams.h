@@ -44,6 +44,16 @@ namespace TGM
 			return data[_idx];
 		}
 
+		std::vector<BYTE> toVector()
+		{
+			std::vector<BYTE> out;
+
+			for (int i = 0; i < size; i++)
+				out.push_back(data[i]);
+
+			return out;
+		}
+
 		void clear()
 		{
 			memset(data, 0, sizeof(data));
@@ -240,7 +250,7 @@ namespace TGM
 		BYTE AdrE;
 
 		/// <summary>	Default constructor. </summary>
-		_header_t(BYTE _addr_master = 0, BYTE _addr_slave = 0, BYTE _service = 0, TGM::Bitfields::Cntrl _cntrl = TGM::Bitfields::Cntrl()) :
+		_header_t(BYTE _addr_master = 0, BYTE _addr_slave = 0, BYTE _service = 0, TGM::Bitfields::Header_Cntrl _cntrl = TGM::Bitfields::Header_Cntrl()) :
 			StZ(0x02),
 			CS(0),
 			DatL(get_size()),
@@ -430,7 +440,7 @@ namespace TGM
 #pragma pack(push,1)
 		typedef struct _sercos_param_t
 		{
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by Telegrams::Sercos_Control. </summary>
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 			BYTE control;
 
 			///=================================================================================================
@@ -443,12 +453,30 @@ namespace TGM
 			///=================================================================================================
 			BYTE unit_addr;
 
-			/// <summary>	Identifier for the parameter. Size: 16 bit. Set coding by Telegrams::Sercos_Param_Ident. </summary>
+			///=================================================================================================
+			/// <summary>
+			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
+			/// </summary>
+			///=================================================================================================
 			USHORT param_ident;
 
-			/// <summary>	Payload used for user data that a specific subservice may require. </summary>
-			std::vector<BYTE> payload;
+			/// <summary>	Payload data. </summary>
+			Data data;
 
+			_sercos_param_t(TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(), BYTE _unit_addr = 0, TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), TGM::Data _data = Data()) :
+				control(_control.toByte()),
+				unit_addr(_unit_addr),
+				param_ident(_param_ident.toByte()),
+				data(_data)
+			{}
+
+			void clear() 
+			{ 
+				control = unit_addr = param_ident = 0; 
+				data.clear();
+			}
+
+			size_t get_size() { return 4 + data.get_size(); }
 
 		}  Sercos_Param;
 #pragma pack(pop)
@@ -460,7 +488,7 @@ namespace TGM
 #pragma pack(push,1)
 		///=================================================================================================
 		/// <summary>
-		/// Representation of the payload header for a Subservice reaction. A Reaction Telegram is for regular subservices,
+		/// Representation of the payload for a Subservice reaction. A Reaction Telegram is for regular subservices,
 		/// such communication init, or device identification. This telegram is responded after successful execution of
 		/// previous Command Telegram.
 		/// </summary>
@@ -471,8 +499,61 @@ namespace TGM
 			BYTE	address;
 			BYTE	subservice;
 
-			BYTE	error;
+			union
+			{
+				Data	data;
+				BYTE	error;
+			};
+
+			_subservice_payload_t() :
+				status(1),
+				address(0),
+				subservice(0),
+				error(0)
+			{}
+
 		} Subservice;
+#pragma pack(pop)
+
+#pragma pack(push,1)
+		///=================================================================================================
+		/// <summary>
+		/// Representation of the payload for a Sercos Parameter reaction. A Reaction Telegram is for regular subservices,
+		/// such communication init, or device identification. This telegram is responded after successful execution of
+		/// previous Command Telegram.
+		/// </summary>
+		///=================================================================================================
+		typedef struct _sercos_param_payload_t
+		{
+			BYTE status;
+
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			BYTE control;
+
+			///=================================================================================================
+			/// <summary>
+			/// The unit address of a drive is read in the command telegram and copied into the response
+			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+			/// the  motion control and the unit address to the drive.
+			/// </summary>
+			///=================================================================================================
+			BYTE unit_addr;
+
+			union
+			{
+				Data	data;
+				USHORT	error;
+			};
+
+			_sercos_param_payload_t() :
+				status(1),
+				control(0),
+				unit_addr(0),
+				data(TGM::Data())
+			{}
+			
+		} Sercos_Param;
 #pragma pack(pop)
 	}
 }
