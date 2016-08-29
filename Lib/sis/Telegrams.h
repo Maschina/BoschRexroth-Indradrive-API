@@ -12,6 +12,7 @@
 #define TGM_SIZE_HEADER		8
 #define TGM_SIZE_HEADER_EXT	16
 #define TGM_SIZEMAX_PAYLOAD	246
+#define TGM_SIZEMAX			254
 
 
 
@@ -72,40 +73,21 @@ namespace TGM
 	} Data;
 
 
-	namespace Container
+	/// <summary>	Container for Telegram in raw data. </summary>
+	typedef struct _container_t
 	{
-		/// <summary>	Container for Telegram's header in raw data. </summary>
-		typedef struct _container_header_t
+		/// <summary>	The raw data. Size: 254 bytes </summary>
+		char	bytes[TGM_SIZEMAX];
+
+		/// <summary>	Default constructor. </summary>
+		_container_t() { clear(); }
+
+		/// <summary>	Clears this object to its blank/initial state. </summary>
+		void clear()
 		{
-			/// <summary>	The raw data. </summary>
-			char	bytes[TGM_SIZE_HEADER];
-			
-			/// <summary>	Default constructor. </summary>
-			_container_header_t() { clear(); }
-
-			/// <summary>	Clears this object to its blank/initial state. </summary>
-			void clear()
-			{
-				memset(bytes, 0, sizeof(bytes));
-			}
-		} Header;
-
-		/// <summary>	Container for Telegram's payload in raw data. </summary>
-		typedef struct _container_payload_t
-		{
-			/// <summary>	The raw data. Size: 239 bytes (255 bytes - 8 bytes {Header}) </summary>
-			char	bytes[TGM_SIZEMAX_PAYLOAD];
-			
-			/// <summary>	Default constructor. </summary>
-			_container_payload_t() { clear(); }
-
-			/// <summary>	Clears this object to its blank/initial state. </summary>
-			void clear()
-			{
-				memset(bytes, 0, sizeof(bytes));
-			}
-		} Payload;
-	}
+			memset(bytes, 0, sizeof(bytes));
+		}
+	} Bytestream;
 
 
 	/// <summary>	Templated mapping union to transfer raw TGM data from/to specialized data class. </summary>
@@ -114,18 +96,7 @@ namespace TGM
 	{
 	public:
 		/// Generic raw data, comprising byte arrays
-#pragma pack(push,1)
-		struct _raw_t
-		{
-			Container::Header header;
-			Container::Payload payload;
-
-			_raw_t(Container::Header& _header = Container::Header(), Container::Payload& _payload = Container::Payload()) :
-				header(_header),
-				payload(_payload)
-			{}
-		} raw;		
-#pragma pack(pop)
+		Bytestream raw;
 
 		/// Specialized data class, comprising structure payload head and data
 #pragma pack(push,1)
@@ -291,20 +262,22 @@ namespace TGM
 
 		///=================================================================================================
 		/// <summary>
-		/// Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically assigned to CS.
+		/// Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically
+		/// assigned to CS. This function will use DatL parameter for the appropriate length
+		/// determination.
 		/// </summary>
 		///
-		/// <param name="_payload">	   	[in] Container of payload (head + data) with the raw data. </param>
+		/// <param name="_payload">	   	[in] Bytestream of payload (head + data) with the raw data. </param>
 		/// <param name="_payload_len">	Length of the payload. </param>
 		///=================================================================================================
-		void calc_checksum(Container::Payload * _payload, size_t _payload_len)
+		void calc_checksum(TGM::Bytestream * _payload, size_t _payload_len)
 		{
 			// Set length of telegram
 			set_DatL(_payload_len);
 
 			// Sum of payload
 			BYTE sum_of_payload = 0;
-			for (int i = 0; i < _payload_len; i++)
+			for (int i = TGM_SIZE_HEADER; i < TGM_SIZE_HEADER+_payload_len; i++)
 				sum_of_payload += (BYTE)_payload->bytes[i];
 			
 			// Calc difference
@@ -415,7 +388,8 @@ namespace TGM
 			/// <summary>	Clears this object to its blank/initial state. </summary>
 			void clear() { address = subservice = 0; }
 
-			size_t get_size() { return 2 + data.get_size(); }
+			size_t get_head_size() { return 2; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		} Subservice;
 #pragma pack(pop)
@@ -476,7 +450,8 @@ namespace TGM
 				data.clear();
 			}
 
-			size_t get_size() { return 5 + data.get_size(); }
+			size_t get_head_size() { return 5; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		}  Sercos_Param;
 #pragma pack(pop)
@@ -546,7 +521,8 @@ namespace TGM
 				data.clear();
 			}
 
-			size_t get_size() { return 8 + data.get_size(); }
+			size_t get_head_size() { return 8; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		}  Sercos_List;
 #pragma pack(pop)
@@ -582,6 +558,9 @@ namespace TGM
 				subservice(0),
 				error(0)
 			{}
+
+			size_t get_head_size() { return 3; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		} Subservice;
 #pragma pack(pop)
@@ -625,6 +604,9 @@ namespace TGM
 				data(TGM::Data())
 			{}
 			
+			size_t get_head_size() { return 3; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
+
 		} Sercos_Param;
 #pragma pack(pop)
 
@@ -696,6 +678,9 @@ namespace TGM
 				control = unit_addr = param_num = list_offset = element_size = 0;
 				data.clear();
 			}
+
+			size_t get_head_size() { return 8; }
+			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		}  Sercos_List;
 #pragma pack(pop)

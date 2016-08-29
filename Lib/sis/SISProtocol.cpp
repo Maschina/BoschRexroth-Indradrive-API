@@ -157,7 +157,7 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 {
 	// Calculate Checksum
 	size_t payload_len = tx_tgm.mapping.payload.get_size();
-	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw.payload, payload_len);
+	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw, payload_len);
 
 	if (!check_boundaries(tx_tgm))
 		throw SISProtocol::ExceptionGeneric("SISProtocol::check_boundaries", __FILE__, __LINE__, -1, "Boundaries are out of spec. Telegram is not ready to be sent.");
@@ -173,7 +173,6 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
 {
-	char tx_buffer[RS232_BUFFER];
 	char rx_buffer[RS232_BUFFER];
 
 	// Transceiver lengths
@@ -183,16 +182,13 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 	// Receiver lengths
 	size_t rx_header_len = tx_tgm.mapping.header.get_size();
 	size_t rx_payload_len = 0;
-
-	// Copy from map to buffer
-	concat_data(tx_buffer, tx_tgm.raw.header.bytes, tx_header_len, tx_tgm.raw.payload.bytes, tx_payload_len);
-
+	
 	// Clear buffers
-	m_serial.Purge();
+	m_serial.Purge();	
 
 	/// Write
-	m_serial.Write(tx_buffer, tx_header_len + tx_payload_len);
-
+	m_serial.Write(tx_tgm.raw.bytes, tx_header_len + tx_payload_len);
+	
 	/// Read
 	bool bContd = true;
 	DWORD rcvd_cur = 0;
@@ -218,10 +214,9 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 		if (event & CSerial::EEventRecv)
 		{
 			// Read header data
-			m_serial.Read(rx_buffer, RS232_BUFFER, &rcvd_cur, 0, RS232_READ_TIMEOUT);
-			
-			// Copy buffer back to map
-			split_data(rx_buffer+rcvd_rcnt, rx_tgm.raw.header.bytes, rx_header_len, rx_tgm.raw.payload.bytes, rx_payload_len);
+			m_serial.Read(rx_tgm.raw.bytes + rcvd_rcnt, RS232_BUFFER, &rcvd_cur, 0, RS232_READ_TIMEOUT);
+
+			// Hold back number of already received bytes
 			rcvd_rcnt += rcvd_cur;
 
 			// It is assumed that if the number of received bytes is bigger than 4,
@@ -229,7 +224,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			if (rcvd_rcnt > 4)
 			{
 				rx_payload_len = rx_tgm.mapping.header.DatL;
-				rx_tgm.mapping.payload.data.set_size(rx_payload_len);
+				rx_tgm.mapping.payload.data.set_size(rx_payload_len - rx_tgm.mapping.payload.get_head_size());
 			}
 
 			// Length of payload is zero --> No payload received
@@ -239,7 +234,6 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 
 				throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.mapping.payload.status, sformat("Telegram received without payload, but just the header."), true);
 			}
-				
 
 			// Complete Telegram received
 			if (rx_header_len + rx_payload_len <= rcvd_rcnt)
@@ -250,6 +244,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 					throw SISProtocol::ExceptionTransceiveFailed("SISProtocol::transceive", __FILE__, __LINE__, rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: %d.", rx_tgm.mapping.payload.error), true);
 			}
 		}
+		
 	} while (bContd);
 }
 
@@ -263,18 +258,6 @@ inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
 	return false;
 }
 
-
-inline void SISProtocol::concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len)
-{
-	memcpy_s(_dest, _header_len, _header, _header_len);
-	memcpy_s(_dest+_header_len, _payload_len, _payload, _payload_len);
-}
-
-inline void SISProtocol::split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len)
-{
-	memcpy_s(_header, _header_len, _src, _header_len);
-	memcpy_s(_payload, _payload_len, _src+_header_len, _payload_len);
-}
 
 void SISProtocol::throw_rs232_error_events(CSerial::EError _err)
 {

@@ -79,9 +79,6 @@ private:
 	template <class THeader, class TPayload>
 	inline bool check_boundaries(TGM::Map<THeader, TPayload>& _tgm);
 
-	inline void concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len);
-	inline void split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len);
-
 	static void throw_rs232_error_events(CSerial::EError _err);
 };
 
