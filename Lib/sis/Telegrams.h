@@ -403,7 +403,10 @@ namespace TGM
 			/// <param name="_addr">	  	The recipient address. </param>
 			/// <param name="_subservice">	The subservice number. </param>
 			///=================================================================================================
-			_subservice_payload_t(BYTE _addr = 0, BYTE _subservice = 0, Data _data = Data()) : 
+			_subservice_payload_t(
+				BYTE _addr = 0, 
+				BYTE _subservice = 0, 
+				Data _data = Data()) : 
 				address(_addr), 
 				subservice(_subservice),
 				data(_data)
@@ -421,20 +424,7 @@ namespace TGM
 
 		///=================================================================================================
 		/// <summary>
-		/// Sercos Command Telegram. Used for master communication (active communicator) of Sercos
-		/// parameters.
-		/// 
-		/// The common SIS services are
-		/// *   0x10: Read access on a SERCOS parameter, supporting consecutive telegrams in case
-		/// of(long) lists.
-		/// *   0x11: Read access on a list segment of SERCOS parameter, supporting no consecutive
-		/// telegram.
-		/// *   0x12: Read access on the actual SERCOS phase.
-		/// *   0x1D: Switch of the SERCOS phase(Write access).
-		/// *   0x1E: Write access on a list segment of a SERCOS parameter, supporting no consecutive
-		/// telegram.
-		/// *   0x1F: Write  access  on  a  SERCOS  parameter, supporting consecutive telegrams in case
-		/// of(long) lists.
+		/// Sercos Command Telegram used for reading/writing single parameter from/to slave.
 		/// </summary>
 		///=================================================================================================
 #pragma pack(push,1)
@@ -463,7 +453,11 @@ namespace TGM
 			/// <summary>	Payload data. </summary>
 			Data data;
 
-			_sercos_param_t(TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(), BYTE _unit_addr = 0, TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), TGM::Data _data = Data()) :
+			_sercos_param_t(
+				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(), 
+				BYTE _unit_addr = 0, 
+				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), 
+				TGM::Data _data = Data()) :
 				control(_control.toByte()),
 				unit_addr(_unit_addr),
 				param_ident(_param_ident.toByte()),
@@ -480,7 +474,78 @@ namespace TGM
 
 		}  Sercos_Param;
 #pragma pack(pop)
+
+
+		///=================================================================================================
+		/// <summary>
+		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
+		/// </summary>
+		///=================================================================================================
+#pragma pack(push,1)
+		typedef struct _sercos_list_t
+		{
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			BYTE control;
+
+			///=================================================================================================
+			/// <summary>
+			/// The unit address of a drive is read in the command telegram and copied into the response
+			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+			/// the  motion control and the unit address to the drive.
+			/// </summary>
+			///=================================================================================================
+			BYTE unit_addr;
+
+			///=================================================================================================
+			/// <summary>
+			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
+			/// </summary>
+			///=================================================================================================
+			USHORT param_ident;
+
+			///=================================================================================================
+			/// <summary>
+			/// Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
+			/// consisting of 4-byte elements should be handeled --> list_offset=0x0028.
+			/// </summary>
+			///=================================================================================================
+			USHORT list_offset;
+
+			/// <summary>	Size of the element to be handeled. For example: The 11th element of a list
+			/// consisting of 4-byte elements should be handeled --> element_size=0x0004. </summary>
+			USHORT element_size;
+
+			/// <summary>	Payload data. </summary>
+			Data data;
+
+			_sercos_list_t(
+				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(),
+				BYTE _unit_addr = 0,
+				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(),
+				USHORT _list_offset = 0,
+				USHORT _element_size = 0,
+				TGM::Data _data = Data()) :
+				control(_control.toByte()),
+				unit_addr(_unit_addr),
+				param_ident(_param_ident.toByte()),
+				list_offset(_list_offset),
+				element_size(_element_size),
+				data(_data)
+			{}
+
+			void clear()
+			{
+				control = unit_addr = param_ident = list_offset = element_size = 0;
+				data.clear();
+			}
+
+			size_t get_size() { return 8 + data.get_size(); }
+
+		}  Sercos_List;
+#pragma pack(pop)
 	}
+
 
 
 	namespace Reactions
@@ -514,6 +579,7 @@ namespace TGM
 
 		} Subservice;
 #pragma pack(pop)
+
 
 #pragma pack(push,1)
 		///=================================================================================================
@@ -554,6 +620,78 @@ namespace TGM
 			{}
 			
 		} Sercos_Param;
+#pragma pack(pop)
+
+
+		///=================================================================================================
+		/// <summary>
+		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
+		/// </summary>
+		///=================================================================================================
+#pragma pack(push,1)
+		typedef struct _sercos_list_t
+		{
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			BYTE control;
+
+			///=================================================================================================
+			/// <summary>
+			/// The unit address of a drive is read in the command telegram and copied into the response
+			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+			/// the  motion control and the unit address to the drive.
+			/// </summary>
+			///=================================================================================================
+			BYTE unit_addr;
+
+			///=================================================================================================
+			/// <summary>
+			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
+			/// </summary>
+			///=================================================================================================
+			USHORT param_ident;
+
+			///=================================================================================================
+			/// <summary>
+			/// Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
+			/// consisting of 4-byte elements should be handeled --> list_offset=0x0028.
+			/// </summary>
+			///=================================================================================================
+			USHORT list_offset;
+
+			/// <summary>	Size of the element to be handeled. For example: The 11th element of a list
+			/// consisting of 4-byte elements should be handeled --> element_size=0x0004. </summary>
+			USHORT element_size;
+
+			/// <summary>	Payload data, or error byte. </summary>
+			union
+			{
+				Data data;
+				USHORT error;
+			};
+			
+			_sercos_list_t(
+				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(),
+				BYTE _unit_addr = 0,
+				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(),
+				USHORT _list_offset = 0,
+				USHORT _element_size = 0,
+				TGM::Data _data = Data()) :
+				control(_control.toByte()),
+				unit_addr(_unit_addr),
+				param_ident(_param_ident.toByte()),
+				list_offset(_list_offset),
+				element_size(_element_size),
+				data(_data)
+			{}
+
+			void clear()
+			{
+				control = unit_addr = param_ident = list_offset = element_size = 0;
+				data.clear();
+			}
+
+		}  Sercos_List;
 #pragma pack(pop)
 	}
 }
