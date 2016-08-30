@@ -234,6 +234,9 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			// Read header data
 			m_serial.Read(rx_tgm.raw.bytes + rcvd_rcnt, RS232_BUFFER, &rcvd_cur, 0, RS232_READ_TIMEOUT);
 
+			// Loop back if nothing received
+			if (rcvd_cur == 0) continue;
+
 			// Hold back number of already received bytes
 			rcvd_rcnt += rcvd_cur;
 

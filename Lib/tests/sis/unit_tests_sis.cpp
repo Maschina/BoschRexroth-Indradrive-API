@@ -20,7 +20,10 @@ namespace SISProtocolTest
 			try
 			{
 				sis.open("COM1");
+
 				sis.set_baudrate(SISProtocol::Baud_19200);
+
+				sis.close();
 			}
 			catch (SISProtocol::ExceptionTransceiveFailed &ex)
 			{
@@ -49,7 +52,9 @@ namespace SISProtocolTest
 				sis.open("COM1");
 				
 				std::vector<BYTE> rcvddata;
-				sis.read_parameter(TGM::Param_P, 4086, rcvddata);
+				sis.read_parameter(TGM::Param_S, 36, rcvddata);
+
+				sis.close();
 			}
 			catch (SISProtocol::ExceptionTransceiveFailed &ex)
 			{
@@ -73,5 +78,83 @@ namespace SISProtocolTest
 			}
 		}
 
+		TEST_METHOD(SIS_SINGLEPARAMETER_WRITE)
+		{
+			SISProtocol sis;
+
+			try
+			{
+				sis.open("COM1");
+
+				BYTE value = 77;
+
+				std::vector<BYTE> data;
+				data.push_back(value);
+				data.push_back(0);
+				data.push_back(0);
+				data.push_back(0);
+				sis.write_parameter(TGM::Param_S, 36, data);
+
+				std::vector<BYTE> rcvddata;
+				sis.read_parameter(TGM::Param_S, 36, rcvddata);
+
+				sis.close();
+
+				Assert::AreEqual<BYTE>(value, rcvddata.at(0));
+			}
+			catch (SISProtocol::ExceptionTransceiveFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionReceptionFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+		}
+
+		TEST_METHOD(SIS_LISTPARAMETER_READ)
+		{
+			SISProtocol sis;
+
+			try
+			{
+				sis.open("COM1");
+
+
+				sis.close();
+			}
+			catch (SISProtocol::ExceptionTransceiveFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionReceptionFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+		}
 	};
 }
