@@ -77,7 +77,7 @@ namespace TGM
 	typedef struct _container_t
 	{
 		/// <summary>	The raw data. Size: 254 bytes </summary>
-		char	bytes[TGM_SIZEMAX];
+		BYTE	bytes[TGM_SIZEMAX];
 
 		/// <summary>	Default constructor. </summary>
 		_container_t() { clear(); }

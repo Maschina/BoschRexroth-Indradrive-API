@@ -248,18 +248,23 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 			// Length of payload is zero --> No payload received
 			if (rx_payload_len == 0)
 			{
-				bContd = false;
-
-				throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram received without payload, but just the header."), true);
+				std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.bytes, tx_header_len + tx_payload_len);
+				std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len);
+				throw SISProtocol::ExceptionTransceiveFailed(-1, sformat("Reception Telegram received without payload, but just the header.\nRecption Header bytestream: %s.\nCommand Telegram bytestream was: %s.", rx_hexstream.c_str(), tx_hexstream.c_str()), true);
 			}
+				
 
 			// Complete Telegram received
 			if (rx_header_len + rx_payload_len <= rcvd_rcnt)
 			{
-				bContd = false;
-
 				if (rx_tgm.mapping.payload.status)
-					throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: %d.", rx_tgm.mapping.payload.error), true);
+				{
+					std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.bytes, tx_header_len + tx_payload_len);
+					std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len);
+					throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: 0x%04x.\nCommand Telegram bytestream was: %s.\nRecption Telegram bytestream was: %s.", rx_tgm.mapping.payload.error, tx_hexstream.c_str(), rx_hexstream.c_str()), true);
+				}
+					
+				bContd = false;
 			}
 		}
 		
@@ -278,6 +283,16 @@ inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
 	return false;
 }
 
+
+std::string SISProtocol::hexprint_bytestream(const BYTE * _bytestream, const size_t _len)
+{
+	std::string buf;
+	
+	for (size_t i = 0; i < _len; i++)
+		buf.append(sformat("%02X ", (BYTE)_bytestream[i]));
+
+	return buf;
+}
 
 void SISProtocol::throw_rs232_error_events(CSerial::EError _err)
 {

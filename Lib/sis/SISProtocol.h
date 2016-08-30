@@ -80,6 +80,7 @@ private:
 	template <class THeader, class TPayload>
 	inline bool check_boundaries(TGM::Map<THeader, TPayload>& _tgm);
 
+	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
 	static void throw_rs232_error_events(CSerial::EError _err);
 };
 
@@ -103,10 +104,9 @@ public:
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_message.c_str()));
+		return str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%d) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_status, m_message.c_str()));
 #else
-		std::string errstr = stde::GetWinErrorString(m_status);
-		const char* ex = str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%s) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, errstr.c_str(), m_message.c_str()));
+		const char* ex = str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%d) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_status, m_message.c_str()));
 		OutputDebugStringA((LPCSTR)ex);
 		return ex;
 #endif
@@ -143,10 +143,9 @@ public:
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x ### MESSAGE='%s'", m_status, m_message.c_str()));
+		return str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%d) ### MESSAGE='%s'", m_status, m_status, m_message.c_str()));
 #else
-		std::string errstr = stde::GetWinErrorString(m_status);
-		const char* ex = str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%s) ### MESSAGE='%s'", m_status, errstr.c_str(), m_message.c_str()));
+		const char* ex = str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%d) ### MESSAGE='%s'", m_status, m_status, m_message.c_str()));
 		OutputDebugStringA((LPCSTR)ex);
 		return ex;
 #endif
