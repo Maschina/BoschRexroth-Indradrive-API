@@ -132,6 +132,8 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 
+				std::vector<BYTE> rcvddata;
+				sis.read_listelm(TGM::SERCOS_Param_P, 4007, 1*4, 4, rcvddata);
 
 				sis.close();
 			}

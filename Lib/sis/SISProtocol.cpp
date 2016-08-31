@@ -122,6 +122,33 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 	_rcvddata = rx_tgm.mapping.payload.data.toVector();
 }
 
+void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, USHORT _elm_length, std::vector<BYTE>& _rcvdelm)
+{
+	STACK;
+
+	/// Build Telegrams
+	TGM::Bitfields::Sercos_Control		sercos_control;
+	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
+	
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Sercos_List>
+		tx_tgm(
+			// Init header
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_LIST_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
+			// Init payload
+			TGM::Commands::Sercos_List(sercos_control, SIS_ADDR_SLAVE, param_num, _elm_pos, _elm_length)
+		);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Sercos_List> rx_tgm;
+
+	/// Transceive
+	prepare_and_transceive(tx_tgm, rx_tgm);
+
+	/// Read back response
+	_rcvdelm = rx_tgm.mapping.payload.data.toVector();
+}
+
 
 void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
 {

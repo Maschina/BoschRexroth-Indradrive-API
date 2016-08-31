@@ -12,7 +12,7 @@ namespace RS232Test
 	{
 	public:
 
-		LPCTSTR cport = _T("COM8");
+		LPCTSTR cport = _T("COM1");
 		CSerial::EBaudrate cbaudrate = CSerial::EBaud115200;
 		CSerial::EDataBits cdata = CSerial::EData8;
 		CSerial::EParity cparity = CSerial::EParEven;
