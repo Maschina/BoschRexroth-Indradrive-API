@@ -478,6 +478,8 @@ namespace TGM
 			///=================================================================================================
 			BYTE unit_addr;
 
+			BYTE param_type;
+
 			///=================================================================================================
 			/// <summary>
 			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
@@ -523,7 +525,7 @@ namespace TGM
 				data.clear();
 			}
 
-			size_t get_head_size() { return 8; }
+			size_t get_head_size() { return 9; }
 			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		}  Sercos_List;
@@ -560,6 +562,13 @@ namespace TGM
 				subservice(0),
 				error(0)
 			{}
+
+			void clear()
+			{
+				status = 1;
+				address = subservice = 0;
+				data.clear();
+			}
 
 			size_t get_head_size() { return 3; }
 			size_t get_size() { return get_head_size() + data.get_size(); }
@@ -605,6 +614,13 @@ namespace TGM
 				unit_addr(0),
 				data(TGM::Data())
 			{}
+
+			void clear()
+			{
+				status = 1;
+				control = unit_addr = 0;
+				data.clear();
+			}
 			
 			size_t get_head_size() { return 3; }
 			size_t get_size() { return get_head_size() + data.get_size(); }
@@ -621,6 +637,8 @@ namespace TGM
 #pragma pack(push,1)
 		typedef struct _sercos_list_t
 		{
+			BYTE status;
+
 			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 			BYTE control;
 
@@ -633,26 +651,7 @@ namespace TGM
 			/// </summary>
 			///=================================================================================================
 			BYTE unit_addr;
-
-			///=================================================================================================
-			/// <summary>
-			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
-			/// </summary>
-			///=================================================================================================
-			USHORT param_num;
-
-			///=================================================================================================
-			/// <summary>
-			/// Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
-			/// consisting of 4-byte elements should be handeled --> list_offset=0x0028.
-			/// </summary>
-			///=================================================================================================
-			USHORT list_offset;
-
-			/// <summary>	Size of the element to be handeled. For example: The 11th element of a list
-			/// consisting of 4-byte elements should be handeled --> element_size=0x0004. </summary>
-			USHORT element_size;
-
+			
 			/// <summary>	Payload data, or error byte. </summary>
 			union
 			{
@@ -660,28 +659,21 @@ namespace TGM
 				USHORT error;
 			};
 			
-			_sercos_list_t(
-				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(),
-				BYTE _unit_addr = 0,
-				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(),
-				USHORT _list_offset = 0,
-				USHORT _element_size = 0,
-				TGM::Data _data = Data()) :
-				control(_control.toByte()),
-				unit_addr(_unit_addr),
-				param_num(_param_ident.toByte()),
-				list_offset(_list_offset),
-				element_size(_element_size),
-				data(_data)
+			_sercos_list_t() :
+				status(1),
+				control(0),
+				unit_addr(0),
+				data(TGM::Data())
 			{}
 
 			void clear()
 			{
-				control = unit_addr = param_num = list_offset = element_size = 0;
+				status = 1;
+				control = unit_addr = 0;
 				data.clear();
 			}
 
-			size_t get_head_size() { return 8; }
+			size_t get_head_size() { return 3; }
 			size_t get_size() { return get_head_size() + data.get_size(); }
 
 		}  Sercos_List;
