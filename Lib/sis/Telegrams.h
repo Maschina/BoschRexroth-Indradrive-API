@@ -226,7 +226,7 @@ namespace TGM
 			CS(0),
 			DatL(get_size()),
 			DatLW(get_size()),
-			Cntrl(_cntrl.toByte()),
+			Cntrl(_cntrl.value),
 			Service(_service),
 			AdrS(_addr_master),
 			AdrE(_addr_slave)
@@ -434,10 +434,10 @@ namespace TGM
 				BYTE _unit_addr = 0, 
 				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), 
 				TGM::Data _data = Data()) :
-				control(_control.toByte()),
+				control(_control.value),
 				unit_addr(_unit_addr),
 				param_type(0),
-				param_num(_param_ident.toByte()),
+				param_num(_param_ident.value),
 				data(_data)
 			{}
 
@@ -507,9 +507,11 @@ namespace TGM
 				USHORT _list_offset = 0,
 				USHORT _element_size = 0,
 				TGM::Data _data = Data()) :
-				control(_control.toByte()),
+
+				control(_control.value),
 				unit_addr(_unit_addr),
-				param_num(_param_ident.toByte()),
+				param_type(0),
+				param_num(_param_ident.value),
 				list_offset(_list_offset),
 				element_size(_element_size),
 				data(_data)

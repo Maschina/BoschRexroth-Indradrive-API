@@ -52,7 +52,7 @@ namespace SISProtocolTest
 				sis.open("COM1");
 				
 				std::vector<BYTE> rcvddata;
-				sis.read_parameter(TGM::Param_S, 36, rcvddata);
+				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
 
 				sis.close();
 			}
@@ -93,10 +93,10 @@ namespace SISProtocolTest
 				data.push_back(0);
 				data.push_back(0);
 				data.push_back(0);
-				sis.write_parameter(TGM::Param_S, 36, data);
+				sis.write_parameter(TGM::SERCOS_Param_S, 36, data);
 
 				std::vector<BYTE> rcvddata;
-				sis.read_parameter(TGM::Param_S, 36, rcvddata);
+				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
 
 				sis.close();
 

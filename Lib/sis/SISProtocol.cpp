@@ -19,7 +19,7 @@ void SISProtocol::open(const char * _port)
 	LPCTSTR cport = (LPCTSTR)char2wchar(_port);
 	CSerial::EBaudrate cbaudrate = CSerial::EBaud19200;
 	CSerial::EDataBits cdata = CSerial::EData8;
-	CSerial::EParity cparity = CSerial::EParEven;
+	CSerial::EParity cparity = CSerial::EParNone;
 	CSerial::EStopBits cstopbits = CSerial::EStop1;
 	CSerial::EHandshake chandshake = CSerial::EHandshakeOff;
 
@@ -83,27 +83,25 @@ void SISProtocol::read_parameter(const std::string & _paramvar, USHORT _paramnum
 {
 	STACK;
 
-	TGM::Param_Variant var;
+	TGM::SERCOS_ParamVar var;
 
 	if (_paramvar == "S")
-		var = TGM::Param_S;
+		var = TGM::SERCOS_Param_S;
 	else if (_paramvar == "P")
-		var = TGM::Param_P;
+		var = TGM::SERCOS_Param_P;
 	else
 		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
 
 	read_parameter(var, _paramnum, _rcvddata);
 }
 
-void SISProtocol::read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
+void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
 {
 	STACK;
 
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
-
-	USHORT foo1 = param_num.toByte();
 
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
@@ -129,19 +127,19 @@ void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum
 {
 	STACK;
 
-	TGM::Param_Variant var;
+	TGM::SERCOS_ParamVar var;
 
 	if (_paramvar == "S")
-		var = TGM::Param_S;
+		var = TGM::SERCOS_Param_S;
 	else if (_paramvar == "P")
-		var = TGM::Param_P;
+		var = TGM::SERCOS_Param_P;
 	else
 		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
 
 	write_parameter(var, _paramnum, _data);
 }
 
-void SISProtocol::write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
 {
 	STACK;
 
@@ -190,8 +188,6 @@ template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
 {
 	STACK;
-
-	char rx_buffer[RS232_BUFFER];
 
 	// Transceiver lengths
 	size_t tx_payload_len = tx_tgm.mapping.payload.get_size();

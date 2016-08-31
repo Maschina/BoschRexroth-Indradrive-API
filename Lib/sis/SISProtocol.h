@@ -63,10 +63,12 @@ public:
 	void set_baudrate(init_set_mask_baudrate _baudrate);
 
 	void read_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata = std::vector<BYTE>());
-	void read_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata = std::vector<BYTE>());
+	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata = std::vector<BYTE>());
+
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, USHORT _elm_length, std::vector<BYTE>& _rcvdelm);
 
 	void write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
-	void write_parameter(TGM::Param_Variant _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _data);
 
 private:
 	CSerial m_serial;
