@@ -142,6 +142,10 @@ namespace TGM
 				bits(_attribute)
 			{}
 
+			sercos_control_t(BYTE _value) :
+				value(_value)
+			{}
+
 		} Sercos_Control;
 
 

@@ -82,6 +82,9 @@ private:
 	template <class THeader, class TPayload>
 	inline bool check_boundaries(TGM::Map<THeader, TPayload>& _tgm);
 
+	template <class THeader, class TPayload>
+	inline bool set_size(TGM::Map<THeader, TPayload>& _tgm);
+
 	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
 	static void throw_rs232_error_events(CSerial::EError _err);
 };

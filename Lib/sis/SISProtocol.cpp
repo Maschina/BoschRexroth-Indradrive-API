@@ -75,6 +75,10 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Subservice> rx_tgm;
 
+	// Set payload size
+	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
+
+	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 }
 
@@ -115,6 +119,9 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Sercos_Param> rx_tgm;
 
+	// Set payload size
+	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
+
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 
@@ -141,6 +148,8 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Sercos_List> rx_tgm;
+
+	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
 
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
@@ -186,6 +195,9 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Sercos_Param> rx_tgm;
 
+	// Set payload size
+	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
+
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 }
@@ -197,8 +209,7 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 	STACK;
 
 	// Calculate Checksum
-	size_t payload_len = tx_tgm.mapping.payload.get_size();
-	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw, payload_len);
+	tx_tgm.mapping.header.calc_checksum(&tx_tgm.raw);
 
 	if (!check_boundaries(tx_tgm))
 		throw SISProtocol::ExceptionGeneric(-1, "Boundaries are out of spec. Telegram is not ready to be sent.");

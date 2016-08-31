@@ -258,7 +258,9 @@ namespace TGM
 		///
 		/// <param name="_payload_len">	Length of the payload. </param>
 		///=================================================================================================
-		void set_DatL(size_t _payload_len) { DatL = DatLW = (BYTE)_payload_len; }
+		inline void set_DatL(size_t _payload_len) { DatL = DatLW = (BYTE)_payload_len; }
+
+		inline size_t get_DatL() { return DatL; }
 
 		///=================================================================================================
 		/// <summary>
@@ -270,14 +272,11 @@ namespace TGM
 		/// <param name="_payload">	   	[in] Bytestream of payload (head + data) with the raw data. </param>
 		/// <param name="_payload_len">	Length of the payload. </param>
 		///=================================================================================================
-		void calc_checksum(TGM::Bytestream * _payload, size_t _payload_len)
+		void calc_checksum(TGM::Bytestream * _payload)
 		{
-			// Set length of telegram
-			set_DatL(_payload_len);
-
 			// Sum of payload
 			BYTE sum_of_payload = 0;
-			for (int i = TGM_SIZE_HEADER; i < TGM_SIZE_HEADER+_payload_len; i++)
+			for (int i = TGM_SIZE_HEADER; i < TGM_SIZE_HEADER + get_DatL(); i++)
 				sum_of_payload += (BYTE)_payload->bytes[i];
 			
 			// Calc difference
