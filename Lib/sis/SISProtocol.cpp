@@ -232,7 +232,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 		if (event & CSerial::EEventRecv)
 		{
 			// Read header data
-			m_serial.Read(rx_tgm.raw.bytes + rcvd_rcnt, RS232_BUFFER, &rcvd_cur, 0, RS232_READ_TIMEOUT);
+			m_serial.Read(rx_tgm.raw.bytes + rcvd_rcnt, RS232_BUFFER - rcvd_rcnt, &rcvd_cur, 0, RS232_READ_TIMEOUT);
 
 			// Loop back if nothing received
 			if (rcvd_cur == 0) continue;
