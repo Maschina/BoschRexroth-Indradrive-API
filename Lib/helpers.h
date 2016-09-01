@@ -4,6 +4,7 @@
 #include <stdarg.h>  // For va_start, etc.
 #include <string.h>
 #include <stdio.h>
+#include <vector>
 #include <stdlib.h>
 #include <math.h>
 #include <memory>
@@ -75,6 +76,31 @@ namespace stde
 		return std::string(_in);
 	}
 
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT8 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		return buf;
+	}
+
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT16 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		buf.push_back((_in & 0xFF00) >> 8);
+		return buf;
+	}
+
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT32 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		buf.push_back((_in & 0xFF00) >> 8);
+		buf.push_back((_in & 0xFF0000) >> 16);
+		buf.push_back((_in & 0xFF000000) >> 24);
+		return buf;
+	}
+
     static std::string string_format(const std::string fmt, ...)
     {
 		int final_n, n = ((int)fmt.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
@@ -119,6 +145,7 @@ namespace stde
 #define str2wchar stde::convert_str_to_wchar
 #define char2str stde::convert_char_to_str
 #define sformat stde::string_format
+#define int2vec stde::convert_to_bytevector
 
 
 #endif // HELPERS_H

@@ -75,6 +75,7 @@ private:
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 	inline void prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
+	inline void get_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen);
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 	void transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
@@ -86,6 +87,9 @@ private:
 	inline bool set_size(TGM::Map<THeader, TPayload>& _tgm);
 
 	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
+
+	inline UINT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
+	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm);
 	static void throw_rs232_error_events(CSerial::EError _err);
 };
 
@@ -120,12 +124,6 @@ public:
 	int get_status() { return m_status; }
 
 protected:
-	///=================================================================================================
-	/// <summary>
-	/// For Win32 API commands, most likely representation of the System Error Codes:
-	/// # https://msdn.microsoft.com/de-de/library/windows/desktop/ms681381(v=vs.85).aspx.
-	/// </summary>
-	///=================================================================================================
 	int m_status;
 
 	std::string m_message;

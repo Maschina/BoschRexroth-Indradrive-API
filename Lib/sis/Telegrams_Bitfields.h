@@ -17,15 +17,15 @@ namespace TGM
 		SERCOS_Param_P
 	};
 
-	enum SERCOS_Attribute : BYTE {
-		SERCOS_Attribute_channel_not_active,
-		SERCOS_Attribute_ident_number,
-		SERCOS_Attribute_name,
-		SERCOS_Attribute_attribute,
-		SERCOS_Attribute_unit,
-		SERCOS_Attribute_minval,
-		SERCOS_Attribute_maxval,
-		SERCOS_Attribute_operatingdata
+	enum SERCOS_Datablock : BYTE {
+		SERCOS_Datablock_channel_not_active,
+		SERCOS_Datablock_ident_number,
+		SERCOS_Datablock_name,
+		SERCOS_Datablock_attribute,
+		SERCOS_Datablock_unit,
+		SERCOS_Datablock_minval,
+		SERCOS_Datablock_maxval,
+		SERCOS_Datablock_operatingdata
 	};
 
 	enum SERCOS_TX : BYTE {
@@ -33,6 +33,16 @@ namespace TGM
 		SERCOS_TX_final
 	};
 
+	enum SERCOS_DATALEN : UINT32 {
+		SERCOS_DATALEN_res1			= 0b000,
+		SERCOS_DATALEN_param_2byte	= 0b001,
+		SERCOS_DATALEN_param_4byte	= 0b010,
+		SERCOS_DATALEN_param_8byte	= 0b011,
+		SERCOS_DATALEN_listel_1byte = 0b100,
+		SERCOS_DATALEN_listel_2byte = 0b101,
+		SERCOS_DATALEN_listel_4byte = 0b110,
+		SERCOS_DATALEN_listel_8byte = 0b111,
+	};
 
 	namespace Bitfields
 	{
@@ -124,12 +134,12 @@ namespace TGM
 					/// * b111: operating data (write access)
 					/// </summary>
 					///=================================================================================================
-					SERCOS_Attribute attribute : 3;
+					SERCOS_Datablock attribute : 3;
 
 					BYTE res6 : 1;
 					BYTE res7 : 1;
 
-					bits_t(SERCOS_Attribute _attribute = SERCOS_Attribute_operatingdata) :
+					bits_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
 						res1(0), res2(0), tx_status(SERCOS_TX_final), attribute(_attribute), res6(0), res7(0)
 					{}
 
@@ -138,7 +148,7 @@ namespace TGM
 				BYTE value;
 			};
 
-			sercos_control_t(SERCOS_Attribute _attribute = SERCOS_Attribute_operatingdata) :
+			sercos_control_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
 				bits(_attribute)
 			{}
 
@@ -188,6 +198,68 @@ namespace TGM
 			{}
 			
 		} Sercos_Param_Ident;
+
+
+		typedef struct sercos_attribute_t
+		{
+			union
+			{
+				struct bits_t
+				{
+					/// <summary>	Bit 0-15: Conversion factor: The conversion factor is an unsigned integer used to convert numeric data to display format.The conversion factor shall be set to a value of 1, if a conversion is not required(e.g. for binary numbers, character strings or floating - point numbers). </summary>
+					UINT32 conv_factor : 16;
+
+					/// <summary>	Bit 16-18: The data length is required so that the Master is able to complete Service Channel data transfers correctly. </summary>
+					SERCOS_DATALEN data_len : 3;
+
+					/// <summary>	Bit 19: Indicates whether this data calls a procedure in a drive: 0 Operation data or parameter 1 Procedure command. </summary>
+					UINT32 func_of_data : 1;
+
+					/// <summary>	Bit 20-22: Format Used to convert the operation data, and min/max input values to the correct display format. </summary>
+					UINT32 data_disp : 3;
+
+					/// <summary>	Bit 23. </summary>
+					UINT32 res5 : 1;
+
+					/// <summary>	Bit 24-27: Decimal point: Places after the decimal point indicates the position of the decimal point of appropriate operation data.Decimal point is used to define fixed point decimal numbers.For all other display formats the decimal point shall be = 0. </summary>
+					UINT32 scale_factor : 4;
+
+					/// <summary>	Bit 28. </summary>
+					UINT32 is_writeonly_phase2 : 1;
+
+					/// <summary>	Bit 29. </summary>
+					UINT32 is_writeonly_phase3 : 1;
+
+					/// <summary>	Bit 30. </summary>
+					UINT32 is_writeonly_phase4 : 1;
+
+					/// <summary>	Bit 31. </summary>
+					UINT32 res10 : 1;
+
+					/// <summary>	Default constructor. </summary>
+					bits_t() :
+						conv_factor(0), 
+						data_len(SERCOS_DATALEN_param_2byte), 
+						func_of_data(0), 
+						data_disp(0),
+						res5(0),
+						scale_factor(0),
+						is_writeonly_phase2(0),
+						is_writeonly_phase3(0),
+						is_writeonly_phase4(0),
+						res10(0)
+					{}
+
+				} bits;
+
+				UINT32 value;
+			};
+
+			sercos_attribute_t(UINT32 _value = 0) :
+				value(_value)
+			{}
+
+		} Sercos_Attribute;
 	}
 }
 

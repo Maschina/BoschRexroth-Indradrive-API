@@ -40,6 +40,45 @@ namespace TGM
 			size = _data.size();
 		}
 
+		_data_t(UINT8 _data)
+		{
+			clear();
+
+			operator<<(_data);
+		}
+
+		_data_t(UINT16 _data)
+		{
+			clear();
+
+			operator<<(_data & 0xFF);
+			operator<<((_data & 0xFF00) >> 8);
+		}
+
+		_data_t(UINT32 _data)
+		{
+			clear();
+
+			operator<<(_data & 0xFF);
+			operator<<((_data & 0xFF00) >> 8);
+			operator<<((_data & 0xFF0000) >> 16);
+			operator<<((_data & 0xFF000000) >> 24);
+		}
+
+		_data_t(UINT64 _data)
+		{
+			clear();
+
+			operator<<(_data & 0xFF);
+			operator<<((_data & 0xFF00) >> 8);
+			operator<<((_data & 0xFF0000) >> 16);
+			operator<<((_data & 0xFF000000) >> 24);
+			operator<<((_data & 0xFF00000000) >> 32);
+			operator<<((_data & 0xFF0000000000) >> 40);
+			operator<<((_data & 0xFF000000000000) >> 48);
+			operator<<((_data & 0xFF00000000000000) >> 54);
+		}
+
 		BYTE at(UINT32 _idx)
 		{
 			return data[_idx];
@@ -53,6 +92,46 @@ namespace TGM
 				out.push_back(data[i]);
 
 			return out;
+		}
+
+		UINT64 toUINT64()
+		{
+			UINT64 out = 0;
+
+			for (int i = 0; i < std::min<size_t>(size, 8); i++)
+				out |= data[i] << (i * 8);
+
+			return out;
+		}
+
+		UINT32 toUINT32()
+		{
+			UINT32 out = 0;
+
+			for (int i = 0; i < std::min<size_t>(size, 4); i++)
+				out |= data[i] << (i * 8);
+
+			return out;
+		}
+
+		UINT16 toUINT16()
+		{
+			UINT16 out = 0;
+
+			for (int i = 0; i < std::min<size_t>(size, 2); i++)
+				out |= data[i] << (i * 8);
+
+			return out;
+		}
+
+		UINT8 toUNIT8()
+		{
+			return toBYTE();
+		}
+
+		BYTE toBYTE()
+		{
+			return size > 0 ? (BYTE)data[0] : (BYTE)0;
 		}
 
 		void clear()
