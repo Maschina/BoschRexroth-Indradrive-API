@@ -24,11 +24,14 @@
 #define STRICT
 #include <tchar.h>
 #include <windows.h>
+#include "WinError.h"
 #include <exception>
 #include <string>
 
 #include "ftd2xx.h"
 #include "helpers.h"
+#include "PoppyDebugTools.h"
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -524,36 +527,28 @@ public:
 	bool warning;
 
 	ExceptionGeneric(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
-		const std::string _trace_log,
+		const std::string _message,
 		bool _warning = false) :
 
-		m_src_func(_src_func),
-		m_src_file(_src_file),
-		m_src_line(_src_line),
 		m_status(_status),
-		m_trace_log(_trace_log),
+		m_message(_message),
 		warning(_warning)
 	{}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("CSerial exception @ %s: STATUS=%d, TRACE='%s'", m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		return str2char(sformat("CSerial exception caused %s: STATUS=%d, MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] CSerial exception @ %s: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		std::string foo = stde::GetWinErrorString(m_status);
+		const char* ex = str2char(sformat("CSerial exception caused: %s ### STATUS=0x%04x (%s) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, foo.c_str(), m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 
 	int get_status() { return m_status; }
-
-protected:
-	std::string m_src_func;
-	const char* m_src_file;
-	const unsigned long m_src_line;
 
 	///=================================================================================================
 	/// <summary>
@@ -562,7 +557,8 @@ protected:
 	/// </summary>
 	///=================================================================================================
 	int m_status;
-	std::string m_trace_log;
+
+	std::string m_message;
 };
 
 
@@ -571,23 +567,23 @@ class CSerial::ExceptionReceptionFailed : public CSerial::ExceptionGeneric
 {
 public:
 	ExceptionReceptionFailed(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
-		const std::string _trace_log,
+		const std::string _message,
 		bool _warning = false) :
 
-		ExceptionGeneric(_src_func, _src_file, _src_line, _status, _trace_log, _warning)
+		ExceptionGeneric(_status, _message, _warning)
 	{}
 	~ExceptionReceptionFailed() throw() {}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("CSerial reception failed: TRACE='%s'", m_trace_log.c_str()));
+		return str2char(sformat("CSerial reception fail caused: STATUS=0x%04x ### MESSAGE='%s'", m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] CSerial reception failed: TRACE='%s'", m_src_file, m_src_line, m_trace_log.c_str()));
+		std::string errstr = stde::GetWinErrorString(m_status);
+		const char* ex = str2char(sformat("CSerial reception fail caused: STATUS=0x%04x (%s) ### MESSAGE='%s'", m_status, errstr.c_str(), m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 };

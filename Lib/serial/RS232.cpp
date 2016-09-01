@@ -34,6 +34,8 @@
 
 inline void CSerial::CheckRequirements (LPOVERLAPPED lpOverlapped, DWORD dwTimeout) const
 {
+	STACK;
+
 #ifdef SERIAL_NO_OVERLAPPED
 
 	// Check if an overlapped structure has been specified
@@ -68,6 +70,8 @@ inline void CSerial::CheckRequirements (LPOVERLAPPED lpOverlapped, DWORD dwTimeo
 
 inline BOOL CSerial::CancelCommIo (void)
 {
+	STACK;
+
 #ifdef SERIAL_NO_CANCELIO
 	// CancelIo shouldn't have been called at this point
 	::DebugBreak();
@@ -111,6 +115,8 @@ CSerial::~CSerial ()
 
  void CSerial::CheckPort (LPCTSTR lpszDevice)
 {
+	STACK;
+
 	// Try to open the device
 	HANDLE hFile = ::CreateFile(lpszDevice,				// address of name of the communications device
 						   GENERIC_READ|GENERIC_WRITE,	// access (read-write) mode
@@ -128,15 +134,15 @@ CSerial::~CSerial ()
 		{
 		case ERROR_FILE_NOT_FOUND:
 			// The specified COM-port does not exist
-			throw ExceptionGeneric("CSerial::CheckPort", __FILE__, __LINE__, ERROR_FILE_NOT_FOUND, "Port is not available. Make sure to select a port below COM10.");
+			throw ExceptionGeneric(ERROR_FILE_NOT_FOUND, "Port is not available. Make sure to select a port below COM10.");
 			
 		case ERROR_ACCESS_DENIED:
-			// The specified COM-port is in use
-			throw ExceptionGeneric("CSerial::CheckPort", __FILE__, __LINE__, ERROR_ACCESS_DENIED, "Port is in use.");
+			// The specified COM-po
+			throw ExceptionGeneric(ERROR_ACCESS_DENIED, "Port is in use.");
 
 		default:
-			// Something else is wrong
-			throw ExceptionGeneric("CSerial::CheckPort", __FILE__, __LINE__, ERROR_ACCESS_DENIED, "Unknown error occurred.");
+			// Something else is wr
+			throw ExceptionGeneric(ERROR_ACCESS_DENIED, "Unknown error occurred.");
 		}
 	}
 
@@ -146,6 +152,8 @@ CSerial::~CSerial ()
 
 void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool fOverlapped)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -153,7 +161,7 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 	if (m_hFile)
 	{
 		m_lLastError = ERROR_ALREADY_INITIALIZED;
-		throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Port already opened.");
+		throw ExceptionGeneric(m_lLastError, "Port already opened.");
 	}
 
 	// Open the device
@@ -172,7 +180,7 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 
 		// Display error
 		m_lLastError = ::GetLastError();
-		throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Unable to open port.");
+		throw ExceptionGeneric(m_lLastError, "Unable to open port.");
 	}
 
 #ifndef SERIAL_NO_OVERLAPPED
@@ -193,7 +201,7 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 			m_hFile = 0;
 
 			// Return the error
-			throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Unable to create event.");
+			throw ExceptionGeneric(m_lLastError, "Unable to create event.");
 		}
 	}
 #else
@@ -219,7 +227,7 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 
 			// Display a warning
 			m_lLastError = ::GetLastError();;
-			throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Unable to setup the COM-port.");
+			throw ExceptionGeneric(m_lLastError, "Unable to setup the COM-port.");
 		}
 	}
 
@@ -241,19 +249,21 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 		{
 			// Display a warning
 			m_lLastError = ::GetLastError();
-			throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Unable to set default communication configuration.", true);
+			throw ExceptionGeneric(m_lLastError, "Unable to set default communication configuration.", true);
 		}
 	}
 	else
 	{
 		// Display a warning
 		m_lLastError = ::GetLastError();
-		throw ExceptionGeneric("CSerial::Open", __FILE__, __LINE__, m_lLastError, "Unable to obtain default communication configuration.", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain default communication configuration.", true);
 	}
 }
 
 LONG CSerial::Close (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -262,7 +272,7 @@ LONG CSerial::Close (void)
 	if (m_hFile == 0)
 	{
 		// Display a warning
-		throw ExceptionGeneric("CSerial::Close", __FILE__, __LINE__, m_lLastError, "Method called when device is not open", true);
+		throw ExceptionGeneric(m_lLastError, "Method called when device is not open", true);
 	}
 
 #ifndef SERIAL_NO_OVERLAPPED
@@ -284,6 +294,8 @@ LONG CSerial::Close (void)
 
 LONG CSerial::Setup (EBaudrate eBaudrate, EDataBits eDataBits, EParity eParity, EStopBits eStopBits)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -294,7 +306,7 @@ LONG CSerial::Setup (EBaudrate eBaudrate, EDataBits eDataBits, EParity eParity, 
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Setup", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -305,7 +317,7 @@ LONG CSerial::Setup (EBaudrate eBaudrate, EDataBits eDataBits, EParity eParity, 
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::Setup", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Set the new data
@@ -324,7 +336,7 @@ LONG CSerial::Setup (EBaudrate eBaudrate, EDataBits eDataBits, EParity eParity, 
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::Setup", __FILE__, __LINE__, m_lLastError, "Unable to set DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to set DCB information", true);
 	}
 
 	// Return successful
@@ -333,6 +345,8 @@ LONG CSerial::Setup (EBaudrate eBaudrate, EDataBits eDataBits, EParity eParity, 
 
 LONG CSerial::SetEventChar (BYTE bEventChar, bool fAdjustMask)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -343,7 +357,7 @@ LONG CSerial::SetEventChar (BYTE bEventChar, bool fAdjustMask)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::SetEventChar", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -354,7 +368,7 @@ LONG CSerial::SetEventChar (BYTE bEventChar, bool fAdjustMask)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetEventChar", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information");
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information");
 	}
 
 	// Set the new event character
@@ -376,7 +390,7 @@ LONG CSerial::SetEventChar (BYTE bEventChar, bool fAdjustMask)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetEventChar", __FILE__, __LINE__, m_lLastError, "Unable to set DCB information");
+		throw ExceptionGeneric(m_lLastError, "Unable to set DCB information");
 	}
 
 	// Return successful
@@ -385,6 +399,8 @@ LONG CSerial::SetEventChar (BYTE bEventChar, bool fAdjustMask)
 
 LONG CSerial::SetMask (DWORD dwEventMask)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -395,7 +411,7 @@ LONG CSerial::SetMask (DWORD dwEventMask)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::SetMask", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Set the new mask. Note that this will generate an EEventNone
@@ -406,7 +422,7 @@ LONG CSerial::SetMask (DWORD dwEventMask)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetMask", __FILE__, __LINE__, m_lLastError, "Unable to set event mask", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to set event mask", true);
 	}
 
 	// Save event mask and return successful
@@ -416,6 +432,8 @@ LONG CSerial::SetMask (DWORD dwEventMask)
 
 LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 {
+	STACK;
+
 	// Check if time-outs are supported
 	CheckRequirements(lpOverlapped,dwTimeout);
 
@@ -429,7 +447,7 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::WaitEvent", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 #ifndef SERIAL_NO_OVERLAPPED
@@ -441,10 +459,10 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 		m_lLastError = ERROR_INVALID_FUNCTION;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::WaitEvent", __FILE__, __LINE__, m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
+		throw ExceptionGeneric(m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
 	}
 
-	// Wait for the event to happen
+	STACK_SECTION("Wait for the event to happen");
 	OVERLAPPED ovInternal;
 	if (!lpOverlapped && m_hevtOverlapped)
 	{
@@ -459,7 +477,7 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 	// Make sure the overlapped structure isn't busy
 	_ASSERTE(!m_hevtOverlapped || HasOverlappedIoCompleted(lpOverlapped));
 
-	// Wait for the COM event
+	STACK_SECTION("Wait for the COM event");
 	if (!::WaitCommEvent(m_hFile,LPDWORD(&m_eEvent),lpOverlapped))
 	{
 		// Set the internal error code
@@ -472,13 +490,13 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 			m_lLastError = lLastError;
 
 			// Issue an error and quit
-			throw ExceptionGeneric("CSerial::WaitEvent", __FILE__, __LINE__, m_lLastError, "Unable to wait for COM event");
+			throw ExceptionGeneric(m_lLastError, "Unable to wait for COM event");
 		}
 
 		// We need to block if the client didn't specify an overlapped structure
 		if (lpOverlapped == &ovInternal)
 		{
-			// Wait for the overlapped operation to complete
+			STACK_SECTION("Wait for the overlapped operation to complete");
 			switch (::WaitForSingleObject(lpOverlapped->hEvent,dwTimeout))
 			{
 			case WAIT_OBJECT_0:
@@ -498,7 +516,7 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 				m_lLastError = ::GetLastError();
 
 				// Issue an error and quit
-				throw ExceptionGeneric("CSerial::WaitEvent", __FILE__, __LINE__, m_lLastError, "Unable to wait until COM event has arrived");
+				throw ExceptionGeneric(m_lLastError, "Unable to wait until COM event has arrived");
 			}
 		}
 	}
@@ -527,9 +545,10 @@ LONG CSerial::WaitEvent (LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 	return m_lLastError;
 }
 
-
 LONG CSerial::SetupHandshaking (EHandshake eHandshake)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -540,7 +559,7 @@ LONG CSerial::SetupHandshaking (EHandshake eHandshake)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::SetupHandshaking", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -551,7 +570,7 @@ LONG CSerial::SetupHandshaking (EHandshake eHandshake)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetupHandshaking", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Set the handshaking flags
@@ -598,7 +617,7 @@ LONG CSerial::SetupHandshaking (EHandshake eHandshake)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetupHandshaking", __FILE__, __LINE__, m_lLastError, "Unable to set DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to set DCB information", true);
 	}
 
 	// Return successful
@@ -607,6 +626,8 @@ LONG CSerial::SetupHandshaking (EHandshake eHandshake)
 
 LONG CSerial::SetupReadTimeouts (EReadTimeout eReadTimeout)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -617,7 +638,7 @@ LONG CSerial::SetupReadTimeouts (EReadTimeout eReadTimeout)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::SetupReadTimeouts", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Determine the time-outs
@@ -628,7 +649,7 @@ LONG CSerial::SetupReadTimeouts (EReadTimeout eReadTimeout)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetupReadTimeouts", __FILE__, __LINE__, m_lLastError, "Unable to obtain timeout information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain timeout information", true);
 	}
 
 	// Set the new timeouts
@@ -658,7 +679,7 @@ LONG CSerial::SetupReadTimeouts (EReadTimeout eReadTimeout)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::SetupReadTimeouts", __FILE__, __LINE__, m_lLastError, "Unable to set timeout information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to set timeout information", true);
 	}
 
 	// Return successful
@@ -667,6 +688,8 @@ LONG CSerial::SetupReadTimeouts (EReadTimeout eReadTimeout)
 
 CSerial::EBaudrate CSerial::GetBaudrate (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -677,7 +700,7 @@ CSerial::EBaudrate CSerial::GetBaudrate (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetBaudrate", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -688,7 +711,7 @@ CSerial::EBaudrate CSerial::GetBaudrate (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetBaudrate", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Return the appropriate baudrate
@@ -697,6 +720,8 @@ CSerial::EBaudrate CSerial::GetBaudrate (void)
 
 CSerial::EDataBits CSerial::GetDataBits (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -707,7 +732,7 @@ CSerial::EDataBits CSerial::GetDataBits (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetDataBits", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -718,7 +743,7 @@ CSerial::EDataBits CSerial::GetDataBits (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetDataBits", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Return the appropriate bytesize
@@ -727,6 +752,8 @@ CSerial::EDataBits CSerial::GetDataBits (void)
 
 CSerial::EParity CSerial::GetParity (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -737,7 +764,7 @@ CSerial::EParity CSerial::GetParity (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetParity", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -748,7 +775,7 @@ CSerial::EParity CSerial::GetParity (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetParity", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Check if parity is used
@@ -764,6 +791,8 @@ CSerial::EParity CSerial::GetParity (void)
 
 CSerial::EStopBits CSerial::GetStopBits (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -774,7 +803,7 @@ CSerial::EStopBits CSerial::GetStopBits (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetStopBits", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -785,7 +814,7 @@ CSerial::EStopBits CSerial::GetStopBits (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetStopBits", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Return the appropriate stopbits
@@ -794,6 +823,8 @@ CSerial::EStopBits CSerial::GetStopBits (void)
 
 DWORD CSerial::GetEventMask (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -804,7 +835,7 @@ DWORD CSerial::GetEventMask (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetEventMask", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Return the event mask
@@ -813,6 +844,8 @@ DWORD CSerial::GetEventMask (void)
 
 BYTE CSerial::GetEventChar (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -823,7 +856,7 @@ BYTE CSerial::GetEventChar (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetEventChar", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -834,7 +867,7 @@ BYTE CSerial::GetEventChar (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetEventChar", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Set the new event character
@@ -843,6 +876,8 @@ BYTE CSerial::GetEventChar (void)
 
 CSerial::EHandshake CSerial::GetHandshaking (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -853,7 +888,7 @@ CSerial::EHandshake CSerial::GetHandshaking (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetHandshaking", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain the DCB structure for the device
@@ -864,7 +899,7 @@ CSerial::EHandshake CSerial::GetHandshaking (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetHandshaking", __FILE__, __LINE__, m_lLastError, "Unable to obtain DCB information", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain DCB information", true);
 	}
 
 	// Check if hardware handshaking is being used
@@ -881,6 +916,8 @@ CSerial::EHandshake CSerial::GetHandshaking (void)
 
 LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 {
+	STACK;
+
 	// Check if time-outs are supported
 	CheckRequirements(lpOverlapped,dwTimeout);
 
@@ -907,7 +944,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Write", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 #ifndef SERIAL_NO_OVERLAPPED
@@ -919,7 +956,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 		m_lLastError = ERROR_INVALID_FUNCTION;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Write", __FILE__, __LINE__, m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
+		throw ExceptionGeneric(m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
 	}
 
 	// Wait for the event to happen
@@ -950,7 +987,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 			m_lLastError = lLastError;
 
 			// Issue an error and quit
-			throw ExceptionGeneric("CSerial::Write", __FILE__, __LINE__, m_lLastError, "Unable to write the payload");
+			throw ExceptionGeneric(m_lLastError, "Unable to write the payload");
 		}
 
 		// We need to block if the client didn't specify an overlapped structure
@@ -966,7 +1003,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 					// Set the internal error code
 					m_lLastError = ::GetLastError();
 
-					throw ExceptionGeneric("CSerial::Write", __FILE__, __LINE__, m_lLastError, "Overlapped completed without result");
+					throw ExceptionGeneric(m_lLastError, "Overlapped completed without result");
 				}
 				break;
 
@@ -983,7 +1020,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 				m_lLastError = ::GetLastError();
 
 				// Issue an error and quit
-				throw ExceptionGeneric("CSerial::Write", __FILE__, __LINE__, m_lLastError, "Unable to wait until payload has been sent");
+				throw ExceptionGeneric(m_lLastError, "Unable to wait until payload has been sent");
 			}
 		}
 	}
@@ -1015,6 +1052,8 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 
 LONG CSerial::Write (LPCSTR pString, DWORD* pdwWritten, LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 {
+	STACK;
+
 	// Check if time-outs are supported
 	CheckRequirements(lpOverlapped,dwTimeout);
 
@@ -1024,6 +1063,8 @@ LONG CSerial::Write (LPCSTR pString, DWORD* pdwWritten, LPOVERLAPPED lpOverlappe
 
 LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOverlapped, DWORD dwTimeout)
 {
+	STACK;
+
 	// Check if time-outs are supported
 	CheckRequirements(lpOverlapped,dwTimeout);
 
@@ -1050,7 +1091,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 #ifdef _DEBUG
@@ -1068,7 +1109,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 		m_lLastError = ERROR_INVALID_FUNCTION;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
+		throw ExceptionGeneric(m_lLastError, "Overlapped I/O is disabled, specified parameters are illegal");
 	}
 
 	// Wait for the event to happen
@@ -1099,7 +1140,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 			m_lLastError = lLastError;
 
 			// Issue an error and quit
-			throw ExceptionReceptionFailed("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to read the payload");
+			throw ExceptionReceptionFailed(m_lLastError, "Unable to read the payload");
 		}
 
 		// We need to block if the client didn't specify an overlapped structure
@@ -1115,7 +1156,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 					// Set the internal error code
 					m_lLastError = ::GetLastError();
 
-					throw ExceptionGeneric("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Overlapped completed without result", true);
+					throw ExceptionGeneric(m_lLastError, "Overlapped completed without result", true);
 				}
 				break;
 
@@ -1132,7 +1173,7 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 				m_lLastError = ::GetLastError();
 
 				// Issue an error and quit
-				throw ExceptionReceptionFailed("CSerial::Read", __FILE__, __LINE__, m_lLastError, "Unable to wait until payload has been read");
+				throw ExceptionReceptionFailed(m_lLastError, "Unable to wait until payload has been read");
 			}
 		}
 	}
@@ -1164,6 +1205,8 @@ LONG CSerial::Read (void* pData, size_t iLen, DWORD* pdwRead, LPOVERLAPPED lpOve
 
 LONG CSerial::Purge()
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1174,14 +1217,14 @@ LONG CSerial::Purge()
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Purge", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	if (!::PurgeComm(m_hFile, PURGE_TXCLEAR | PURGE_RXCLEAR))
 	{
 		// Set the internal error code
 		m_lLastError = ::GetLastError();
-		throw ExceptionGeneric("CSerial::Purge", __FILE__, __LINE__, m_lLastError, "Overlapped completed without result", true);
+		throw ExceptionGeneric(m_lLastError, "Overlapped completed without result", true);
 	}
 	
 	// Return successfully
@@ -1190,6 +1233,8 @@ LONG CSerial::Purge()
 
 LONG CSerial::Break (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1200,7 +1245,7 @@ LONG CSerial::Break (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::Break", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
     // Set the RS-232 port in break mode for a little while
@@ -1214,10 +1259,12 @@ LONG CSerial::Break (void)
 
 CSerial::EEvent CSerial::GetEventType (void)
 {
+	STACK;
+
 #ifdef _DEBUG
 	// Check if the event is within the mask
 	if ((m_eEvent & m_dwEventMask) == 0)
-		throw ExceptionGeneric("CSerial::GetEventType", __FILE__, __LINE__, m_lLastError, sformat("Event %08Xh not within mask %08Xh", m_eEvent, m_dwEventMask));
+		throw ExceptionGeneric(m_lLastError, sformat("Event %08Xh not within mask %08Xh", m_eEvent, m_dwEventMask));
 #endif
 
 	// Obtain the event (mask unwanted events out)
@@ -1232,6 +1279,8 @@ CSerial::EEvent CSerial::GetEventType (void)
 
 CSerial::EError CSerial::GetError (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1242,7 +1291,7 @@ CSerial::EError CSerial::GetError (void)
 		m_lLastError = ERROR_INVALID_HANDLE;
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetError", __FILE__, __LINE__, m_lLastError, "Device is not opened");
+		throw ExceptionGeneric(m_lLastError, "Device is not opened");
 	}
 
 	// Obtain COM status
@@ -1253,7 +1302,7 @@ CSerial::EError CSerial::GetError (void)
 		m_lLastError = ::GetLastError();
 
 		// Issue an error and quit
-		throw ExceptionGeneric("CSerial::GetError", __FILE__, __LINE__, m_lLastError, "Unable to obtain COM status");
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain COM status");
 	}
 
 	// Return the error
@@ -1262,6 +1311,8 @@ CSerial::EError CSerial::GetError (void)
 
 bool CSerial::GetCTS (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1273,7 +1324,7 @@ bool CSerial::GetCTS (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetCTS", __FILE__, __LINE__, m_lLastError, "Unable to obtain the modem status", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain the modem status", true);
 	}
 
 	// Determine if CTS is on
@@ -1282,6 +1333,8 @@ bool CSerial::GetCTS (void)
 
 bool CSerial::GetDSR (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1293,7 +1346,7 @@ bool CSerial::GetDSR (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetDSR", __FILE__, __LINE__, m_lLastError, "Unable to obtain the modem status", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain the modem status", true);
 	}
 
 	// Determine if DSR is on
@@ -1302,6 +1355,8 @@ bool CSerial::GetDSR (void)
 
 bool CSerial::GetRing (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1313,7 +1368,7 @@ bool CSerial::GetRing (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetRing", __FILE__, __LINE__, m_lLastError, "Unable to obtain the modem status", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain the modem status", true);
 	}
 
 	// Determine if Ring is on
@@ -1322,6 +1377,8 @@ bool CSerial::GetRing (void)
 
 bool CSerial::GetRLSD (void)
 {
+	STACK;
+
 	// Reset error state
 	m_lLastError = ERROR_SUCCESS;
 
@@ -1333,7 +1390,7 @@ bool CSerial::GetRLSD (void)
 		m_lLastError = ::GetLastError();
 
 		// Display a warning
-		throw ExceptionGeneric("CSerial::GetRLSD", __FILE__, __LINE__, m_lLastError, "Unable to obtain the modem status", true);
+		throw ExceptionGeneric(m_lLastError, "Unable to obtain the modem status", true);
 	}
 
 	// Determine if RLSD is on

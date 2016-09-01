@@ -7,49 +7,94 @@
 
 namespace TGM
 {
-	enum Type { TGM_Type_Command, TGM_Type_Reaction };
-	enum Param_Variant { TGM_Param_S, TGM_Param_P };
+	enum Header_Type : BYTE {
+		Type_Command, 
+		Type_Reaction 
+	};
+
+	enum SERCOS_ParamVar : BYTE {
+		SERCOS_Param_S,
+		SERCOS_Param_P
+	};
+
+	enum SERCOS_Datablock : BYTE {
+		SERCOS_Datablock_channel_not_active,
+		SERCOS_Datablock_ident_number,
+		SERCOS_Datablock_name,
+		SERCOS_Datablock_attribute,
+		SERCOS_Datablock_unit,
+		SERCOS_Datablock_minval,
+		SERCOS_Datablock_maxval,
+		SERCOS_Datablock_operatingdata
+	};
+
+	enum SERCOS_TX : BYTE {
+		SERCOS_TX_in_progress,
+		SERCOS_TX_final
+	};
+
+	enum SERCOS_DATALEN : UINT32 {
+		SERCOS_DATALEN_res1			= 0b000,
+		SERCOS_DATALEN_param_2byte	= 0b001,
+		SERCOS_DATALEN_param_4byte	= 0b010,
+		SERCOS_DATALEN_param_8byte	= 0b011,
+		SERCOS_DATALEN_listel_1byte = 0b100,
+		SERCOS_DATALEN_listel_2byte = 0b101,
+		SERCOS_DATALEN_listel_4byte = 0b110,
+		SERCOS_DATALEN_listel_8byte = 0b111,
+	};
 
 	namespace Bitfields
 	{
 		/// <summary>	Control byte consisting of several bit fields. Size: 8 bit. </summary>
-		typedef struct _cntrl_t
+		typedef struct _header_cntrl_t
 		{
-			///=================================================================================================
-			/// <summary>
-			/// Bit 0-2: Number of sub-addresses in the address block: num_sub_addresses=[0..7].
-			/// </summary>
-			///=================================================================================================
-			UCHAR num_sub_addresses : 3;
+			union
+			{
+				struct bits_t
+				{
+					///=================================================================================================
+					/// <summary>
+					/// Bit 0-2: Number of sub-addresses in the address block: num_sub_addresses=[0..7].
+					/// </summary>
+					///=================================================================================================
+					BYTE num_sub_addresses : 3;
 
-			/// <summary>	Bit 3: Running telegram number. 0: not support, 1: additional byte. </summary>
-			UCHAR num_running_tgm : 1;
+					/// <summary>	Bit 3: Running telegram number. 0: not support, 1: additional byte. </summary>
+					BYTE num_running_tgm : 1;
 
-			/// <summary>	Bit 4: Telegram type. 0: Command telegram, 1: Reaction telegram. </summary>
-			Type type : 1;
+					/// <summary>	Bit 4: Telegram type. 0: Command telegram, 1: Reaction telegram. </summary>
+					Header_Type type : 1;
 
-			///=================================================================================================
-			/// <summary>
-			/// Bit 5-7: Status data for the reaction telegram.
-			/// * 000: no error, request was processed  
-			/// * 001: transmission request being processed  
-			/// * 010: transmission cannot presently be processed  
-			/// * 100: warning  
-			/// * 110: error.
-			/// </summary>
-			///=================================================================================================
-			UCHAR status_react_tgm : 3;
+					///=================================================================================================
+					/// <summary>
+					/// Bit 5-7: Status data for the reaction telegram.
+					/// * 000: no error, request was processed  
+					/// * 001: transmission request being processed  
+					/// * 010: transmission cannot presently be processed  
+					/// * 100: warning  
+					/// * 110: error.
+					/// </summary>
+					///=================================================================================================
+					BYTE status_react_tgm : 3;
 
-			_cntrl_t(Type _type = TGM_Type_Command) :
-				num_sub_addresses(0),
-				num_running_tgm(0),
-				type(_type),
-				status_react_tgm(0)
+					bits_t(Header_Type _type = Type_Command) :
+						num_sub_addresses(0),
+						num_running_tgm(0),
+						type(_type),
+						status_react_tgm(0)
+					{}
+				} bits;
+
+				BYTE value;
+			};
+
+			_header_cntrl_t(Header_Type _type = Type_Command) :
+				bits(Type_Command)
 			{}
 
-			BYTE toByte() { return *(BYTE*)this; }
+		} Header_Cntrl;
 
-		} Cntrl;
 
 		///=================================================================================================
 		/// <summary>
@@ -59,96 +104,162 @@ namespace TGM
 		///================================================================================================= 
 		typedef struct sercos_control_t
 		{
-			enum sercos_control_tx_status {
-				tx_in_progress,
-				tx_final
+			union
+			{
+				struct bits_t
+				{
+					BYTE res1 : 1;
+					BYTE res2 : 1;
+
+					///=================================================================================================
+					/// <summary>
+					/// The transmission of a consecutive telegram is controlled with this bit (lists are written in
+					/// several steps):
+					/// * 0: transmission in prog.
+					/// * 1: final transmission.
+					/// </summary>
+					///=================================================================================================
+					SERCOS_TX tx_status : 1;
+
+					///=================================================================================================
+					/// <summary>
+					/// The type of the SERCOS parameter: 
+					/// * b000: channel not active   
+					/// * b001: ident number (write access)
+					/// * b010: name   
+					/// * b011: attribute (read access)
+					/// * b100: unit (read access)
+					/// * b101: min.input value (read access)
+					/// * b110: max.input value (read access)
+					/// * b111: operating data (write access)
+					/// </summary>
+					///=================================================================================================
+					SERCOS_Datablock attribute : 3;
+
+					BYTE res6 : 1;
+					BYTE res7 : 1;
+
+					bits_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
+						res1(0), res2(0), tx_status(SERCOS_TX_final), attribute(_attribute), res6(0), res7(0)
+					{}
+
+				} bits;
+
+				BYTE value;
 			};
 
-			enum sercos_control_type {
-				type_channel_not_active,
-				type_ident_number,
-				type_name,
-				type_attribute,
-				type_unit,
-				type_minval,
-				type_maxval,
-				type_operatingdata
-			};
-
-
-			UCHAR res1 : 1;
-			UCHAR res2 : 1;
-
-			///=================================================================================================
-			/// <summary>
-			/// The transmission of a consecutive telegram is controlled with this bit (lists are written in
-			/// several steps):
-			/// * 0: transmission in prog.
-			/// * 1: final transmission.
-			/// </summary>
-			///=================================================================================================
-			sercos_control_tx_status tx_status : 1;
-
-			///=================================================================================================
-			/// <summary>
-			/// The type of the SERCOS parameter: 
-			/// * b000: channel not active   
-			/// * b001: ident number (write access)
-			/// * b010: name   
-			/// * b011: attribute (read access)
-			/// * b100: unit (read access)
-			/// * b101: min.input value (read access)
-			/// * b110: max.input value (read access)
-			/// * b111: operating data (write access)
-			/// </summary>
-			///=================================================================================================
-			sercos_control_type type : 3;
-
-			UCHAR res6 : 1;
-			UCHAR res7 : 1;
-
-			/// <summary>	Default constructor. </summary>
-			sercos_control_t(sercos_control_type _type = type_operatingdata) :
-				res1(0),
-				res2(0),
-				tx_status(tx_final),
-				type(_type),
-				res6(0),
-				res7(0)
+			sercos_control_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
+				bits(_attribute)
 			{}
 
-			BYTE toByte() { return *(BYTE*)this; }
+			sercos_control_t(BYTE _value) :
+				value(_value)
+			{}
 
 		} Sercos_Control;
+
 
 		/// <summary>	Identification of the parameter. Size: 16 bit. </summary>
 		typedef struct sercos_param_ident_t
 		{
-			/// <summary>	Bit 0-11: The parameter number [0..4095]. </summary>
-			USHORT param_num : 12;
+			union
+			{
+				struct bits_t
+				{
+					/// <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_no. </summary>
+					USHORT param_no : 12;
 
-			/// <summary>	Bit 12-15: The parameter block [0..7]. </summary>
-			UCHAR param_block : 3;
+					/// <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_set. </summary>
+					USHORT param_set : 3;
 
-			///=================================================================================================
-			/// <summary>
-			/// Bit 16: Parameter variant:
-			/// * 0: S-Parameter (drive)  
-			/// * 1: P-Parameter (drive).
-			/// </summary>
-			///=================================================================================================
-			UCHAR param_variant : 1;
+					///=================================================================================================
+					/// <summary>
+					/// Bit 16: Parameter variant:
+					/// * 0: S-Parameter (drive)  
+					/// * 1: P-Parameter (drive).
+					/// </summary>
+					///=================================================================================================
+					USHORT param_variant : 1;
 
-			/// <summary>	Default constructor. </summary>
-			sercos_param_ident_t(Param_Variant _param_variant = TGM_Param_S, USHORT _param_num = 0) :
-				param_num(_param_num),
-				param_block(0),
-				param_variant(_param_variant)
+					/// <summary>	Default constructor. </summary>
+					bits_t(SERCOS_ParamVar _param_variant = TGM::SERCOS_Param_S, USHORT _param_num = 0) :
+						param_no(_param_num),
+						param_set(0),
+						param_variant(_param_variant)
+					{}
+
+				} bits;
+
+				USHORT value;
+			};
+
+			sercos_param_ident_t(SERCOS_ParamVar _param_variant = TGM::SERCOS_Param_S, USHORT _param_num = 0) :
+				bits(_param_variant, _param_num)
+			{}
+			
+		} Sercos_Param_Ident;
+
+
+		typedef struct sercos_attribute_t
+		{
+			union
+			{
+				struct bits_t
+				{
+					/// <summary>	Bit 0-15: Conversion factor: The conversion factor is an unsigned integer used to convert numeric data to display format.The conversion factor shall be set to a value of 1, if a conversion is not required(e.g. for binary numbers, character strings or floating - point numbers). </summary>
+					UINT32 conv_factor : 16;
+
+					/// <summary>	Bit 16-18: The data length is required so that the Master is able to complete Service Channel data transfers correctly. </summary>
+					SERCOS_DATALEN data_len : 3;
+
+					/// <summary>	Bit 19: Indicates whether this data calls a procedure in a drive: 0 Operation data or parameter 1 Procedure command. </summary>
+					UINT32 func_of_data : 1;
+
+					/// <summary>	Bit 20-22: Format Used to convert the operation data, and min/max input values to the correct display format. </summary>
+					UINT32 data_disp : 3;
+
+					/// <summary>	Bit 23. </summary>
+					UINT32 res5 : 1;
+
+					/// <summary>	Bit 24-27: Decimal point: Places after the decimal point indicates the position of the decimal point of appropriate operation data.Decimal point is used to define fixed point decimal numbers.For all other display formats the decimal point shall be = 0. </summary>
+					UINT32 scale_factor : 4;
+
+					/// <summary>	Bit 28. </summary>
+					UINT32 is_writeonly_phase2 : 1;
+
+					/// <summary>	Bit 29. </summary>
+					UINT32 is_writeonly_phase3 : 1;
+
+					/// <summary>	Bit 30. </summary>
+					UINT32 is_writeonly_phase4 : 1;
+
+					/// <summary>	Bit 31. </summary>
+					UINT32 res10 : 1;
+
+					/// <summary>	Default constructor. </summary>
+					bits_t() :
+						conv_factor(0), 
+						data_len(SERCOS_DATALEN_param_2byte), 
+						func_of_data(0), 
+						data_disp(0),
+						res5(0),
+						scale_factor(0),
+						is_writeonly_phase2(0),
+						is_writeonly_phase3(0),
+						is_writeonly_phase4(0),
+						res10(0)
+					{}
+
+				} bits;
+
+				UINT32 value;
+			};
+
+			sercos_attribute_t(UINT32 _value = 0) :
+				value(_value)
 			{}
 
-			USHORT toByte() { return *(USHORT*)this; }
-
-		} Sercos_Param_Ident;
+		} Sercos_Attribute;
 	}
 }
 

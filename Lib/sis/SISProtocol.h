@@ -2,10 +2,13 @@
 #define _SISPROTOCOL_H_
 
 #include <Windows.h>
+#include <string>
 
+#include "poppydebugtools.h"
+#include "helpers.h"
 #include "RS232.h"
 #include "Telegrams.h"
-#include "helpers.h"
+
 
 
 #define RS232_BUFFER			254
@@ -20,6 +23,7 @@
 #define SIS_ADDR_UNIT			0x01
 
 #define SIS_SERVICE_INIT_COMM			0x03
+#define SIS_SERVICE_SEQUENTIALOP		0x04
 
 #define SIS_SERVICE_SERCOS_PARAM_READ	0x10
 #define SIS_SERVICE_SERCOS_LIST_READ	0x11
@@ -52,24 +56,51 @@ public:
 	/// <summary>	Destructor. </summary>
 	virtual ~SISProtocol();
 
+	/// API FUNCTIONS
 
 	void open(const char * _port = "COM1");
 	void close();
 
-	void get_sisversion();
 	void set_baudrate(init_set_mask_baudrate _baudrate);
-	void write_parameter(TGM::Param_Variant _paramvar, const char* _data, size_t _data_len);
+
+	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32& _rcvddata);
+	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _rcvddata);
+
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm);
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64 & _rcvdelm);
+	
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32& _data);
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _data);
+
+	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32& _rcvdelm);
+	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm);
+
+private:
+	/// TELEGRAM SUPPORTING FUNCTIONS
+
+	inline void get_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen);
+
+	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
+	inline void prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
+
+	template <class THeader, class TPayload>
+	inline bool check_boundaries(TGM::Map<THeader, TPayload>& _tgm);
+
+	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
+
+	inline UINT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
+	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm);
+
+private:
+	/// COMMUNICATION FUNCTIONS
+
+	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
+	void transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
+
+	static void throw_rs232_error_events(CSerial::EError _err);
 
 private:
 	CSerial m_serial;
-
-	template <class TCHeader, class TCPLHead, class TCPLDat, class TRHeader, class TRPLHead, class TRPLDat>
-	void transceive(TGM::Map<TCHeader, TCPLHead, TCPLDat>& tx_tgm, TGM::Map<TRHeader, TRPLHead, TRPLDat>& rx_tgm);
-
-	void concat_data(char * _dest, const char * _header, size_t _header_len, const char * _payload, size_t _payload_len);
-	void split_data(const char * _src, char * _header, size_t _header_len, char * _payload, size_t _payload_len);
-
-	static void throw_rs232_error_events(CSerial::EError _err);
 };
 
 
@@ -80,45 +111,32 @@ public:
 	bool warning;
 
 	ExceptionGeneric(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
 		const std::string _trace_log,
 		bool _warning = false) :
 
-		m_src_func(_src_func),
-		m_src_file(_src_file),
-		m_src_line(_src_line),
 		m_status(_status),
-		m_trace_log(_trace_log),
+		m_message(_trace_log),
 		warning(_warning)
 	{}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol exception @ %s: STATUS=%d, TRACE='%s'", m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		return str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%d) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] SIS Protocol exception @ %s: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_src_func.c_str(), m_status, m_trace_log.c_str()));
+		const char* ex = str2char(sformat("SIS Protocol exception caused: %s ### STATUS=0x%04x (%d) ### MESSAGE='%s'", Stack::GetTraceString().c_str(), m_status, m_status, m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 
 	int get_status() { return m_status; }
 
 protected:
-	std::string m_src_func;
-	const char* m_src_file;
-	const unsigned long m_src_line;
-
-	///=================================================================================================
-	/// <summary>
-	/// For Win32 API commands, most likely representation of the System Error Codes:
-	/// # https://msdn.microsoft.com/de-de/library/windows/desktop/ms681381(v=vs.85).aspx.
-	/// </summary>
-	///=================================================================================================
 	int m_status;
-	std::string m_trace_log;
+
+	std::string m_message;
 };
 
 
@@ -127,23 +145,22 @@ class SISProtocol::ExceptionTransceiveFailed : public SISProtocol::ExceptionGene
 {
 public:
 	ExceptionTransceiveFailed(
-		const std::string _src_func,
-		const char* _src_file,
-		const unsigned long _src_line,
 		int _status,
-		const std::string _trace_log,
+		const std::string _message,
 		bool _warning = false) :
 
-		ExceptionGeneric(_src_func, _src_file, _src_line, _status, _trace_log, _warning)
+		ExceptionGeneric(_status, _message, _warning)
 	{}
 	~ExceptionTransceiveFailed() throw() {}
 
 	virtual const char* what() const throw ()
 	{
 #ifdef NDEBUG
-		return str2char(sformat("SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_status, m_trace_log.c_str()));
+		return str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%d) ### MESSAGE='%s'", m_status, m_status, m_message.c_str()));
 #else
-		return str2char(sformat("[%s @ line %d] SIS Protocol reception failed: STATUS=%d, TRACE='%s'", m_src_file, m_src_line, m_status, m_trace_log.c_str()));
+		const char* ex = str2char(sformat("SIS Protocol reception fail caused: STATUS=0x%04x (%d) ### MESSAGE='%s'", m_status, m_status, m_message.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
 #endif
 	}
 };

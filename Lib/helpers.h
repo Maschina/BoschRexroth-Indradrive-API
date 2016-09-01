@@ -4,6 +4,7 @@
 #include <stdarg.h>  // For va_start, etc.
 #include <string.h>
 #include <stdio.h>
+#include <vector>
 #include <stdlib.h>
 #include <math.h>
 #include <memory>
@@ -18,6 +19,30 @@
 
 namespace stde
 {
+	static std::string GetWinErrorString(DWORD _errorMessageID)
+	{
+		//Get the error message, if any.
+		DWORD errorMessageID = _errorMessageID;
+		if (errorMessageID == 0)
+			return std::string(); //No error message has been recorded
+
+		LPSTR messageBuffer = nullptr;
+		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+		// Remove trailing new line characters
+		messageBuffer[strcspn(messageBuffer, "\r\n")] = 0;
+		size -= 2;
+
+		// Convert
+		std::string message(messageBuffer, size);
+
+		//Free the buffer.
+		LocalFree(messageBuffer);
+
+		return message;
+	}
+
 	inline static char* convert_str_to_char(const std::string _in)
 	{
 		char* _in_c = new char[_in.length() + 1];
@@ -49,6 +74,31 @@ namespace stde
 	inline static std::string convert_char_to_str(const char* _in)
 	{
 		return std::string(_in);
+	}
+
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT8 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		return buf;
+	}
+
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT16 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		buf.push_back((_in & 0xFF00) >> 8);
+		return buf;
+	}
+
+	inline static std::vector<BYTE> convert_to_bytevector(const UINT32 _in)
+	{
+		std::vector<BYTE> buf;
+		buf.push_back(_in & 0xFF);
+		buf.push_back((_in & 0xFF00) >> 8);
+		buf.push_back((_in & 0xFF0000) >> 16);
+		buf.push_back((_in & 0xFF000000) >> 24);
+		return buf;
 	}
 
     static std::string string_format(const std::string fmt, ...)
@@ -95,6 +145,7 @@ namespace stde
 #define str2wchar stde::convert_str_to_wchar
 #define char2str stde::convert_char_to_str
 #define sformat stde::string_format
+#define int2vec stde::convert_to_bytevector
 
 
 #endif // HELPERS_H
