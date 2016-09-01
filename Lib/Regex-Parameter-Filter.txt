@@ -1,0 +1,13 @@
+\|[\n\r]+(?#Parameter)(P-0-[0-9]{4}|S-0-[0-9]{4})[\n\r]+(?#Name)[^\n]*[\n\r]+[0-1]+[\n\r]+(?#Unit)[^\n]+[\n\r]+(?#Min)[bx.\-0-9A-F]+[\n\r]+(?#Max)[bx.\-0-9A-F]+[\n\r]+(?#Value)([^\|]+)
+
+--> 362 matches
+
+
+\|[\n\r]+(?#Parameter)(P-0-[0-9]{4}|S-0-[0-9]{4})[\n\r]+(?#Name)[^\n]*[\n\r]+[0-1]+[\n\r]+(?#Unit)[^\n]+[\n\r]+(?#Min)[bx.\-0-9A-F]+[\n\r]+(?#Max)[bx.\-0-9A-F]+[\n\r]+(?#Value)(?:([\w\s.\-]+)\n)+
+
+--> 362 matches and no linebreak at end of second group
+
+
+\|[\n\r]+(?#Parameter)(P-0-[0-9]{4}|S-0-[0-9]{4})[\n\r]+(?#Name)[^\n]*[\n\r]+[0-1]+[\n\r]+(?#Unit)[^\n]+[\n\r]+(?#Min)[bx.\-0-9A-F]+[\n\r]+(?#Max)[bx.\-0-9A-F]+[\n\r]+(?#Value)(?:(?:([0-9\n.\-]{1,18})\n)?(?:([01]{4}.[01]{4}.[01]{4}.[01]{4})\n)?(?:([0-9A-Za-z\-\s]+)\n)?)+
+
+--> 362 matches and no linebreak at end of second group and groups for each kind of value type

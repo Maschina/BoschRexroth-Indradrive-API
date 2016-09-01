@@ -4,11 +4,13 @@
         "IndradriveWrapper"
     </assembly>
     <members>
-        <member name="M:SISProtocol.get_attributes(&lt;unknown type&gt;,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.Byte*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.UInt32*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
-TELEGRAM SUPPORTING FUNCTIONS
-</member>
-        <member name="M:SISProtocol.open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)">
-API FUNCTIONS
+        <member name="F:SISProtocol.ExceptionGeneric.m_status">
+=================================================================================================
+<summary>
+For Win32 API commands, most likely representation of the System Error Codes:
+# https://msdn.microsoft.com/de-de/library/windows/desktop/ms681381(v=vs.85).aspx.
+</summary>
+=================================================================================================
 </member>
         <member name="M:SISProtocol.Dispose">
             <summary>	Destructor. </summary>
@@ -231,7 +233,7 @@ Expanded part of the telegram header. Subaddress 1 of recipient. Bit 0-2 of Cntr
         <member name="T:TGM._header_ext_t">
             <summary>	Extended Telegram Header to be used for Routing and Sequential Telegrams. </summary>
         </member>
-        <member name="M:TGM._header_t.calc_checksum(TGM._container_t*)">
+        <member name="M:TGM._header_t.calc_checksum(TGM._container_t*,System.UInt32)">
 =================================================================================================
 <summary>
 Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically
@@ -372,39 +374,6 @@ Payload data + Payload header.
 </summary>
 =================================================================================================
 </member>
-        <member name="M:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.#ctor">
-            <summary>	Default constructor. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.res10">
-            <summary>	Bit 31. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase4">
-            <summary>	Bit 30. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase3">
-            <summary>	Bit 29. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase2">
-            <summary>	Bit 28. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.scale_factor">
-            <summary>	Bit 24-27: Decimal point: Places after the decimal point indicates the position of the decimal point of appropriate operation data.Decimal point is used to define fixed point decimal numbers.For all other display formats the decimal point shall be = 0. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.res5">
-            <summary>	Bit 23. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.data_disp">
-            <summary>	Bit 20-22: Format Used to convert the operation data, and min/max input values to the correct display format. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.func_of_data">
-            <summary>	Bit 19: Indicates whether this data calls a procedure in a drive: 0 Operation data or parameter 1 Procedure command. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.data_len">
-            <summary>	Bit 16-18: The data length is required so that the Master is able to complete Service Channel data transfers correctly. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.conv_factor">
-            <summary>	Bit 0-15: Conversion factor: The conversion factor is an unsigned integer used to convert numeric data to display format.The conversion factor shall be set to a value of 1, if a conversion is not required(e.g. for binary numbers, character strings or floating - point numbers). </summary>
-        </member>
         <member name="M:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.#ctor(&lt;unknown type&gt;,System.UInt16)">
             <summary>	Default constructor. </summary>
         </member>
