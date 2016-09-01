@@ -1,6 +1,6 @@
 <?xml version="1.0"?><doc>
 <members>
-<member name="T:CSerial" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="50">
+<member name="T:CSerial" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="50">
 =================================================================================================
 <summary>
 CSerial - Win32 wrapper for serial communications
@@ -41,19 +41,19 @@ Copyright (C) 1999-2003 Ramon de Klein
 </summary>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionGeneric" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="214">
+<member name="T:CSerial.ExceptionGeneric" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="214">
 <summary>	Generic exception handling for Serial communication. </summary>
 </member>
-<member name="T:CSerial.ExceptionReceptionFailed" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="216">
+<member name="T:CSerial.ExceptionReceptionFailed" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="216">
 <summary>	Specific exception handling of Serial communication for failed reception. </summary>
 </member>
-<member name="M:CSerial.#ctor" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="220">
+<member name="M:CSerial.#ctor" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="220">
 <summary>	Default constructor. </summary>
 </member>
-<member name="M:CSerial.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="222">
+<member name="M:CSerial.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="222">
 <summary>	Destructor. </summary>
 </member>
-<member name="M:CSerial.CheckPort(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="228">
+<member name="M:CSerial.CheckPort(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="228">
 =================================================================================================
 <summary>	Check if particular COM-port is available (static method). </summary>
 
@@ -63,7 +63,7 @@ Copyright (C) 1999-2003 Ramon de Klein
 <returns>	Port availability. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong,System.UInt32!System.Runtime.CompilerServices.IsLong,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="238">
+<member name="M:CSerial.Open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong,System.UInt32!System.Runtime.CompilerServices.IsLong,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="238">
 =================================================================================================
 <summary>
 Open the serial communications for a particular COM port. You need to use the full devicename
@@ -81,14 +81,14 @@ Open the serial communications for a particular COM port. You need to use the fu
 <param name="fOverlapped">	(Optional) true if overlapped. </param>
 =================================================================================================
 </member>
-<member name="M:CSerial.Close" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="256">
+<member name="M:CSerial.Close" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="256">
 =================================================================================================
 <summary>	Close the serial port. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Setup(CSerial.EBaudrate,CSerial.EDataBits,CSerial.EParity,CSerial.EStopBits)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="263">
+<member name="M:CSerial.Setup(CSerial.EBaudrate,CSerial.EDataBits,CSerial.EParity,CSerial.EStopBits)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="263">
 =================================================================================================
 <summary>
 Setup the communication settings such as baudrate, databits, parity and stopbits. The default
@@ -115,7 +115,7 @@ appropriate values.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetEventChar(System.Byte,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="293">
+<member name="M:CSerial.SetEventChar(System.Byte,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="293">
 =================================================================================================
 <summary>
 Set/clear the event character. When this byte is being received on the serial port then the EEventRcvEv event is
@@ -129,7 +129,7 @@ automatically adjusted.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetMask(System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="307">
+<member name="M:CSerial.SetMask(System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="307">
 =================================================================================================
 <summary>
 Set the event mask, which indicates what events should be monitored. The WaitEvent method can
@@ -142,7 +142,7 @@ events and data events. An application may choose to monitor CTS. DSR, RLSD, etc
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.WaitEvent(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="320">
+<member name="M:CSerial.WaitEvent(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="320">
 =================================================================================================
 <summary>
 The WaitEvent method waits for one of the events that are enabled (see SetMask).
@@ -154,7 +154,7 @@ The WaitEvent method waits for one of the events that are enabled (see SetMask).
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetupHandshaking(CSerial.EHandshake)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="332">
+<member name="M:CSerial.SetupHandshaking(CSerial.EHandshake)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="332">
 =================================================================================================
 <summary>
 Setup the handshaking protocol. There are three forms of handshaking:
@@ -176,7 +176,7 @@ Setup the handshaking protocol. There are three forms of handshaking:
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetupReadTimeouts(CSerial.EReadTimeout)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="354">
+<member name="M:CSerial.SetupReadTimeouts(CSerial.EReadTimeout)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="354">
 =================================================================================================
 <summary>
 Read operations can be blocking or non-blocking. You can use this method to setup wether to
@@ -195,7 +195,7 @@ most applications.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Write(System.Void!System.Runtime.CompilerServices.IsConst*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="381">
+<member name="M:CSerial.Write(System.Void!System.Runtime.CompilerServices.IsConst*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="381">
 =================================================================================================
 <summary>
 Write data to the serial port. Note that we are only able to send ANSI strings, because it
@@ -211,7 +211,7 @@ probably doesn't make sense to transmit Unicode strings to an application.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Write(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="397">
+<member name="M:CSerial.Write(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="397">
 =================================================================================================
 <summary>	Writes. </summary>
 
@@ -223,7 +223,7 @@ probably doesn't make sense to transmit Unicode strings to an application.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Read(System.Void*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="409">
+<member name="M:CSerial.Read(System.Void*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="409">
 =================================================================================================
 <summary>
 Read data from the serial port. Refer to the description of the 'SetupReadTimeouts' for an
@@ -239,74 +239,74 @@ explanation about (non) blocking reads and how to use this.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Break" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="425">
+<member name="M:CSerial.Break" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="425">
 =================================================================================================
 <summary>	Send a break. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetEventType" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="432">
+<member name="M:CSerial.GetEventType" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="432">
 =================================================================================================
 <summary>	Determine what caused the event to trigger. </summary>
 
 <returns>	The event type. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetError" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="439">
+<member name="M:CSerial.GetError" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="439">
 =================================================================================================
 <summary>	Obtain the error. </summary>
 
 <returns>	The error. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetCommHandle" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="446">
+<member name="M:CSerial.GetCommHandle" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="446">
 =================================================================================================
 <summary>	Obtain the COMM and event handle. </summary>
 
 <returns>	The communications handle. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.IsOpen" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="453">
+<member name="M:CSerial.IsOpen" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="453">
 =================================================================================================
 <summary>	Check if com-port is opened. </summary>
 
 <returns>	true if open, false if not. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="460">
+<member name="M:CSerial.GetLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="460">
 =================================================================================================
 <summary>	Obtain last error status. </summary>
 
 <returns>	The last error. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Purge" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="473">
+<member name="M:CSerial.Purge" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="473">
 =================================================================================================
 <summary>	Purge all buffers. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="T:CSerial.CDCB" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="481">
+<member name="T:CSerial.CDCB" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="481">
 <summary>	Internal helper class which wraps DCB structure. </summary>
 </member>
-<member name="F:CSerial.m_lLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="490">
+<member name="F:CSerial.m_lLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="490">
 <summary>	Last serial error. </summary>
 </member>
-<member name="F:CSerial.m_hFile" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="492">
+<member name="F:CSerial.m_hFile" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="492">
 <summary>	File handle. </summary>
 </member>
-<member name="F:CSerial.m_eEvent" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="494">
+<member name="F:CSerial.m_eEvent" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="494">
 <summary>	Event type. </summary>
 </member>
-<member name="F:CSerial.m_dwEventMask" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="496">
+<member name="F:CSerial.m_dwEventMask" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="496">
 <summary>	Event mask. </summary>
 </member>
-<member name="F:CSerial.m_hevtOverlapped" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="500">
+<member name="F:CSerial.m_hevtOverlapped" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="500">
 <summary>	Event handle for internal overlapped operations. </summary>
 </member>
-<member name="M:CSerial.CheckRequirements(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="506">
+<member name="M:CSerial.CheckRequirements(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="506">
 =================================================================================================
 <summary>	Check the requirements. </summary>
 
@@ -314,17 +314,17 @@ explanation about (non) blocking reads and how to use this.
 <param name="dwTimeout">   	The timeout. </param>
 =================================================================================================
 </member>
-<member name="M:CSerial.CancelCommIo" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="514">
+<member name="M:CSerial.CancelCommIo" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="514">
 =================================================================================================
 <summary>	CancelIo wrapper (for Win95 compatibility) </summary>
 
 <returns>	true if it succeeds, false if it fails. </returns>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="523">
+<member name="T:CSerial.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="523">
 <summary>	Generic exceptions for Serial communication. </summary>
 </member>
-<member name="F:CSerial.ExceptionGeneric.m_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="553">
+<member name="F:CSerial.ExceptionGeneric.m_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="553">
 =================================================================================================
 <summary>
 For Win32 API commands, most likely representation of the System Error Codes:
@@ -332,26 +332,26 @@ For Win32 API commands, most likely representation of the System Error Codes:
 </summary>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionReceptionFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\serial\rs232.h" line="565">
+<member name="T:CSerial.ExceptionReceptionFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="565">
 <summary>	Specific exception handling of Serial communication for failed reception. </summary>
 </member>
-<member name="T:TGM.Bitfields._header_cntrl_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="39">
+<member name="T:TGM.Bitfields._header_cntrl_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="49">
 <summary>	Control byte consisting of several bit fields. Size: 8 bit. </summary>
 </member>
-<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_sub_addresses" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="46">
+<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_sub_addresses" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="56">
 =================================================================================================
 <summary>
 Bit 0-2: Number of sub-addresses in the address block: num_sub_addresses=[0..7].
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_running_tgm" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="53">
+<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_running_tgm" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="63">
 <summary>	Bit 3: Running telegram number. 0: not support, 1: additional byte. </summary>
 </member>
-<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.type" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="56">
+<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.type" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="66">
 <summary>	Bit 4: Telegram type. 0: Command telegram, 1: Reaction telegram. </summary>
 </member>
-<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.status_react_tgm" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="59">
+<member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.status_react_tgm" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="69">
 =================================================================================================
 <summary>
 Bit 5-7: Status data for the reaction telegram.
@@ -363,7 +363,7 @@ Bit 5-7: Status data for the reaction telegram.
 </summary>
 =================================================================================================
 </member>
-<member name="T:TGM.Bitfields.sercos_control_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="89">
+<member name="T:TGM.Bitfields.sercos_control_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="99">
 =================================================================================================
 <summary>
 The  control  byte  specifies  how  a  data  block  element  of  a  parameter  is accessed.
@@ -371,7 +371,7 @@ The control byte is read out of the command telegram and copied into the respons
 </summary>
 ================================================================================================= 
 </member>
-<member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.tx_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="104">
+<member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.tx_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="114">
 =================================================================================================
 <summary>
 The transmission of a consecutive telegram is controlled with this bit (lists are written in
@@ -381,7 +381,7 @@ several steps):
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.attribute" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="114">
+<member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.attribute" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="124">
 =================================================================================================
 <summary>
 The type of the SERCOS parameter: 
@@ -396,16 +396,16 @@ The type of the SERCOS parameter:
 </summary>
 =================================================================================================
 </member>
-<member name="T:TGM.Bitfields.sercos_param_ident_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="148">
+<member name="T:TGM.Bitfields.sercos_param_ident_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="162">
 <summary>	Identification of the parameter. Size: 16 bit. </summary>
 </member>
-<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_no" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="155">
+<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_no" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="169">
 <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_no. </summary>
 </member>
-<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_set" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="158">
+<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_set" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="172">
 <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_set. </summary>
 </member>
-<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_variant" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="161">
+<member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_variant" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="175">
 =================================================================================================
 <summary>
 Bit 16: Parameter variant:
@@ -414,10 +414,43 @@ Bit 16: Parameter variant:
 </summary>
 =================================================================================================
 </member>
-<member name="M:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.#ctor(&lt;unknown type&gt;,System.UInt16)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams_bitfields.h" line="170">
+<member name="M:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.#ctor(&lt;unknown type&gt;,System.UInt16)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="184">
 <summary>	Default constructor. </summary>
 </member>
-<member name="T:TGM._data_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="21">
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.conv_factor" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="209">
+<summary>	Bit 0-15: Conversion factor: The conversion factor is an unsigned integer used to convert numeric data to display format.The conversion factor shall be set to a value of 1, if a conversion is not required(e.g. for binary numbers, character strings or floating - point numbers). </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.data_len" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="212">
+<summary>	Bit 16-18: The data length is required so that the Master is able to complete Service Channel data transfers correctly. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.func_of_data" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="215">
+<summary>	Bit 19: Indicates whether this data calls a procedure in a drive: 0 Operation data or parameter 1 Procedure command. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.data_disp" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="218">
+<summary>	Bit 20-22: Format Used to convert the operation data, and min/max input values to the correct display format. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.res5" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="221">
+<summary>	Bit 23. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.scale_factor" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="224">
+<summary>	Bit 24-27: Decimal point: Places after the decimal point indicates the position of the decimal point of appropriate operation data.Decimal point is used to define fixed point decimal numbers.For all other display formats the decimal point shall be = 0. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase2" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="227">
+<summary>	Bit 28. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase3" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="230">
+<summary>	Bit 29. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.is_writeonly_phase4" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="233">
+<summary>	Bit 30. </summary>
+</member>
+<member name="F:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.res10" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="236">
+<summary>	Bit 31. </summary>
+</member>
+<member name="M:TGM.Bitfields.sercos_attribute_t.&lt;unnamed-tag&gt;.bits_t.#ctor" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams_bitfields.h" line="239">
+<summary>	Default constructor. </summary>
+</member>
+<member name="T:TGM._data_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="21">
 =================================================================================================
 <summary>
 Struct to hold payload data in a command payload. Payload data is third part of a regular Telegram: Header +
@@ -425,32 +458,32 @@ Payload data + Payload header.
 </summary>
 =================================================================================================
 </member>
-<member name="M:TGM._data_t.#ctor(std.vector&lt;System.Byte,std.allocator&lt;System.Byte&gt;&gt;)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="32">
+<member name="M:TGM._data_t.#ctor(std.vector&lt;System.Byte,std.allocator&lt;System.Byte&gt;&gt;)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="32">
 <summary>	Default constructor. </summary>
 </member>
-<member name="T:TGM._container_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="76">
+<member name="T:TGM._container_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="155">
 <summary>	Container for Telegram in raw data. </summary>
 </member>
-<member name="F:TGM._container_t.bytes" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="79">
+<member name="F:TGM._container_t.bytes" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="158">
 <summary>	The raw data. Size: 254 bytes </summary>
 </member>
-<member name="M:TGM._container_t.#ctor" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="82">
+<member name="M:TGM._container_t.#ctor" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="161">
 <summary>	Default constructor. </summary>
 </member>
-<member name="M:TGM._container_t.clear" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="85">
+<member name="M:TGM._container_t.clear" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="164">
 <summary>	Clears this object to its blank/initial state. </summary>
 </member>
-<member name="T:TGM._header_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="129">
+<member name="T:TGM._header_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="208">
 =================================================================================================
 <summary>
 The Telegram Header contains all information required for conducting orderly telegram traffic.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.StZ" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="137">
+<member name="F:TGM._header_t.StZ" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="216">
 <summary>	Start symbol: STX (0x02). </summary>
 </member>
-<member name="F:TGM._header_t.CS" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="140">
+<member name="F:TGM._header_t.CS" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="219">
 =================================================================================================
 <summary>
 The checksum byte. It is generated by adding all sub-sequential telegram symbols as well as
@@ -459,7 +492,7 @@ always equals 0 if the transmission was successful.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.DatL" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="149">
+<member name="F:TGM._header_t.DatL" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="228">
 =================================================================================================
 <summary>
 The length of the sub-sequential user data and the variable part are in the frame protocol. Up
@@ -468,7 +501,7 @@ transmitted in one telegram.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.DatLW" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="158">
+<member name="F:TGM._header_t.DatLW" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="237">
 =================================================================================================
 <summary>
 Repetition of DatL takes place here. The telegram length is generated from the DatLW and the
@@ -476,14 +509,14 @@ fixed part of the frame protocol (byte 1-8), i.e. telegram length = DatLW + 8.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.Cntrl" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="166">
+<member name="F:TGM._header_t.Cntrl" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="245">
 =================================================================================================
 <summary>
 Control byte consisting of several bit fields. Use TGM::Bitfields::Cntrl and toByte() for configuration.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.Service" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="173">
+<member name="F:TGM._header_t.Service" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="252">
 =================================================================================================
 <summary>
 This specifies the service that the sender requests from the recipient or that the recipient
@@ -507,7 +540,7 @@ has executed.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.AdrS" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="197">
+<member name="F:TGM._header_t.AdrS" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="276">
 =================================================================================================
 <summary>
 Address of sender:
@@ -517,7 +550,7 @@ emergencies (this address may not be used during active communication).
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_t.AdrE" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="207">
+<member name="F:TGM._header_t.AdrE" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="286">
 =================================================================================================
 <summary>
 Address of Recipient:
@@ -533,10 +566,10 @@ Telegrams with AdrE = [200..255] are not answered with a response telegram.
 </summary>
 =================================================================================================
 </member>
-<member name="M:TGM._header_t.#ctor(System.Byte,System.Byte,System.Byte,TGM.Bitfields._header_cntrl_t)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="223">
+<member name="M:TGM._header_t.#ctor(System.Byte,System.Byte,System.Byte,TGM.Bitfields._header_cntrl_t)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="302">
 <summary>	Default constructor. </summary>
 </member>
-<member name="M:TGM._header_t.get_sum(System.Boolean)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="235">
+<member name="M:TGM._header_t.get_sum(System.Boolean)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="314">
 =================================================================================================
 <summary>	Gets the sum without carry of all header bytes for checksum calculation. </summary>
 
@@ -545,7 +578,7 @@ Telegrams with AdrE = [200..255] are not answered with a response telegram.
 <returns>	The sum. </returns>
 =================================================================================================
 </member>
-<member name="M:TGM._header_t.set_DatL(System.UInt32)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="253">
+<member name="M:TGM._header_t.set_DatL(System.UInt32)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="332">
 =================================================================================================
 <summary>
 Sets length of Telegram, stored in DatL and DatLW (copy). By default, the length of the telegram is defined by
@@ -555,7 +588,7 @@ the payload length (head + data).
 <param name="_payload_len">	Length of the payload. </param>
 =================================================================================================
 </member>
-<member name="M:TGM._header_t.calc_checksum(TGM._container_t*,System.UInt32)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="263">
+<member name="M:TGM._header_t.calc_checksum(TGM._container_t*)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="344">
 =================================================================================================
 <summary>
 Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically
@@ -567,59 +600,59 @@ determination.
 <param name="_payload_len">	Length of the payload. </param>
 =================================================================================================
 </member>
-<member name="T:TGM._header_ext_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="292">
+<member name="T:TGM._header_ext_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="370">
 <summary>	Extended Telegram Header to be used for Routing and Sequential Telegrams. </summary>
 </member>
-<member name="F:TGM._header_ext_t.AdrES1" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="296">
+<member name="F:TGM._header_ext_t.AdrES1" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="374">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 1 of recipient. Bit 0-2 of Cntrl byte:  000.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES2" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="303">
+<member name="F:TGM._header_ext_t.AdrES2" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="381">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 2 of recipient. Bit 0-2 of Cntrl byte:  001.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES3" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="310">
+<member name="F:TGM._header_ext_t.AdrES3" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="388">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 3 of recipient. Bit 0-2 of Cntrl byte:  010.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES4" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="317">
+<member name="F:TGM._header_ext_t.AdrES4" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="395">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 4 of recipient. Bit 0-2 of Cntrl byte:  011.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES5" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="324">
+<member name="F:TGM._header_ext_t.AdrES5" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="402">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 5 of recipient. Bit 0-2 of Cntrl byte:  100.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES6" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="331">
+<member name="F:TGM._header_ext_t.AdrES6" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="409">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 6 of recipient. Bit 0-2 of Cntrl byte:  101.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.AdrES7" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="338">
+<member name="F:TGM._header_ext_t.AdrES7" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="416">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Subaddress 7 of recipient. Bit 0-2 of Cntrl byte:  110.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM._header_ext_t.PaketN" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="345">
+<member name="F:TGM._header_ext_t.PaketN" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="423">
 =================================================================================================
 <summary>
 Expanded part of the telegram header. Sequential telegram number (packet number) , if bit 3
@@ -627,7 +660,7 @@ in Cntrl byte is set.
 </summary>
 =================================================================================================
 </member>
-<member name="T:TGM.Commands._subservice_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="359">
+<member name="T:TGM.Commands._subservice_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="437">
 =================================================================================================
 <summary>
 Representation of the PAYLOAD for a Subservice command. A Command Telegram is for regular subservices,
@@ -635,7 +668,7 @@ such communication init, or device identification. User for master communication
 </summary>
 =================================================================================================
 </member>
-<member name="M:TGM.Commands._subservice_payload_t.#ctor(System.Byte,System.Byte,TGM._data_t)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="373">
+<member name="M:TGM.Commands._subservice_payload_t.#ctor(System.Byte,System.Byte,TGM._data_t)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="451">
 =================================================================================================
 <summary>	Constructor. </summary>
 
@@ -643,20 +676,20 @@ such communication init, or device identification. User for master communication
 <param name="_subservice">	The subservice number. </param>
 =================================================================================================
 </member>
-<member name="M:TGM.Commands._subservice_payload_t.clear" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="388">
+<member name="M:TGM.Commands._subservice_payload_t.clear" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="466">
 <summary>	Clears this object to its blank/initial state. </summary>
 </member>
-<member name="T:TGM.Commands._sercos_param_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="399">
+<member name="T:TGM.Commands._sercos_param_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="477">
 =================================================================================================
 <summary>
 Sercos Command Telegram used for reading/writing single parameter from/to slave.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_param_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="407">
+<member name="F:TGM.Commands._sercos_param_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="485">
 <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 </member>
-<member name="F:TGM.Commands._sercos_param_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="410">
+<member name="F:TGM.Commands._sercos_param_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="488">
 =================================================================================================
 <summary>
 The unit address of a drive is read in the command telegram and copied into the response
@@ -666,27 +699,27 @@ the  motion control and the unit address to the drive.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_param_t.param_num" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="422">
+<member name="F:TGM.Commands._sercos_param_t.param_num" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="500">
 =================================================================================================
 <summary>
 Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_param_t.data" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="429">
+<member name="F:TGM.Commands._sercos_param_t.data" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="507">
 <summary>	Payload data. </summary>
 </member>
-<member name="T:TGM.Commands._sercos_list_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="460">
+<member name="T:TGM.Commands._sercos_list_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="538">
 =================================================================================================
 <summary>
 Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_list_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="468">
+<member name="F:TGM.Commands._sercos_list_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="546">
 <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 </member>
-<member name="F:TGM.Commands._sercos_list_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="471">
+<member name="F:TGM.Commands._sercos_list_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="549">
 =================================================================================================
 <summary>
 The unit address of a drive is read in the command telegram and copied into the response
@@ -696,14 +729,14 @@ the  motion control and the unit address to the drive.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_list_t.param_num" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="483">
+<member name="F:TGM.Commands._sercos_list_t.param_num" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="561">
 =================================================================================================
 <summary>
 Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_list_t.list_offset" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="490">
+<member name="F:TGM.Commands._sercos_list_t.list_offset" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="568">
 =================================================================================================
 <summary>
 Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
@@ -711,14 +744,14 @@ consisting of 4-byte elements should be handeled --&gt; list_offset=0x0028.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Commands._sercos_list_t.element_size" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="498">
+<member name="F:TGM.Commands._sercos_list_t.element_size" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="576">
 <summary>	Size of the element to be handeled. For example: The 11th element of a list
 consisting of 4-byte elements should be handeled --&gt; element_size=0x0004. </summary>
 </member>
-<member name="F:TGM.Commands._sercos_list_t.data" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="502">
+<member name="F:TGM.Commands._sercos_list_t.data" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="580">
 <summary>	Payload data. </summary>
 </member>
-<member name="T:TGM.Reactions._subservice_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="540">
+<member name="T:TGM.Reactions._subservice_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="618">
 =================================================================================================
 <summary>
 Representation of the payload for a Subservice reaction. A Reaction Telegram is for regular subservices,
@@ -727,7 +760,7 @@ previous Command Telegram.
 </summary>
 =================================================================================================
 </member>
-<member name="T:TGM.Reactions._sercos_param_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="581">
+<member name="T:TGM.Reactions._sercos_param_payload_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="659">
 =================================================================================================
 <summary>
 Representation of the payload for a Sercos Parameter reaction. A Reaction Telegram is for regular subservices,
@@ -736,10 +769,10 @@ previous Command Telegram.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Reactions._sercos_param_payload_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="592">
+<member name="F:TGM.Reactions._sercos_param_payload_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="670">
 <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 </member>
-<member name="F:TGM.Reactions._sercos_param_payload_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="595">
+<member name="F:TGM.Reactions._sercos_param_payload_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="673">
 =================================================================================================
 <summary>
 The unit address of a drive is read in the command telegram and copied into the response
@@ -749,17 +782,17 @@ the  motion control and the unit address to the drive.
 </summary>
 =================================================================================================
 </member>
-<member name="T:TGM.Reactions._sercos_list_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="632">
+<member name="T:TGM.Reactions._sercos_list_t" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="710">
 =================================================================================================
 <summary>
 Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
 </summary>
 =================================================================================================
 </member>
-<member name="F:TGM.Reactions._sercos_list_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="642">
+<member name="F:TGM.Reactions._sercos_list_t.control" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="720">
 <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
 </member>
-<member name="F:TGM.Reactions._sercos_list_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\telegrams.h" line="645">
+<member name="F:TGM.Reactions._sercos_list_t.unit_addr" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\telegrams.h" line="723">
 =================================================================================================
 <summary>
 The unit address of a drive is read in the command telegram and copied into the response
@@ -769,38 +802,36 @@ the  motion control and the unit address to the drive.
 </summary>
 =================================================================================================
 </member>
-<member name="T:SISProtocol" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="18">
+<member name="T:SISProtocol" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="18">
 <summary>	Defines address master. </summary>
 <summary>	Defines sis address slave. '128' is used for peer-to-peer communication. </summary>
 <summary>	Address unit. For Indradrive, this value can be found at P-0-4022. </summary>
 </member>
-<member name="T:SISProtocol.ExceptionGeneric" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="39">
+<member name="T:SISProtocol.ExceptionGeneric" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="39">
 <summary>	Generic exception handling for SIS Protocol. </summary>
 </member>
-<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="41">
+<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="41">
 <summary>	Specific exception handling of SIS Protocol for failed transceiving. </summary>
 </member>
-<member name="T:SISProtocol.init_set_mask_baudrate" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="44">
+<member name="T:SISProtocol.init_set_mask_baudrate" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="44">
 <summary>	Baudrate mask that can be utilized for the Command Telegram Subservice 0x07 </summary>
 </member>
-<member name="M:SISProtocol.#ctor" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="54">
+<member name="M:SISProtocol.#ctor" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="54">
 <summary>	Default constructor. </summary>
 </member>
-<member name="M:SISProtocol.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="56">
+<member name="M:SISProtocol.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="56">
 <summary>	Destructor. </summary>
 </member>
-<member name="T:SISProtocol.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="90">
+<member name="M:SISProtocol.open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="59">
+API FUNCTIONS
+</member>
+<member name="M:SISProtocol.get_attributes(&lt;unknown type&gt;,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.Byte*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.UInt32*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="79">
+TELEGRAM SUPPORTING FUNCTIONS
+</member>
+<member name="T:SISProtocol.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="107">
 <summary>	Generic exceptions for SIS protocol. </summary>
 </member>
-<member name="F:SISProtocol.ExceptionGeneric.m_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="120">
-=================================================================================================
-<summary>
-For Win32 API commands, most likely representation of the System Error Codes:
-# https://msdn.microsoft.com/de-de/library/windows/desktop/ms681381(v=vs.85).aspx.
-</summary>
-=================================================================================================
-</member>
-<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\sis\sisprotocol.h" line="132">
+<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="143">
 <summary>	Specific exception handling of SIS Protocol transceiving failed. </summary>
 </member>
 </members>
