@@ -51,8 +51,9 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 				
-				std::vector<BYTE> rcvddata;
+				UINT32 rcvddata;
 				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
+				Logger::WriteMessage(sformat("S-0-0036=%d", rcvddata).c_str());
 
 				sis.close();
 			}
@@ -86,21 +87,16 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 
-				BYTE value = 77;
+				UINT32 value = 0;
+				sis.write_parameter(TGM::SERCOS_Param_S, 36, value);
 
-				std::vector<BYTE> data;
-				data.push_back(value);
-				data.push_back(0);
-				data.push_back(0);
-				data.push_back(0);
-				sis.write_parameter(TGM::SERCOS_Param_S, 36, data);
-
-				std::vector<BYTE> rcvddata;
+				UINT32 rcvddata;
 				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
+				Logger::WriteMessage(sformat("S-0-0036=%d", rcvddata).c_str());
 
 				sis.close();
 
-				Assert::AreEqual<BYTE>(value, rcvddata.at(0));
+				Assert::AreEqual<BYTE>(value, rcvddata);
 			}
 			catch (SISProtocol::ExceptionTransceiveFailed &ex)
 			{
@@ -132,8 +128,47 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 
-				std::vector<BYTE> rcvddata;
-				sis.read_listelm(TGM::SERCOS_Param_P, 4007, 1*4, 4, rcvddata);
+				for (int i = 1; i < 10; i++)
+				{
+					UINT32 rcvddata;
+					sis.read_listelm(TGM::SERCOS_Param_P, 4007, i, rcvddata);
+					Logger::WriteMessage(sformat("P-0-4007:%d=%d", i, rcvddata).c_str());
+				}
+
+				sis.close();
+			}
+			catch (SISProtocol::ExceptionTransceiveFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionReceptionFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+		}
+
+		TEST_METHOD(SIS_LISTPARAMETER_WRITE)
+		{
+			SISProtocol sis;
+
+			try
+			{
+				sis.open("COM1");
+
+				UINT32 data = 500;
+				sis.write_listelm(TGM::SERCOS_Param_P, 4007, 1, data);
 
 				sis.close();
 			}

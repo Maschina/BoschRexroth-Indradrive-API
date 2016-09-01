@@ -83,25 +83,23 @@ void SISProtocol::set_baudrate(init_set_mask_baudrate _baudrate)
 }
 
 
-void SISProtocol::read_parameter(const std::string & _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
+void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32 & _rcvddata)
 {
 	STACK;
 
-	TGM::SERCOS_ParamVar var;
-
-	if (_paramvar == "S")
-		var = TGM::SERCOS_Param_S;
-	else if (_paramvar == "P")
-		var = TGM::SERCOS_Param_P;
-	else
-		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
-
-	read_parameter(var, _paramnum, _rcvddata);
+	UINT64 buf;
+	read_parameter(_paramvar, _paramnum, buf);
+	_rcvddata = (UINT32)(buf & 0xFFFFFFFF);
 }
 
-void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _rcvddata)
+void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _rcvddata)
 {
 	STACK;
+
+	/// Fetching attributes for length and scale
+	size_t datalen = 1;
+	UINT8 scalefactor = 0;
+	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
@@ -125,37 +123,54 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 
-	/// Read back response
-	_rcvddata = rx_tgm.mapping.payload.data.toVector();
+	/// Response data
+	UINT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
+	_rcvddata = response / std::pow(10, scalefactor);
 }
 
-void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, USHORT _elm_length, std::vector<BYTE>& _rcvdelm)
+void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm)
 {
 	STACK;
 
+	UINT64 buf;
+	read_listelm(_paramvar, _paramnum, _elm_pos, buf);
+	_rcvdelm = (UINT32)(buf & 0xFFFFFFFF);
+}
+
+void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm)
+{
+	STACK;
+
+	/// Fetching attributes for length and scale
+	size_t datalen = 1;
+	UINT8 scalefactor = 0;
+	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+
+	USHORT element_size = (USHORT)datalen;
+	USHORT list_offset = _elm_pos * element_size;
+
 	/// Build Telegrams
-	TGM::Bitfields::Sercos_Control		sercos_control;
-	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
-	
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Sercos_List>
 		tx_tgm(
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_LIST_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_List(sercos_control, SIS_ADDR_SLAVE, param_num, _elm_pos, _elm_length)
+			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_Control(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size)
 		);
 
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Sercos_List> rx_tgm;
 
+	// Set payload size
 	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
 
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
 
-	/// Read back response
-	_rcvdelm = rx_tgm.mapping.payload.data.toVector();
+	/// Response data
+	UINT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
+	_rcvdelm = response / std::pow(10, scalefactor);
 }
 
 
@@ -171,25 +186,28 @@ inline UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &data
 }
 
 
-void SISProtocol::write_parameter(const std::string& _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
+
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32 & _data)
 {
 	STACK;
 
-	TGM::SERCOS_ParamVar var;
-
-	if (_paramvar == "S")
-		var = TGM::SERCOS_Param_S;
-	else if (_paramvar == "P")
-		var = TGM::SERCOS_Param_P;
-	else
-		throw SISProtocol::ExceptionGeneric(-1, sformat("Wrong paramvar parameter given: %s", _paramvar), true);
-
-	write_parameter(var, _paramnum, _data);
+	UINT64 buf = (UINT64)_data;
+	write_parameter(_paramvar, _paramnum, buf);
 }
 
-void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, std::vector<BYTE>& _data)
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _data)
 {
 	STACK;
+
+	/// Fetching attributes for length and scale
+	size_t datalen = 1;
+	UINT8 scalefactor = 0;
+	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+
+	UINT64 inval = _data * std::pow(10, scalefactor);
+
+	TGM::Data data;
+	set_sized_data(data, datalen, inval);
 
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_Control		sercos_control;
@@ -201,11 +219,57 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_num, TGM::Data(_data))
+			TGM::Commands::Sercos_Param(sercos_control, SIS_ADDR_SLAVE, param_num, data)
 		);
 
 	// Mapping for RECEPTION Telegram
 	TGM::Map<TGM::Header, TGM::Reactions::Sercos_Param> rx_tgm;
+
+	// Set payload size
+	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
+
+	/// Transceive
+	prepare_and_transceive(tx_tgm, rx_tgm);
+}
+
+
+void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm)
+{
+	STACK;
+
+	UINT64 buf = (UINT64)_rcvdelm;
+	write_listelm(_paramvar, _paramnum, _elm_pos, buf);
+}
+
+void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm)
+{
+	STACK;
+
+	/// Fetching attributes for length and scale
+	size_t datalen = 1;
+	UINT8 scalefactor = 0;
+	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+
+	UINT64 inval = _rcvdelm * std::pow(10, scalefactor);
+
+	TGM::Data data;
+	set_sized_data(data, datalen, inval);
+	
+	USHORT element_size = (USHORT)datalen;
+	USHORT list_offset = _elm_pos * element_size;
+
+	/// Build Telegrams
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Sercos_List>
+		tx_tgm(
+			// Init header
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_LIST_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
+			// Init payload
+			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_Control(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size, data)
+		);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Sercos_List> rx_tgm;
 
 	// Set payload size
 	tx_tgm.mapping.header.set_DatL(tx_tgm.mapping.payload.get_size());
@@ -360,7 +424,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 				if (rx_tgm.mapping.payload.status)
 				{
 					std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.bytes, tx_header_len + tx_payload_len);
-					std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len);
+					std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len + rx_payload_len);
 					throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: 0x%04x.\nCommand Telegram bytestream was: %s.\nRecption Telegram bytestream was: %s.", rx_tgm.mapping.payload.error, tx_hexstream.c_str(), rx_hexstream.c_str()), true);
 				}
 					
