@@ -34,50 +34,141 @@ For Win32 API commands, most likely representation of the System Error Codes:
             <summary>	Defines sis address slave. '128' is used for peer-to-peer communication. </summary>
             <summary>	Address unit. For Indradrive, this value can be found at P-0-4022. </summary>
         </member>
-        <member name="T:TGM.Reactions._subservice_pl_data_t">
+        <member name="F:TGM.Reactions._sercos_list_t.unit_addr">
 =================================================================================================
 <summary>
-Representation of the payload data for a Subservice reaction. A Reaction Telegram is for regular subservices,
+The unit address of a drive is read in the command telegram and copied into the response
+telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+the  motion control and the unit address to the drive.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Reactions._sercos_list_t.control">
+            <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+        </member>
+        <member name="T:TGM.Reactions._sercos_list_t">
+=================================================================================================
+<summary>
+Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Reactions._sercos_param_payload_t.unit_addr">
+=================================================================================================
+<summary>
+The unit address of a drive is read in the command telegram and copied into the response
+telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+the  motion control and the unit address to the drive.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Reactions._sercos_param_payload_t.control">
+            <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+        </member>
+        <member name="T:TGM.Reactions._sercos_param_payload_t">
+=================================================================================================
+<summary>
+Representation of the payload for a Sercos Parameter reaction. A Reaction Telegram is for regular subservices,
 such communication init, or device identification. This telegram is responded after successful execution of
 previous Command Telegram.
 </summary>
 =================================================================================================
 </member>
-        <member name="T:TGM.Reactions._subservice_pl_head_t">
+        <member name="T:TGM.Reactions._subservice_payload_t">
 =================================================================================================
 <summary>
-Representation of the payload header for a Subservice reaction. A Reaction Telegram is for regular subservices,
+Representation of the payload for a Subservice reaction. A Reaction Telegram is for regular subservices,
 such communication init, or device identification. This telegram is responded after successful execution of
 previous Command Telegram.
 </summary>
 =================================================================================================
 </member>
-        <member name="M:TGM.Commands._subservice_pl_data_t.clear">
-            <summary>	Clears this object to its blank/initial state. </summary>
+        <member name="F:TGM.Commands._sercos_list_t.data">
+            <summary>	Payload data. </summary>
         </member>
-        <member name="M:TGM.Commands._subservice_pl_data_t.#ctor(std.vector&lt;System.Byte,std.allocator&lt;System.Byte&gt;&gt;)">
-            <summary>	Default constructor. </summary>
+        <member name="F:TGM.Commands._sercos_list_t.element_size">
+            <summary>	Size of the element to be handeled. For example: The 11th element of a list
+consisting of 4-byte elements should be handeled --&gt; element_size=0x0004. </summary>
         </member>
-        <member name="T:TGM.Commands._subservice_pl_data_t">
+        <member name="F:TGM.Commands._sercos_list_t.list_offset">
 =================================================================================================
 <summary>
-Representation of the payload data for a Subservice command. A Command Telegram is for regular subservices, such
-communication init, or device identification. User for master communication (active communicator).
+Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
+consisting of 4-byte elements should be handeled --&gt; list_offset=0x0028.
 </summary>
 =================================================================================================
 </member>
-        <member name="M:TGM.Commands._subservice_pl_head_t.clear">
+        <member name="F:TGM.Commands._sercos_list_t.param_num">
+=================================================================================================
+<summary>
+Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Commands._sercos_list_t.unit_addr">
+=================================================================================================
+<summary>
+The unit address of a drive is read in the command telegram and copied into the response
+telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+the  motion control and the unit address to the drive.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Commands._sercos_list_t.control">
+            <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+        </member>
+        <member name="T:TGM.Commands._sercos_list_t">
+=================================================================================================
+<summary>
+Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Commands._sercos_param_t.data">
+            <summary>	Payload data. </summary>
+        </member>
+        <member name="F:TGM.Commands._sercos_param_t.param_num">
+=================================================================================================
+<summary>
+Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Commands._sercos_param_t.unit_addr">
+=================================================================================================
+<summary>
+The unit address of a drive is read in the command telegram and copied into the response
+telegram. For direct SIS communication with drives supporting SIS interface, unit address is
+the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
+the  motion control and the unit address to the drive.
+</summary>
+=================================================================================================
+</member>
+        <member name="F:TGM.Commands._sercos_param_t.control">
+            <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+        </member>
+        <member name="T:TGM.Commands._sercos_param_t">
+=================================================================================================
+<summary>
+Sercos Command Telegram used for reading/writing single parameter from/to slave.
+</summary>
+=================================================================================================
+</member>
+        <member name="M:TGM.Commands._subservice_payload_t.clear">
             <summary>	Clears this object to its blank/initial state. </summary>
         </member>
-        <member name="M:TGM.Commands._subservice_pl_head_t.#ctor(System.Byte,System.Byte)">
+        <member name="M:TGM.Commands._subservice_payload_t.#ctor(System.Byte,System.Byte,TGM._data_t)">
 =================================================================================================
 <summary>	Constructor. </summary><param name="_addr">	  	The recipient address. </param><param name="_subservice">	The subservice number. </param>
 =================================================================================================
 </member>
-        <member name="T:TGM.Commands._subservice_pl_head_t">
+        <member name="T:TGM.Commands._subservice_payload_t">
 =================================================================================================
 <summary>
-Representation of the payload header for a Subservice command. A Command Telegram is for regular subservices,
+Representation of the PAYLOAD for a Subservice command. A Command Telegram is for regular subservices,
 such communication init, or device identification. User for master communication (active communicator).
 </summary>
 =================================================================================================
@@ -142,11 +233,13 @@ Expanded part of the telegram header. Subaddress 1 of recipient. Bit 0-2 of Cntr
         <member name="T:TGM._header_ext_t">
             <summary>	Extended Telegram Header to be used for Routing and Sequential Telegrams. </summary>
         </member>
-        <member name="M:TGM._header_t.calc_checksum(TGM.Container._container_payload_t*,System.UInt32)">
+        <member name="M:TGM._header_t.calc_checksum(TGM._container_t*,System.UInt32)">
 =================================================================================================
 <summary>
-Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically assigned to CS.
-</summary><param name="_payload">	   	[in] Container of payload (head + data) with the raw data. </param><param name="_payload_len">	Length of the payload. </param>
+Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically
+assigned to CS. This function will use DatL parameter for the appropriate length
+determination.
+</summary><param name="_payload">	   	[in] Bytestream of payload (head + data) with the raw data. </param><param name="_payload_len">	Length of the payload. </param>
 =================================================================================================
 </member>
         <member name="M:TGM._header_t.set_DatL(System.UInt32)">
@@ -162,7 +255,7 @@ the payload length (head + data).
 <summary>	Gets the sum without carry of all header bytes for checksum calculation. </summary><param name="exclude_cs">	(Optional) true to exclude checksum from calculation. </param><returns>	The sum. </returns>
 =================================================================================================
 </member>
-        <member name="M:TGM._header_t.#ctor(System.Byte,System.Byte,System.Byte,TGM.Bitfields._cntrl_t)">
+        <member name="M:TGM._header_t.#ctor(System.Byte,System.Byte,System.Byte,TGM.Bitfields._header_cntrl_t)">
             <summary>	Default constructor. </summary>
         </member>
         <member name="F:TGM._header_t.AdrE">
@@ -258,34 +351,33 @@ The Telegram Header contains all information required for conducting orderly tel
 </summary>
 =================================================================================================
 </member>
-        <member name="M:TGM.Container._container_payload_t.clear">
+        <member name="M:TGM._container_t.clear">
             <summary>	Clears this object to its blank/initial state. </summary>
         </member>
-        <member name="M:TGM.Container._container_payload_t.#ctor">
+        <member name="M:TGM._container_t.#ctor">
             <summary>	Default constructor. </summary>
         </member>
-        <member name="F:TGM.Container._container_payload_t.bytes">
-            <summary>	The raw data. Size: 239 bytes (255 bytes - 8 bytes {Header}) </summary>
+        <member name="F:TGM._container_t.bytes">
+            <summary>	The raw data. Size: 254 bytes </summary>
         </member>
-        <member name="T:TGM.Container._container_payload_t">
-            <summary>	Container for Telegram's payload in raw data. </summary>
+        <member name="T:TGM._container_t">
+            <summary>	Container for Telegram in raw data. </summary>
         </member>
-        <member name="M:TGM.Container._container_header_t.clear">
-            <summary>	Clears this object to its blank/initial state. </summary>
-        </member>
-        <member name="M:TGM.Container._container_header_t.#ctor">
+        <member name="M:TGM._data_t.#ctor(std.vector&lt;System.Byte,std.allocator&lt;System.Byte&gt;&gt;)">
             <summary>	Default constructor. </summary>
         </member>
-        <member name="F:TGM.Container._container_header_t.bytes">
-            <summary>	The raw data. </summary>
-        </member>
-        <member name="T:TGM.Container._container_header_t">
-            <summary>	Container for Telegram's header in raw data. </summary>
-        </member>
-        <member name="M:TGM.Bitfields.sercos_param_ident_t.#ctor(TGM.Param_Variant,System.UInt16)">
+        <member name="T:TGM._data_t">
+=================================================================================================
+<summary>
+Struct to hold payload data in a command payload. Payload data is third part of a regular Telegram: Header +
+Payload data + Payload header.
+</summary>
+=================================================================================================
+</member>
+        <member name="M:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.#ctor(&lt;unknown type&gt;,System.UInt16)">
             <summary>	Default constructor. </summary>
         </member>
-        <member name="F:TGM.Bitfields.sercos_param_ident_t.param_variant">
+        <member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_variant">
 =================================================================================================
 <summary>
 Bit 16: Parameter variant:
@@ -294,19 +386,16 @@ Bit 16: Parameter variant:
 </summary>
 =================================================================================================
 </member>
-        <member name="F:TGM.Bitfields.sercos_param_ident_t.param_block">
-            <summary>	Bit 12-15: The parameter block [0..7]. </summary>
+        <member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_set">
+            <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_set. </summary>
         </member>
-        <member name="F:TGM.Bitfields.sercos_param_ident_t.param_num">
-            <summary>	Bit 0-11: The parameter number [0..4095]. </summary>
+        <member name="F:TGM.Bitfields.sercos_param_ident_t.&lt;unnamed-tag&gt;.bits_t.param_no">
+            <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_no. </summary>
         </member>
         <member name="T:TGM.Bitfields.sercos_param_ident_t">
             <summary>	Identification of the parameter. Size: 16 bit. </summary>
         </member>
-        <member name="M:TGM.Bitfields.sercos_control_t.#ctor(TGM.Bitfields.sercos_control_t.sercos_control_type)">
-            <summary>	Default constructor. </summary>
-        </member>
-        <member name="F:TGM.Bitfields.sercos_control_t.type">
+        <member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.attribute">
 =================================================================================================
 <summary>
 The type of the SERCOS parameter: 
@@ -321,7 +410,7 @@ The type of the SERCOS parameter:
 </summary>
 =================================================================================================
 </member>
-        <member name="F:TGM.Bitfields.sercos_control_t.tx_status">
+        <member name="F:TGM.Bitfields.sercos_control_t.&lt;unnamed-tag&gt;.bits_t.tx_status">
 =================================================================================================
 <summary>
 The transmission of a consecutive telegram is controlled with this bit (lists are written in
@@ -339,7 +428,7 @@ The control byte is read out of the command telegram and copied into the respons
 </summary>
 ================================================================================================= 
 </member>
-        <member name="F:TGM.Bitfields._cntrl_t.status_react_tgm">
+        <member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.status_react_tgm">
 =================================================================================================
 <summary>
 Bit 5-7: Status data for the reaction telegram.
@@ -351,20 +440,20 @@ Bit 5-7: Status data for the reaction telegram.
 </summary>
 =================================================================================================
 </member>
-        <member name="F:TGM.Bitfields._cntrl_t.type">
+        <member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.type">
             <summary>	Bit 4: Telegram type. 0: Command telegram, 1: Reaction telegram. </summary>
         </member>
-        <member name="F:TGM.Bitfields._cntrl_t.num_running_tgm">
+        <member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_running_tgm">
             <summary>	Bit 3: Running telegram number. 0: not support, 1: additional byte. </summary>
         </member>
-        <member name="F:TGM.Bitfields._cntrl_t.num_sub_addresses">
+        <member name="F:TGM.Bitfields._header_cntrl_t.&lt;unnamed-tag&gt;.bits_t.num_sub_addresses">
 =================================================================================================
 <summary>
 Bit 0-2: Number of sub-addresses in the address block: num_sub_addresses=[0..7].
 </summary>
 =================================================================================================
 </member>
-        <member name="T:TGM.Bitfields._cntrl_t">
+        <member name="T:TGM.Bitfields._header_cntrl_t">
             <summary>	Control byte consisting of several bit fields. Size: 8 bit. </summary>
         </member>
         <member name="F:CSerial.ExceptionGeneric.m_status">
