@@ -236,28 +236,6 @@ void CSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue, bool 
 
 	// Non-blocking reads is default
 	SetupReadTimeouts(EReadTimeoutNonblocking);
-
-	// Setup the device for default settings
- 	COMMCONFIG commConfig = {0};
-	DWORD dwSize = sizeof(commConfig);
-	commConfig.dwSize = dwSize;
-
-	if (::GetDefaultCommConfig(lpszDevice, &commConfig, &dwSize))
-	{
-		// Set the default communication configuration
-		if (!::SetCommConfig(m_hFile, &commConfig, dwSize))
-		{
-			// Display a warning
-			m_lLastError = ::GetLastError();
-			throw ExceptionGeneric(m_lLastError, "Unable to set default communication configuration.", true);
-		}
-	}
-	else
-	{
-		// Display a warning
-		m_lLastError = ::GetLastError();
-		throw ExceptionGeneric(m_lLastError, "Unable to obtain default communication configuration.", true);
-	}
 }
 
 LONG CSerial::Close (void)
