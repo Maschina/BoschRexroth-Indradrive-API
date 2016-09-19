@@ -19,6 +19,11 @@
 
 namespace stde
 {
+	template <typename T> int sgn(T val) 
+	{
+		return (T(0) < val) - (val < T(0));
+	}
+
 	static std::string GetWinErrorString(DWORD _errorMessageID)
 	{
 		//Get the error message, if any.

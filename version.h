@@ -6,15 +6,15 @@
 // Will be automatically increased by AutoIncreaseBuildNrs.exe
 // cmd: AutoIncreaseBuildNrs.exe version.h
 <<<<<<< HEAD:Lib/API/version.h
-#define VER_BUILDNR 39
+#define VER_BUILDNR 40
 // Will be automatically increased by get-git-rev-HEAD.py
 // cmd: python get-git-rev-HEAD.py $(MSBuildProjectDir) version.h
-#define VER_BUILD					8585d2d
+#define VER_BUILD					f2d0e78
 =======
 #define VER_BUILDNR 1
 // Will be automatically increased by get-git-rev-HEAD.py
 // cmd: python get-git-rev-HEAD.py $(MSBuildProjectDir) version.h
-#define VER_BUILD					8585d2d
+#define VER_BUILD					f2d0e78
 >>>>>>> parent of 68aad79... Move files from Lib to Lib/API:Lib/version.h
 
 

@@ -236,5 +236,6 @@ namespace SISProtocolTest
 				Assert::Fail(char2wchar(ex.what()));
 			}
 		}
+
 	};
 }
