@@ -124,7 +124,7 @@ namespace TGM
 			return out;
 		}
 
-		UINT8 toUNIT8()
+		UINT8 toUINT8()
 		{
 			return toBYTE();
 		}
@@ -482,7 +482,7 @@ namespace TGM
 #pragma pack(push,1)
 		typedef struct _sercos_param_t
 		{
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
 			BYTE control;
 
 			///=================================================================================================
@@ -508,7 +508,7 @@ namespace TGM
 			Data data;
 
 			_sercos_param_t(
-				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(), 
+				TGM::Bitfields::Sercos_ParControl _control = TGM::Bitfields::Sercos_ParControl(), 
 				BYTE _unit_addr = 0, 
 				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), 
 				TGM::Data _data = Data()) :
@@ -543,7 +543,7 @@ namespace TGM
 #pragma pack(push,1)
 		typedef struct _sercos_list_t
 		{
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
 			BYTE control;
 
 			///=================================================================================================
@@ -581,7 +581,7 @@ namespace TGM
 			Data data;
 
 			_sercos_list_t(
-				TGM::Bitfields::Sercos_Control _control = TGM::Bitfields::Sercos_Control(),
+				TGM::Bitfields::Sercos_ParControl _control = TGM::Bitfields::Sercos_ParControl(),
 				BYTE _unit_addr = 0,
 				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(),
 				USHORT _list_offset = 0,
@@ -667,7 +667,7 @@ namespace TGM
 		{
 			BYTE status;
 
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
 			BYTE control;
 
 			///=================================================================================================
@@ -717,7 +717,7 @@ namespace TGM
 		{
 			BYTE status;
 
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_Control and toByte(). </summary>
+			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
 			BYTE control;
 
 			///=================================================================================================

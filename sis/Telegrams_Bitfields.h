@@ -28,6 +28,20 @@ namespace TGM
 		SERCOS_Datablock_operatingdata
 	};
 
+	enum SERCOS_Commandrequest : BYTE {
+		SERCOS_Commandrequest_not_set = 0x0,
+		SERCOS_Commandrequest_cancel = 0x1,
+		SERCOS_Commandrequest_set = 0x3
+	};
+
+	enum SERCOS_Commandstatus : BYTE {
+		SERCOS_Commandstatus_not_set = 0x0,
+		SERCOS_Commandstatus_ok = 0x3,
+		SERCOS_Commandstatus_canceled = 0x5,
+		SERCOS_Commandstatus_busy = 0x7,
+		SERCOS_Commandstatus_error = 0xF
+	};
+
 	enum SERCOS_TX : BYTE {
 		SERCOS_TX_in_progress,
 		SERCOS_TX_final
@@ -102,7 +116,7 @@ namespace TGM
 		/// The control byte is read out of the command telegram and copied into the response  telegram.
 		/// </summary>
 		///================================================================================================= 
-		typedef struct sercos_control_t
+		typedef struct sercos_parcontrol_t
 		{
 			union
 			{
@@ -148,15 +162,15 @@ namespace TGM
 				BYTE value;
 			};
 
-			sercos_control_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
+			sercos_parcontrol_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
 				bits(_attribute)
 			{}
 
-			sercos_control_t(BYTE _value) :
+			sercos_parcontrol_t(BYTE _value) :
 				value(_value)
 			{}
 
-		} Sercos_Control;
+		} Sercos_ParControl;
 
 
 		/// <summary>	Identification of the parameter. Size: 16 bit. </summary>

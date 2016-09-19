@@ -99,10 +99,10 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 	/// Fetching attributes for length and scale
 	size_t datalen = 1;
 	UINT8 scalefactor = 0;
-	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
 	/// Build Telegrams
-	TGM::Bitfields::Sercos_Control		sercos_control;
+	TGM::Bitfields::Sercos_ParControl		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
 
 	// Mapping for SEND Telegram
@@ -144,7 +144,7 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 	/// Fetching attributes for length and scale
 	size_t datalen = 1;
 	UINT8 scalefactor = 0;
-	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
 	USHORT element_size = (USHORT)datalen;
 	USHORT list_offset = _elm_pos * element_size;
@@ -156,7 +156,7 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_LIST_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_Control(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size)
+			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_ParControl(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size)
 		);
 
 	// Mapping for RECEPTION Telegram
@@ -178,7 +178,7 @@ inline UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &data
 {
 	STACK;
 
-	if (datalen == 1) return (UINT64)rx_data.toUNIT8();
+	if (datalen == 1) return (UINT64)rx_data.toUINT8();
 	else if (datalen == 2) return (UINT64)rx_data.toUINT16();
 	else if (datalen == 4) return (UINT64)rx_data.toUINT32();
 	else if (datalen == 8) return (UINT64)rx_data.toUINT64();
@@ -187,22 +187,21 @@ inline UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &data
 
 
 
-void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32 & _data)
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT32 _data)
 {
 	STACK;
 
-	UINT64 buf = (UINT64)_data;
-	write_parameter(_paramvar, _paramnum, buf);
+	write_parameter(_paramvar, _paramnum, static_cast<UINT64>(_data));
 }
 
-void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _data)
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT64 _data)
 {
 	STACK;
 
 	/// Fetching attributes for length and scale
 	size_t datalen = 1;
 	UINT8 scalefactor = 0;
-	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
 	UINT64 inval = _data * std::pow(10, scalefactor);
 
@@ -210,7 +209,7 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 	set_sized_data(data, datalen, inval);
 
 	/// Build Telegrams
-	TGM::Bitfields::Sercos_Control		sercos_control;
+	TGM::Bitfields::Sercos_ParControl		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
 			
 	// Mapping for SEND Telegram
@@ -248,7 +247,7 @@ void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum
 	/// Fetching attributes for length and scale
 	size_t datalen = 1;
 	UINT8 scalefactor = 0;
-	get_attributes(_paramvar, _paramnum, scalefactor, datalen);
+	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
 	UINT64 inval = _rcvdelm * std::pow(10, scalefactor);
 
@@ -265,7 +264,7 @@ void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_LIST_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_Control(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size, data)
+			TGM::Commands::Sercos_List(TGM::Bitfields::Sercos_ParControl(), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), list_offset, element_size, data)
 		);
 
 	// Mapping for RECEPTION Telegram
@@ -276,6 +275,86 @@ void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum
 
 	/// Transceive
 	prepare_and_transceive(tx_tgm, rx_tgm);
+}
+
+
+void SISProtocol::execute_command(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum)
+{
+	TGM::SERCOS_Commandrequest cmd;
+	TGM::SERCOS_Commandstatus status = TGM::SERCOS_Commandstatus_busy;
+	int iterations;
+
+	/// Start command
+	cmd = TGM::SERCOS_Commandrequest_set;
+	try
+	{
+		write_parameter(_paramvar, _paramnum, static_cast<UINT64>(cmd));
+	}
+	catch (SISProtocol::ExceptionSISError &ex)
+	{
+		if (ex.get_errorcode() == 0x700C)
+			throw SISProtocol::ExceptionGeneric(-1, "Command cannot be executed, because it is write-protected. Release the drive torque (disable drive), or restart the Indradrive system.");
+		else
+			throw;
+	}
+	
+	iterations = 0;
+	do
+	{
+		get_parameter_status(_paramvar, _paramnum, status);
+
+		if (iterations > 300) throw ExceptionGeneric(-1, "Command execution caused a continuous busy loop. Please restart the Indradrive system.");
+	} while (status == TGM::SERCOS_Commandstatus_busy);
+
+	if (status != TGM::SERCOS_Commandstatus_ok)
+		throw ExceptionGeneric(static_cast<int>(status), sformat("Command execution failed with status code %d. Command executation canceled or not possible due to released operation state of the drive.", status));
+
+	
+	/// Delete command
+	cmd = TGM::SERCOS_Commandrequest_not_set;
+	write_parameter(_paramvar, _paramnum, static_cast<UINT64>(cmd));
+	
+	status = TGM::SERCOS_Commandstatus_busy;
+	iterations = 0;
+	do
+	{
+		get_parameter_status(_paramvar, _paramnum, status);
+
+		if (iterations > 300) throw ExceptionGeneric(-1, "Command execution caused a continuous busy loop. Please restart the Indradrive system.");
+	} while (status == TGM::SERCOS_Commandstatus_busy);
+
+	if (status != TGM::SERCOS_Commandstatus_not_set)
+		throw ExceptionGeneric(static_cast<int>(status), sformat("Command execution failed with status code %d. Command executation canceled or not possible due to released operation state of the drive.", status));
+}
+
+
+inline void SISProtocol::get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT & _paramnum, TGM::SERCOS_Commandstatus& _datastatus)
+{
+	STACK;
+
+	/// Build Telegrams
+	// Mapping for SEND Telegram
+	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
+		datastatus_tx_tgm(
+			// Init header
+			// Service 0x1F will be used to acquire data status
+			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_WRITE, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
+			// Init payload
+			// Par Control SERCOS_Datablock_ident_number is required to get the status of the parameter. Furthermore, payload data will be filled with parameter number again
+			TGM::Commands::Sercos_Param(TGM::Bitfields::Sercos_ParControl(TGM::SERCOS_Datablock_ident_number), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum), TGM::Data(_paramnum))
+		);
+
+	// Mapping for RECEPTION Telegram
+	TGM::Map<TGM::Header, TGM::Reactions::Sercos_List> datastatus_rx_tgm;
+
+
+	datastatus_tx_tgm.mapping.header.set_DatL(datastatus_tx_tgm.mapping.payload.get_size());
+
+	/// Transceive
+	prepare_and_transceive(datastatus_tx_tgm, datastatus_rx_tgm);
+
+	/// Read back attribute
+	_datastatus = static_cast<TGM::SERCOS_Commandstatus>(datastatus_rx_tgm.mapping.payload.data.toUINT8());
 }
 
 
@@ -310,7 +389,7 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 }
 
 
-inline void SISProtocol::get_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen)
+inline void SISProtocol::get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen)
 {
 	STACK;
 
@@ -321,7 +400,7 @@ inline void SISProtocol::get_attributes(TGM::SERCOS_ParamVar _paramvar, const US
 			// Init header
 			TGM::Header(SIS_ADDR_MASTER, SIS_ADDR_SLAVE, SIS_SERVICE_SERCOS_PARAM_READ, TGM::Bitfields::Header_Cntrl(TGM::Type_Command)),
 			// Init payload
-			TGM::Commands::Sercos_Param(TGM::Bitfields::Sercos_Control(TGM::SERCOS_Datablock_attribute), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum))
+			TGM::Commands::Sercos_Param(TGM::Bitfields::Sercos_ParControl(TGM::SERCOS_Datablock_attribute), SIS_ADDR_SLAVE, TGM::Bitfields::Sercos_Param_Ident(_paramvar, _paramnum))
 		);
 
 	// Mapping for RECEPTION Telegram
@@ -424,8 +503,8 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 				if (rx_tgm.mapping.payload.status)
 				{
 					std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.bytes, tx_header_len + tx_payload_len);
-					std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len + rx_payload_len);
-					throw SISProtocol::ExceptionTransceiveFailed(rx_tgm.mapping.payload.status, sformat("Telegram with status message received. Error byte: 0x%04x.\nCommand Telegram bytestream was: %s.\nRecption Telegram bytestream was: %s.", rx_tgm.mapping.payload.error, tx_hexstream.c_str(), rx_hexstream.c_str()), true);
+					//std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len + rx_payload_len);
+					throw SISProtocol::ExceptionSISError(rx_tgm.mapping.payload.status, rx_tgm.mapping.payload.error, tx_hexstream);
 				}
 					
 				bContd = false;

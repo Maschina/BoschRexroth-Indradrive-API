@@ -193,5 +193,48 @@ namespace SISProtocolTest
 				Assert::Fail(char2wchar(ex.what()));
 			}
 		}
+
+		TEST_METHOD(SIS_EXEC_COMMAND)
+		{
+			SISProtocol sis;
+
+			try
+			{
+				sis.open("COM1");
+
+				// Activate parameterization level 1 // C0400
+				sis.execute_command(TGM::SERCOS_Param_S, 420);
+
+				// Leave parameterization level 1 // C0200
+				sis.execute_command(TGM::SERCOS_Param_S, 422);
+
+				sis.close();
+			}
+			catch (SISProtocol::ExceptionTransceiveFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionSISError &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (SISProtocol::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionReceptionFailed &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+			catch (CSerial::ExceptionGeneric &ex)
+			{
+				Logger::WriteMessage(ex.what());
+				Assert::Fail(char2wchar(ex.what()));
+			}
+		}
 	};
 }

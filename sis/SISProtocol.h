@@ -43,6 +43,8 @@ public:
 	/// <summary>	Specific exception handling of SIS Protocol for failed transceiving. </summary>
 	class ExceptionTransceiveFailed;
 
+	class ExceptionSISError;
+
 	/// <summary>	Baudrate mask that can be utilized for the Command Telegram Subservice 0x07 </summary>
 	enum init_set_mask_baudrate
 	{
@@ -71,16 +73,20 @@ public:
 	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm);
 	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64 & _rcvdelm);
 	
-	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32& _data);
-	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _data);
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT32 _data);
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT64 _data);
 
 	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32& _rcvdelm);
 	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm);
 
+	void execute_command(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum);
+
+
 private:
 	/// TELEGRAM SUPPORTING FUNCTIONS
 
-	inline void get_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen);
+	inline void get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen);
+	inline void get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, TGM::SERCOS_Commandstatus& _datastatus);
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 	inline void prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
@@ -165,6 +171,41 @@ public:
 		return ex;
 #endif
 	}
+};
+
+
+/// <summary>	Specific exception handling of SIS Protocol error codes. </summary>
+class SISProtocol::ExceptionSISError : public SISProtocol::ExceptionGeneric
+{
+public:
+	ExceptionSISError(
+		int _status,
+		int _code,
+		const std::string _bytestream,
+		bool _warning = false) :
+
+		ExceptionGeneric(_status, std::string(), _warning),
+		m_errorcode(_code),
+		m_bytestream(_bytestream)
+	{}
+	~ExceptionSISError() throw() {}
+
+	virtual const char* what() const throw ()
+	{
+#ifdef NDEBUG
+		return str2char(sformat("(Return code: %d) SIS Protocol Error code returned has been received: 0x%04X.\nOriginal Telegram bytestream: %s", m_status, m_errorcode, m_bytestream.c_str()));
+#else
+		const char* ex = str2char(sformat("(Return code: %d) SIS Protocol Error code returned has been received: 0x%04X.\nOriginal Telegram bytestream: %s", m_status, m_errorcode, m_bytestream.c_str()));
+		OutputDebugStringA((LPCSTR)ex);
+		return ex;
+#endif
+	}
+
+	int get_errorcode() { return m_errorcode; }
+
+protected:
+	int m_errorcode;
+	std::string m_bytestream;
 };
 
 #endif /* _SISPROTOCOL_H_ */

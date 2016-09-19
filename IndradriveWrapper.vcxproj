@@ -87,8 +87,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)
-copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)</Command>
+      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\
+copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)..\</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -133,7 +133,7 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)</Command>
+      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
