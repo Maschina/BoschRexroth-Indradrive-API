@@ -45,7 +45,8 @@ extern "C" {  /*  using a C++ compiler  */
 
 	/// API: Sequencer
 
-	DLLIMPORT int32_t sequencer_init(SISProtocol* ID_ref, uint32_t ID_max_accel, int32_t ID_max_jerk, LStrHandle ID_errmsg);
+	DLLIMPORT int32_t sequencer_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg);
+	DLLIMPORT int32_t sequencer_write(SISProtocol* ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, LStrHandle ID_errmsg);
 
 #ifdef __cplusplus
 }

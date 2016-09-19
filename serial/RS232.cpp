@@ -119,12 +119,12 @@ CSerial::~CSerial ()
 
 	// Try to open the device
 	HANDLE hFile = ::CreateFile(lpszDevice,				// address of name of the communications device
-						   GENERIC_READ|GENERIC_WRITE,	// access (read-write) mode
-						   0,							// share mode
-						   0,							// address of security descriptor
-						   OPEN_EXISTING,				// how to create
-						   0,							// file attributes
-						   0);							// handle of file with attributes to copy
+							GENERIC_READ|GENERIC_WRITE,	// access (read-write) mode
+							0,							// share mode
+							NULL,						// address of security descriptor
+							OPEN_EXISTING,				// how to create
+							0,							// file attributes
+							NULL);						// handle of file with attributes to copy
 
 	// Check if we could open the device
 	if (hFile == INVALID_HANDLE_VALUE)
