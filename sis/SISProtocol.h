@@ -69,15 +69,19 @@ public:
 
 	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32& _rcvddata);
 	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _rcvddata);
+	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, DOUBLE& _rcvddata);
 
-	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm);
-	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64 & _rcvdelm);
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32& _rcvdelm);
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm);
+	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, DOUBLE& _rcvdelm);
 	
 	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT32 _data);
 	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT64 _data);
+	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const DOUBLE _data);
 
-	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32& _rcvdelm);
-	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm);
+	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT32 _rcvdelm);
+	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT64 _rcvdelm);
+	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const DOUBLE _rcvdelm);
 
 	void execute_command(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum);
 

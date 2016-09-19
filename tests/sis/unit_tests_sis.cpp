@@ -87,12 +87,12 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 
-				UINT32 value = 0;
+				DOUBLE value = 5.2;
 				sis.write_parameter(TGM::SERCOS_Param_S, 36, value);
 
-				UINT32 rcvddata;
+				DOUBLE rcvddata;
 				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
-				Logger::WriteMessage(sformat("S-0-0036=%d", rcvddata).c_str());
+				Logger::WriteMessage(sformat("S-0-0036=%f", rcvddata).c_str());
 
 				sis.close();
 
@@ -130,9 +130,9 @@ namespace SISProtocolTest
 
 				for (int i = 1; i < 10; i++)
 				{
-					UINT32 rcvddata;
+					DOUBLE rcvddata;
 					sis.read_listelm(TGM::SERCOS_Param_P, 4007, i, rcvddata);
-					Logger::WriteMessage(sformat("P-0-4007:%d=%d", i, rcvddata).c_str());
+					Logger::WriteMessage(sformat("P-0-4007:%d=%f", i, rcvddata).c_str());
 				}
 
 				sis.close();
@@ -167,7 +167,7 @@ namespace SISProtocolTest
 			{
 				sis.open("COM1");
 
-				UINT32 data = 500;
+				DOUBLE data = 500.2;
 				sis.write_listelm(TGM::SERCOS_Param_P, 4007, 1, data);
 
 				sis.close();

@@ -87,12 +87,21 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 {
 	STACK;
 
-	UINT64 buf;
+	DOUBLE buf;
 	read_parameter(_paramvar, _paramnum, buf);
-	_rcvddata = (UINT32)(buf & 0xFFFFFFFF);
+	_rcvddata = static_cast<UINT32>(buf);
 }
 
 void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _rcvddata)
+{
+	STACK;
+
+	DOUBLE buf;
+	read_parameter(_paramvar, _paramnum, buf);
+	_rcvddata = static_cast<UINT64>(buf);
+}
+
+void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, DOUBLE & _rcvddata)
 {
 	STACK;
 
@@ -132,12 +141,21 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 {
 	STACK;
 
-	UINT64 buf;
+	DOUBLE buf;
 	read_listelm(_paramvar, _paramnum, _elm_pos, buf);
-	_rcvdelm = (UINT32)(buf & 0xFFFFFFFF);
+	_rcvdelm = static_cast<UINT32>(buf);
 }
 
 void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm)
+{
+	STACK;
+
+	DOUBLE buf;
+	read_listelm(_paramvar, _paramnum, _elm_pos, buf);
+	_rcvdelm = static_cast<UINT64>(buf);
+}
+
+void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, DOUBLE & _rcvdelm)
 {
 	STACK;
 
@@ -191,10 +209,17 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 {
 	STACK;
 
-	write_parameter(_paramvar, _paramnum, static_cast<UINT64>(_data));
+	write_parameter(_paramvar, _paramnum, static_cast<DOUBLE>(_data));
 }
 
 void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT64 _data)
+{
+	STACK;
+
+	write_parameter(_paramvar, _paramnum, static_cast<DOUBLE>(_data));
+}
+
+void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const DOUBLE _data)
 {
 	STACK;
 
@@ -203,7 +228,7 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 	UINT8 scalefactor = 0;
 	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
-	UINT64 inval = _data * std::pow(10, scalefactor);
+	UINT64 inval = static_cast<UINT64>(_data * std::pow(10, scalefactor));
 
 	TGM::Data data;
 	set_sized_data(data, datalen, inval);
@@ -211,7 +236,7 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 	/// Build Telegrams
 	TGM::Bitfields::Sercos_ParControl		sercos_control;
 	TGM::Bitfields::Sercos_Param_Ident	param_num(_paramvar, _paramnum);
-			
+
 	// Mapping for SEND Telegram
 	TGM::Map<TGM::Header, TGM::Commands::Sercos_Param>
 		tx_tgm(
@@ -232,15 +257,23 @@ void SISProtocol::write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 }
 
 
-void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm)
+void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT32 _rcvdelm)
 {
 	STACK;
 
-	UINT64 buf = (UINT64)_rcvdelm;
+	DOUBLE buf = static_cast<DOUBLE>(_rcvdelm);
 	write_listelm(_paramvar, _paramnum, _elm_pos, buf);
 }
 
-void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm)
+void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT64 _rcvdelm)
+{
+	STACK;
+
+	DOUBLE buf = static_cast<DOUBLE>(_rcvdelm);
+	write_listelm(_paramvar, _paramnum, _elm_pos, buf);
+}
+
+void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const DOUBLE _rcvdelm)
 {
 	STACK;
 
@@ -249,11 +282,11 @@ void SISProtocol::write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum
 	UINT8 scalefactor = 0;
 	get_parameter_attributes(_paramvar, _paramnum, scalefactor, datalen);
 
-	UINT64 inval = _rcvdelm * std::pow(10, scalefactor);
+	UINT64 inval = static_cast<UINT64>(_rcvdelm * std::pow(10, scalefactor));
 
 	TGM::Data data;
 	set_sized_data(data, datalen, inval);
-	
+
 	USHORT element_size = (USHORT)datalen;
 	USHORT list_offset = _elm_pos * element_size;
 
