@@ -5,14 +5,12 @@
 
 #include "SISProtocol.h"
 #include "RS232.h"
-
-#include "labview_types.h"
-#include "labview_errors.h"
-#include "labview_helpers.h"
+#include "errors.h"
 
 
 /*  building a DLL  */
-#define DLLIMPORT __declspec (dllexport)
+#define DLLEXPORT __declspec(dllexport)
+#define DLLCALLCONV __cdecl
 
 #ifndef _DLL
 #error Project output has to be a DLL file
@@ -38,24 +36,24 @@ extern "C" {  /*  using a C++ compiler  */
 
 	/// API: Fundumentals
 
-	DLLIMPORT SISProtocol* init();
-	DLLIMPORT int32_t open(SISProtocol* ID_ref, char* ID_comport = "COM1", uint32_t ID_combaudrate = 19200, LStrHandle ID_errmsg = LStrHandle());
-	DLLIMPORT int32_t close(SISProtocol* ID_ref, LStrHandle ID_errmsg);
+	DLLEXPORT SISProtocol* DLLCALLCONV init();
+	DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const char* ID_comport = "COM1", uint32_t ID_combaudrate = 19200, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV close(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 
 	/// API: Sequencer
 
-	DLLIMPORT int32_t sequencer_activate(SISProtocol* ID_ref, LStrHandle ID_errmsg);
-	DLLIMPORT int32_t sequencer_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg);
-	DLLIMPORT int32_t sequencer_write(SISProtocol* ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, LStrHandle ID_errmsg);
-	DLLIMPORT int32_t sequencer_softtrigger(SISProtocol* ID_ref, LStrHandle ID_errmsg);
+	DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol* ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 
 	/// API: SpeedControl
 
-	DLLIMPORT int32_t speedcontrol_activate(SISProtocol* ID_ref, LStrHandle ID_errmsg);
-	DLLIMPORT int32_t speedcontrol_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg);
-	DLLIMPORT int32_t speedcontrol_write(SISProtocol* ID_ref, int32_t ID_speed, double_t ID_accel, LStrHandle ID_errmsg);
+	DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol* ID_ref, uint32_t ID_max_accel = 10000, uint32_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol* ID_ref, int32_t ID_speed, double_t ID_accel, ErrHandle ID_err = ErrHandle());
 
 #ifdef __cplusplus
 }

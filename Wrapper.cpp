@@ -1,44 +1,44 @@
 #include "Wrapper.h"
 
 
-DLLIMPORT SISProtocol * init()
+DLLEXPORT SISProtocol * DLLCALLCONV init()
 {
 	SISProtocol * protocol = new SISProtocol();
 	return protocol;
 }
 
 
-DLLIMPORT int32_t open(SISProtocol* ID_ref, const char* ID_comport, uint32_t ID_combaudrate, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const char* ID_comport, uint32_t ID_combaudrate, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref)) 
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
 		ID_ref->open(ID_comport);
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_OpenByCOM);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_OpenByCOM);
 	}
 	catch (CSerial::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_OpenByCOM);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_OpenByCOM);
 	}
 }
 
 
-DLLIMPORT int32_t close(SISProtocol* ID_ref, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV close(SISProtocol* ID_ref, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -46,22 +46,22 @@ DLLIMPORT int32_t close(SISProtocol* ID_ref, LStrHandle ID_errmsg)
 
 		delete ID_ref;
 		ID_ref = NULL;
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_Close);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_Close);
 	}
 }
 
 
-DLLIMPORT int32_t sequencer_activate(SISProtocol * ID_ref, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol * ID_ref, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -75,21 +75,21 @@ DLLIMPORT int32_t sequencer_activate(SISProtocol * ID_ref, LStrHandle ID_errmsg)
 		// Leave parameterization level 1 (S-0-0422) // Command C0200
 		ID_ref->execute_command(TGM::SERCOS_Param_S, 422);
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_SeqInit);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqInit);
 	}
 }
 
-DLLIMPORT int32_t sequencer_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -105,21 +105,21 @@ DLLIMPORT int32_t sequencer_init(SISProtocol * ID_ref, uint32_t ID_max_accel, ui
 		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<UINT64>(0));
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_SeqInit);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqInit);
 	}
 }
 
-DLLIMPORT int32_t sequencer_write(SISProtocol * ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -157,21 +157,21 @@ DLLIMPORT int32_t sequencer_write(SISProtocol * ID_ref, int32_t ID_speeds[], dou
 		// Time triggers for cam (P-0-1370)
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1370, static_cast<UINT32>(ID_set_length));
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_SeqWrite);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
 	}	
 }
 
-DLLIMPORT int32_t sequencer_softtrigger(SISProtocol * ID_ref, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -199,21 +199,21 @@ DLLIMPORT int32_t sequencer_softtrigger(SISProtocol * ID_ref, LStrHandle ID_errm
 		// Check status (P-0-1410)
 		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); /// TODO: Check Drive started bit (0b1000)
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_SeqWrite);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
 	}
 }
 
-DLLIMPORT int32_t speedcontrol_activate(SISProtocol * ID_ref, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol * ID_ref, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -227,21 +227,21 @@ DLLIMPORT int32_t speedcontrol_activate(SISProtocol * ID_ref, LStrHandle ID_errm
 		// Leave parameterization level 1 (S-0-0422) // Command C0200
 		ID_ref->execute_command(TGM::SERCOS_Param_S, 422);
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_VelCInit);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_VelCInit);
 	}
 }
 
-DLLIMPORT int32_t speedcontrol_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -251,21 +251,21 @@ DLLIMPORT int32_t speedcontrol_init(SISProtocol * ID_ref, uint32_t ID_max_accel,
 		// Max Jerk (S-0-0349)
 		ID_ref->write_parameter(TGM::SERCOS_Param_S, 349, ID_max_jerk);
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_VelCInit);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_VelCInit);
 	}
 }
 
-DLLIMPORT int32_t speedcontrol_write(SISProtocol * ID_ref, int32_t ID_speed, double_t ID_accel, LStrHandle ID_errmsg)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, int32_t ID_speed, double_t ID_accel, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
-		return get_error_code(
-			ID_errmsg, sformat("Reference pointing to invalid location '%p'.", ID_ref).c_str(),
-			LVErr_Invalid_Pointer);
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
 	try
 	{
@@ -280,10 +280,10 @@ DLLIMPORT int32_t speedcontrol_write(SISProtocol * ID_ref, int32_t ID_speed, dou
 		// Speed in rpm (S-0-0036)
 		ID_ref->write_parameter(TGM::SERCOS_Param_S, 36, static_cast<UINT32>(abs(ID_speed)));
 
-		return LVErr_NoError;
+		return Err_NoError;
 	}
 	catch (SISProtocol::ExceptionGeneric &ex)
 	{
-		return get_error_code(ID_errmsg, char2str(ex.what()), LVErr_Block_VelCWrite);
+		return set_error(ID_err, char2str(ex.what()), Err_Block_VelCWrite);
 	}
 }
