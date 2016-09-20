@@ -36,8 +36,14 @@ def main():
 
 
 
-    ans_yn = input("Do you have to explicitly switch to Velocity Control mode? (Y/N):")
-    if (ans_yn.lower() == "y"):
+    # Check Operation Mode
+    opmode = ctypes.c_uint32(0)
+    result = indralib.get_opmode(indraref, ctypes.POINTER(opmode), indra_error_call)
+    if result: 
+        print("Error occurred: " + indra_error_out())
+        return result
+
+    if opmode != 2: # Operation Mode is not "Speed Control" -> Change it
         input("Please make sure to DISABLE the drive release before continue (stand-by mode)!\n(Press any key to continue...)")
 
         # Activate Speed Control
@@ -46,7 +52,7 @@ def main():
             print("Error occurred: " + indra_error_out())
             return result
 
-    input("Please make sure to RELEASE before continue (torque-controlled operation mode)!\n(Press any key to continue...)")
+        input("Please make sure to RELEASE before continue (torque-controlled operation mode)!\n(Press any key to continue...)")
     
 
     # Set limits

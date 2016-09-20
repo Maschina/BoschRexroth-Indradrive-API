@@ -73,6 +73,8 @@ typedef struct {
 #define Err_Block_SeqWrite		7
 #define Err_Block_VelCInit		8
 #define Err_Block_VelCWrite		9
+#define Err_Block_GetStatus		10
+#define Err_Block_SetControl	11
 #define Err_Invalid_Pointer		12
 
 

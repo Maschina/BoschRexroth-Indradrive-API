@@ -32,7 +32,51 @@
 extern "C" {  /*  using a C++ compiler  */
 #endif
 
+	// Positioning mode lagless, encoder 1
+	#define DRIVEMODE_SEQUENCER		0b111011
+	// Velocity Control
+	#define DRIVEMODE_SPEEDCONTROL	0b10
+
+
+	typedef struct _opstate_t
+	{
+		union
+		{
+			struct bits_t
+			{
+				/* Bit 0-1:
+				 * 00: Control section / power section not ready for operation (e.g., drive error or phase 2)
+				 * 01: Control section ready for operation "bb"
+				 * 10: Control section and power section ready for op. "Ab"
+				 * 11: Drive with torque "AF"
+				 */
+				uint8_t ready_for_operation : 2;
+
+				/// Bit 2: Drive Halt acknowledgment - 1: Drive Halt is active and axis is in standstill
+				uint8_t drive_halted : 1;
+
+				/// Bit 3: Drive error - 0: No error, 1: Drive error
+				uint8_t drive_error : 1;
+
+				bits_t(uint16_t _P_0_0115 = 0) :
+					// Bit 14-15 @ P-0-0115
+					ready_for_operation((_P_0_0115 >> 14) & 0b11),
+					// Bit 4 @ P-0-0115
+					drive_halted((_P_0_0115 >> 4) & 0b1),
+					// Bit 13 @ P-0-0115
+					drive_error((_P_0_0115 >> 13) & 0b1)
+				{}
+			} bits;
+
+			uint8_t value;
+		};
+
+		_opstate_t(uint16_t _P_0_0115 = 0) : bits(_P_0_0115) {}
+	} OPSTATE;
+
+
 	typedef struct SISProtocol SISProtocol;
+
 
 	/// API: Fundumentals
 
@@ -54,6 +98,25 @@ extern "C" {  /*  using a C++ compiler  */
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol* ID_ref, uint32_t ID_max_accel = 10000, uint32_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol* ID_ref, int32_t ID_speed, double_t ID_accel, ErrHandle ID_err = ErrHandle());
+
+
+	/// API: Configuration
+
+	DLLEXPORT int32_t DLLCALLCONV set_units(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+
+	
+	/// API: Status
+
+	DLLEXPORT int32_t DLLCALLCONV get_drivemode(SISProtocol* ID_ref, uint32_t * ID_drvmode, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol* ID_ref, uint8_t * ID_opstate, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol* ID_ref, int32_t * ID_speed, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_position(SISProtocol* ID_ref, int32_t * ID_speed, ErrHandle ID_err = ErrHandle());
+
+
+	/// Internal helper functions
+
+	inline void change_opmode(SISProtocol * ID_ref, const uint64_t opmode);
+	inline void change_units(SISProtocol * ID_ref);
 
 #ifdef __cplusplus
 }

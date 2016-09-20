@@ -27,9 +27,9 @@
     <Compile Include="PythonApplication1.py" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IndradriveWrapper.vcxproj">
-      <Name>IndradriveWrapper</Name>
-      <Project>{83a7f7a4-941b-4807-b970-6a18ac7ac9dc}</Project>
+    <ProjectReference Include="..\..\IndradriveAPI.vcxproj">
+      <Name>IndradriveAPI</Name>
+      <Project>{2c15d200-1b0d-4987-aabd-84cfc2e8f1e4}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
