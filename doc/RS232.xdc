@@ -1,6 +1,6 @@
 <?xml version="1.0"?><doc>
 <members>
-<member name="T:CSerial" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="50">
+<member name="T:CSerial" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="50">
 =================================================================================================
 <summary>
 CSerial - Win32 wrapper for serial communications
@@ -41,19 +41,19 @@ Copyright (C) 1999-2003 Ramon de Klein
 </summary>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionGeneric" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="214">
+<member name="T:CSerial.ExceptionGeneric" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="214">
 <summary>	Generic exception handling for Serial communication. </summary>
 </member>
-<member name="T:CSerial.ExceptionReceptionFailed" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="216">
+<member name="T:CSerial.ExceptionReceptionFailed" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="216">
 <summary>	Specific exception handling of Serial communication for failed reception. </summary>
 </member>
-<member name="M:CSerial.#ctor" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="220">
+<member name="M:CSerial.#ctor" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="220">
 <summary>	Default constructor. </summary>
 </member>
-<member name="M:CSerial.Dispose" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="222">
+<member name="M:CSerial.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="222">
 <summary>	Destructor. </summary>
 </member>
-<member name="M:CSerial.CheckPort(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="228">
+<member name="M:CSerial.CheckPort(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="228">
 =================================================================================================
 <summary>	Check if particular COM-port is available (static method). </summary>
 
@@ -63,7 +63,7 @@ Copyright (C) 1999-2003 Ramon de Klein
 <returns>	Port availability. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong,System.UInt32!System.Runtime.CompilerServices.IsLong,System.Boolean)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="238">
+<member name="M:CSerial.Open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong,System.UInt32!System.Runtime.CompilerServices.IsLong,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="238">
 =================================================================================================
 <summary>
 Open the serial communications for a particular COM port. You need to use the full devicename
@@ -81,14 +81,14 @@ Open the serial communications for a particular COM port. You need to use the fu
 <param name="fOverlapped">	(Optional) true if overlapped. </param>
 =================================================================================================
 </member>
-<member name="M:CSerial.Close" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="256">
+<member name="M:CSerial.Close" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="256">
 =================================================================================================
 <summary>	Close the serial port. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Setup(CSerial.EBaudrate,CSerial.EDataBits,CSerial.EParity,CSerial.EStopBits)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="263">
+<member name="M:CSerial.Setup(CSerial.EBaudrate,CSerial.EDataBits,CSerial.EParity,CSerial.EStopBits)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="263">
 =================================================================================================
 <summary>
 Setup the communication settings such as baudrate, databits, parity and stopbits. The default
@@ -115,7 +115,7 @@ appropriate values.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetEventChar(System.Byte,System.Boolean)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="293">
+<member name="M:CSerial.SetEventChar(System.Byte,System.Boolean)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="293">
 =================================================================================================
 <summary>
 Set/clear the event character. When this byte is being received on the serial port then the EEventRcvEv event is
@@ -129,7 +129,7 @@ automatically adjusted.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetMask(System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="307">
+<member name="M:CSerial.SetMask(System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="307">
 =================================================================================================
 <summary>
 Set the event mask, which indicates what events should be monitored. The WaitEvent method can
@@ -142,7 +142,7 @@ events and data events. An application may choose to monitor CTS. DSR, RLSD, etc
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.WaitEvent(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="320">
+<member name="M:CSerial.WaitEvent(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="320">
 =================================================================================================
 <summary>
 The WaitEvent method waits for one of the events that are enabled (see SetMask).
@@ -154,7 +154,7 @@ The WaitEvent method waits for one of the events that are enabled (see SetMask).
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetupHandshaking(CSerial.EHandshake)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="332">
+<member name="M:CSerial.SetupHandshaking(CSerial.EHandshake)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="332">
 =================================================================================================
 <summary>
 Setup the handshaking protocol. There are three forms of handshaking:
@@ -176,7 +176,7 @@ Setup the handshaking protocol. There are three forms of handshaking:
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.SetupReadTimeouts(CSerial.EReadTimeout)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="354">
+<member name="M:CSerial.SetupReadTimeouts(CSerial.EReadTimeout)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="354">
 =================================================================================================
 <summary>
 Read operations can be blocking or non-blocking. You can use this method to setup wether to
@@ -195,7 +195,7 @@ most applications.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Write(System.Void!System.Runtime.CompilerServices.IsConst*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="381">
+<member name="M:CSerial.Write(System.Void!System.Runtime.CompilerServices.IsConst*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="381">
 =================================================================================================
 <summary>
 Write data to the serial port. Note that we are only able to send ANSI strings, because it
@@ -211,7 +211,7 @@ probably doesn't make sense to transmit Unicode strings to an application.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Write(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="397">
+<member name="M:CSerial.Write(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="397">
 =================================================================================================
 <summary>	Writes. </summary>
 
@@ -223,7 +223,7 @@ probably doesn't make sense to transmit Unicode strings to an application.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Read(System.Void*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="409">
+<member name="M:CSerial.Read(System.Void*,System.UInt32,System.UInt32!System.Runtime.CompilerServices.IsLong*,_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="409">
 =================================================================================================
 <summary>
 Read data from the serial port. Refer to the description of the 'SetupReadTimeouts' for an
@@ -239,74 +239,74 @@ explanation about (non) blocking reads and how to use this.
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Break" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="425">
+<member name="M:CSerial.Break" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="425">
 =================================================================================================
 <summary>	Send a break. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetEventType" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="432">
+<member name="M:CSerial.GetEventType" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="432">
 =================================================================================================
 <summary>	Determine what caused the event to trigger. </summary>
 
 <returns>	The event type. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetError" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="439">
+<member name="M:CSerial.GetError" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="439">
 =================================================================================================
 <summary>	Obtain the error. </summary>
 
 <returns>	The error. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetCommHandle" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="446">
+<member name="M:CSerial.GetCommHandle" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="446">
 =================================================================================================
 <summary>	Obtain the COMM and event handle. </summary>
 
 <returns>	The communications handle. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.IsOpen" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="453">
+<member name="M:CSerial.IsOpen" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="453">
 =================================================================================================
 <summary>	Check if com-port is opened. </summary>
 
 <returns>	true if open, false if not. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.GetLastError" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="460">
+<member name="M:CSerial.GetLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="460">
 =================================================================================================
 <summary>	Obtain last error status. </summary>
 
 <returns>	The last error. </returns>
 =================================================================================================
 </member>
-<member name="M:CSerial.Purge" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="473">
+<member name="M:CSerial.Purge" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="473">
 =================================================================================================
 <summary>	Purge all buffers. </summary>
 
 <returns>	A LONG. </returns>
 =================================================================================================
 </member>
-<member name="T:CSerial.CDCB" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="481">
+<member name="T:CSerial.CDCB" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="481">
 <summary>	Internal helper class which wraps DCB structure. </summary>
 </member>
-<member name="F:CSerial.m_lLastError" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="490">
+<member name="F:CSerial.m_lLastError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="490">
 <summary>	Last serial error. </summary>
 </member>
-<member name="F:CSerial.m_hFile" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="492">
+<member name="F:CSerial.m_hFile" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="492">
 <summary>	File handle. </summary>
 </member>
-<member name="F:CSerial.m_eEvent" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="494">
+<member name="F:CSerial.m_eEvent" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="494">
 <summary>	Event type. </summary>
 </member>
-<member name="F:CSerial.m_dwEventMask" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="496">
+<member name="F:CSerial.m_dwEventMask" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="496">
 <summary>	Event mask. </summary>
 </member>
-<member name="F:CSerial.m_hevtOverlapped" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="500">
+<member name="F:CSerial.m_hevtOverlapped" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="500">
 <summary>	Event handle for internal overlapped operations. </summary>
 </member>
-<member name="M:CSerial.CheckRequirements(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="506">
+<member name="M:CSerial.CheckRequirements(_OVERLAPPED*,System.UInt32!System.Runtime.CompilerServices.IsLong)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="506">
 =================================================================================================
 <summary>	Check the requirements. </summary>
 
@@ -314,17 +314,17 @@ explanation about (non) blocking reads and how to use this.
 <param name="dwTimeout">   	The timeout. </param>
 =================================================================================================
 </member>
-<member name="M:CSerial.CancelCommIo" decl="true" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="514">
+<member name="M:CSerial.CancelCommIo" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="514">
 =================================================================================================
 <summary>	CancelIo wrapper (for Win95 compatibility) </summary>
 
 <returns>	true if it succeeds, false if it fails. </returns>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionGeneric" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="523">
+<member name="T:CSerial.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="523">
 <summary>	Generic exceptions for Serial communication. </summary>
 </member>
-<member name="F:CSerial.ExceptionGeneric.m_status" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="553">
+<member name="F:CSerial.ExceptionGeneric.m_status" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="553">
 =================================================================================================
 <summary>
 For Win32 API commands, most likely representation of the System Error Codes:
@@ -332,7 +332,7 @@ For Win32 API commands, most likely representation of the System Error Codes:
 </summary>
 =================================================================================================
 </member>
-<member name="T:CSerial.ExceptionReceptionFailed" decl="false" source="f:\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="565">
+<member name="T:CSerial.ExceptionReceptionFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\serial\rs232.h" line="565">
 <summary>	Specific exception handling of Serial communication for failed reception. </summary>
 </member>
 </members>
