@@ -50,6 +50,13 @@ extern "C" {  /*  using a C++ compiler  */
 	DLLIMPORT int32_t sequencer_write(SISProtocol* ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, LStrHandle ID_errmsg);
 	DLLIMPORT int32_t sequencer_softtrigger(SISProtocol* ID_ref, LStrHandle ID_errmsg);
 
+
+	/// API: SpeedControl
+
+	DLLIMPORT int32_t speedcontrol_activate(SISProtocol* ID_ref, LStrHandle ID_errmsg);
+	DLLIMPORT int32_t speedcontrol_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, LStrHandle ID_errmsg);
+	DLLIMPORT int32_t speedcontrol_write(SISProtocol* ID_ref, int32_t ID_speed, double_t ID_accel, LStrHandle ID_errmsg);
+
 #ifdef __cplusplus
 }
 #endif

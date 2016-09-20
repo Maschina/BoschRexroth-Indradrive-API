@@ -16,6 +16,8 @@
 #define LVErr_Block_Test			3
 #define LVErr_Block_SeqInit			6
 #define LVErr_Block_SeqWrite		7
+#define LVErr_Block_VelCInit		8
+#define LVErr_Block_VelCWrite		9
 #define LVErr_Invalid_Pointer		12
 
 

@@ -192,7 +192,7 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 }
 
 
-inline UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &datalen)
+UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &datalen)
 {
 	STACK;
 
@@ -361,7 +361,7 @@ void SISProtocol::execute_command(TGM::SERCOS_ParamVar _paramvar, USHORT _paramn
 }
 
 
-inline void SISProtocol::get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT & _paramnum, TGM::SERCOS_Commandstatus& _datastatus)
+void SISProtocol::get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT & _paramnum, TGM::SERCOS_Commandstatus& _datastatus)
 {
 	STACK;
 
@@ -391,7 +391,7 @@ inline void SISProtocol::get_parameter_status(const TGM::SERCOS_ParamVar _paramv
 }
 
 
-inline void SISProtocol::set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm)
+void SISProtocol::set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm)
 {
 	STACK; 
 
@@ -404,7 +404,7 @@ inline void SISProtocol::set_sized_data(TGM::Data& tx_data, const size_t &datale
 
 
 template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
-inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
+void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm)
 {
 	STACK;
 
@@ -422,7 +422,7 @@ inline void SISProtocol::prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& t
 }
 
 
-inline void SISProtocol::get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen)
+void SISProtocol::get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen)
 {
 	STACK;
 
@@ -549,7 +549,7 @@ void SISProtocol::transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRH
 
 
 template<class THeader, class TPayload>
-inline bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
+bool SISProtocol::check_boundaries(TGM::Map<THeader, TPayload>& _tgm)
 {
 	STACK;
 

@@ -13,7 +13,7 @@ namespace SISProtocolTest
 	public:
 
 
-		TEST_METHOD(SIS_SetBaudrate)
+		TEST_METHOD(SIS_SET_BAUDRATE)
 		{
 			SISProtocol sis;
 

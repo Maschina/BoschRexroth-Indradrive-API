@@ -36,8 +36,6 @@
 class SISProtocol
 {
 public:
-	INT32 foo;
-
 	/// <summary>	Generic exception handling for SIS Protocol. </summary>
 	class ExceptionGeneric;
 	/// <summary>	Specific exception handling of SIS Protocol for failed transceiving. </summary>
