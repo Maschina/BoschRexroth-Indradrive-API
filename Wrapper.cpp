@@ -278,7 +278,7 @@ DLLIMPORT int32_t speedcontrol_write(SISProtocol * ID_ref, int32_t ID_speed, dou
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1203, ID_accel);
 
 		// Speed in rpm (S-0-0036)
-		ID_ref->write_parameter(TGM::SERCOS_Param_P, 36, static_cast<UINT32>(abs(ID_speed)));
+		ID_ref->write_parameter(TGM::SERCOS_Param_S, 36, static_cast<UINT32>(abs(ID_speed)));
 
 		return LVErr_NoError;
 	}

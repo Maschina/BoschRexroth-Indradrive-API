@@ -16,7 +16,7 @@ void SISProtocol::open(const char * _port)
 {
 	STACK;
 
-	LPCTSTR cport = (LPCTSTR)char2wchar(_port);
+	LPCTSTR cport = (LPCTSTR)_port;
 	CSerial::EBaudrate cbaudrate = CSerial::EBaud19200;
 	CSerial::EDataBits cdata = CSerial::EData8;
 	CSerial::EParity cparity = CSerial::EParNone;
