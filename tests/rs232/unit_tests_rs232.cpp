@@ -39,5 +39,11 @@ namespace RS232Test
 				Assert::Fail(char2wchar(ex.what()));
 			}
 		}
+
+
+		TEST_METHOD(RS232_NEW)
+		{
+
+		}
 	};
 }
