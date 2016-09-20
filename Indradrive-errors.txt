@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nidocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<nicomment>
+		<nifamily familyname="LinConnect Errors" displayname="LinConnect Errors"/>
+	</nicomment>
+	<nierror code="519953" warning="false">Failure on opening RS232 communication channel using serial number. Check proper connection or serial number.</nierror>
+	<nierror code="519969" warning="false">Handle reference could not be closed properly. Re-connect FTDI device.</nierror>
+	<nierror code="519985" warning="false">Failure occurred while running test functions.</nierror>
+	<nierror code="520001" warning="false">Single LIN message transmission or reception failed.</nierror>
+	<nierror code="520017" warning="true">Single LIN message reception failed.</nierror>
+	<nierror code="520033" warning="false">LinSequencer: Failed to erase queue.</nierror>
+	<nierror code="520049" warning="false">LinSequencer: Failed to write into the queue.</nierror>
+	<nierror code="520065" warning="false">LinSequencer: Failed to read from the queue.</nierror>
+	<nierror code="520081" warning="false">LinSequencer: Failed to start the queue.</nierror>
+	<nierror code="520097" warning="false">LinSequencer: Failed to await the queue finish.</nierror>
+	<nierror code="520113" warning="false">LinSequencer: Failed to activate the trigger.</nierror>
+	<nierror code="520129" warning="false">Invalid pointer</nierror>
+</nidocument>

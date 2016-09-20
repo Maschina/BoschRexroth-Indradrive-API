@@ -1,0 +1,5 @@
+9999;Generic Custom Error.;Error
+9998;Generic Custom Error.;Warning
+9997;Indradrive Parameter Error.;Warning
+9996;Indradrive Communication Error.;Warning
+9995;Sequence Error. Diagnosis Message does not fit.;Error
