@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by IndradriveWrapper.rc
+// Used by IndradriveAPI.rc
 
 // Next default values for new objects
 // 

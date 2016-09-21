@@ -35,8 +35,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{83A7F7A4-941B-4807-B970-6A18AC7AC9DC}</ProjectGuid>
-    <RootNamespace>IndradriveWrapper</RootNamespace>
+    <ProjectGuid>{2C15D200-1B0D-4987-AABD-84CFC2E8F1E4}</ProjectGuid>
+    <RootNamespace>IndradriveAPI</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -145,8 +145,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\
-copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)..\</Command>
+      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin
+copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -238,7 +238,7 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command>
+      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
@@ -288,8 +288,8 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="helpers.h" />
     <ClInclude Include="errors.h" />
+    <ClInclude Include="helpers.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="serial\RS232.h" />
     <ClInclude Include="sis\SISProtocol.h" />
@@ -304,7 +304,7 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
     <ClCompile Include="Wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="IndradriveWrapper.rc" />
+    <ResourceCompile Include="IndradriveAPI.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

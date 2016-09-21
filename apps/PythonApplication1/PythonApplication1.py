@@ -7,7 +7,7 @@ assert sys.version_info >= (3,3)
 
 
 # Load Indradrive API DLL into memory (use absolute or relative path for 'libpath')
-libpath = "C:\\AE\\Alternator_Testbench\\Software\\API-Hardware\\Indradrive\\Lib\\IndradriveWrapper.dll"
+libpath = "C:\\AE\\Alternator_Testbench\\Software\\API-Hardware\\Indradrive\\Lib\\IndradriveAPI.dll"
 indralib = cdll.LoadLibrary(libpath)
 
 # Error-specific class

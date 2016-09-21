@@ -246,8 +246,8 @@
     <ClCompile Include="unit_tests_rs232.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IndradriveWrapper.vcxproj">
-      <Project>{83a7f7a4-941b-4807-b970-6a18ac7ac9dc}</Project>
+    <ProjectReference Include="..\..\IndradriveAPI.vcxproj">
+      <Project>{2c15d200-1b0d-4987-aabd-84cfc2e8f1e4}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
