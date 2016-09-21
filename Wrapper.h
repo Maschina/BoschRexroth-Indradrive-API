@@ -109,8 +109,7 @@ extern "C" {  /*  using a C++ compiler  */
 
 	DLLEXPORT int32_t DLLCALLCONV get_drivemode(SISProtocol* ID_ref, uint32_t * ID_drvmode, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol* ID_ref, uint8_t * ID_opstate, ErrHandle ID_err = ErrHandle());
-	DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol* ID_ref, int32_t * ID_speed, ErrHandle ID_err = ErrHandle());
-	DLLEXPORT int32_t DLLCALLCONV get_position(SISProtocol* ID_ref, int32_t * ID_speed, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed, ErrHandle ID_err = ErrHandle());
 
 
 	/// Internal helper functions

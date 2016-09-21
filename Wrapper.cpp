@@ -405,7 +405,7 @@ DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol * ID_ref, uint8_t * ID_ops
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, int32_t * ID_speed, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -419,7 +419,20 @@ DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, int32_t * ID_speed
 		// Velocity feedback value (S-0-0040)
 		ID_ref->read_parameter(TGM::SERCOS_Param_S, 40, speed);
 
-		*ID_speed = static_cast<int32_t>(speed);
+		*ID_speed = speed;
+
+		return Err_NoError;
+	}
+	catch (SISProtocol::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+	catch (CSerial::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+}
+
 
 		return Err_NoError;
 	}

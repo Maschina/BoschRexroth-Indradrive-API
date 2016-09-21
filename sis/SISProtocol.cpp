@@ -133,8 +133,8 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 	prepare_and_transceive(tx_tgm, rx_tgm);
 
 	/// Response data
-	UINT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
-	_rcvddata = response / std::pow(10, scalefactor);
+	INT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
+	_rcvddata = (double)response / std::pow(10, scalefactor);
 }
 
 void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm)
@@ -187,20 +187,37 @@ void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum,
 	prepare_and_transceive(tx_tgm, rx_tgm);
 
 	/// Response data
-	UINT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
-	_rcvdelm = response / std::pow(10, scalefactor);
+	INT64 response = get_sized_data(rx_tgm.mapping.payload.data, datalen);
+	_rcvdelm = (double)response / std::pow(10, scalefactor);
 }
 
 
-UINT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &datalen)
+INT64 SISProtocol::get_sized_data(TGM::Data& rx_data, const size_t &datalen)
 {
 	STACK;
 
-	if (datalen == 1) return (UINT64)rx_data.toUINT8();
-	else if (datalen == 2) return (UINT64)rx_data.toUINT16();
-	else if (datalen == 4) return (UINT64)rx_data.toUINT32();
-	else if (datalen == 8) return (UINT64)rx_data.toUINT64();
-	else return (UINT64)rx_data.toUINT32();
+	if (datalen == 1)
+	{
+		UINT8 data = rx_data.toUINT8();
+		UINT64 mask = ((data >> 7) & 1) ? 0xFFFFFFFFFFFFFF00 : 0;
+		return (INT64)(data | mask);
+	}
+	else if (datalen == 2)
+	{
+		UINT16 data = rx_data.toUINT16();
+		UINT64 mask = ((data >> 15) & 1) ? 0xFFFFFFFFFFFF0000 : 0;
+		return (INT64)(data | mask);
+	}
+	else if (datalen == 8) 
+	{
+		return (INT64)rx_data.toUINT64();
+	}		
+	else
+	{
+		UINT32 data = rx_data.toUINT32();
+		UINT64 mask = ((data >> 31) & 1) ? 0xFFFFFFFF00000000 : 0;
+		return (INT64)(data | mask);
+	}
 }
 
 
