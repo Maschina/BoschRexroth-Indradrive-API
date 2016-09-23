@@ -60,7 +60,7 @@ public:
 
 	/// API FUNCTIONS
 
-	void open(const char * _port = "COM1");
+	void open(const wchar_t * _port = L"COM1");
 	void close();
 
 	void set_baudrate(init_set_mask_baudrate _baudrate);

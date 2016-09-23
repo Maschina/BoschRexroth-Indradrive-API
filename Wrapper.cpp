@@ -8,7 +8,7 @@ DLLEXPORT SISProtocol * DLLCALLCONV init()
 }
 
 
-DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const char* ID_comport, uint32_t ID_combaudrate, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const wchar_t* ID_comport, uint32_t ID_combaudrate, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref)) 
 		// Return error for wrong reference

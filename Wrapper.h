@@ -81,7 +81,7 @@ extern "C" {  /*  using a C++ compiler  */
 	/// API: Fundumentals
 
 	DLLEXPORT SISProtocol* DLLCALLCONV init();
-	DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const char* ID_comport = "COM1", uint32_t ID_combaudrate = 19200, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const wchar_t* ID_comport = L"COM1", uint32_t ID_combaudrate = 19200, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV close(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 

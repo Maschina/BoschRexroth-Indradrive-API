@@ -12,7 +12,7 @@ SISProtocol::~SISProtocol()
 }
 
 
-void SISProtocol::open(const char * _port)
+void SISProtocol::open(const wchar_t * _port)
 {
 	STACK;
 
