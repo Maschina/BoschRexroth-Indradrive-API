@@ -102,7 +102,7 @@ extern "C" {  /*  using a C++ compiler  */
 
 	/// API: Configuration
 
-	DLLEXPORT int32_t DLLCALLCONV set_units(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV set_stdenvironment(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 	
 	/// API: Status
@@ -110,12 +110,15 @@ extern "C" {  /*  using a C++ compiler  */
 	DLLEXPORT int32_t DLLCALLCONV get_drivemode(SISProtocol* ID_ref, uint32_t * ID_drvmode, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol* ID_ref, uint8_t * ID_opstate, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_diagnostic_msg(SISProtocol* ID_ref, char * ID_diagnostic_msg, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol* ID_ref, UINT32 * ID_diagnostic_num, ErrHandle ID_err = ErrHandle());
 
 
 	/// Internal helper functions
 
 	inline void change_opmode(SISProtocol * ID_ref, const uint64_t opmode);
 	inline void change_units(SISProtocol * ID_ref);
+	inline void change_language(SISProtocol * ID_ref, const uint8_t lang_code = 1);
 
 #ifdef __cplusplus
 }

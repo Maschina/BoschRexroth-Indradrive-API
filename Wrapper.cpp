@@ -313,7 +313,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, int32_t I
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV set_units(SISProtocol * ID_ref, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV set_stdenvironment(SISProtocol * ID_ref, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -324,6 +324,7 @@ DLLEXPORT int32_t DLLCALLCONV set_units(SISProtocol * ID_ref, ErrHandle ID_err)
 	try
 	{
 		change_units(ID_ref);
+		change_language(ID_ref);
 
 		return Err_NoError;
 	}
@@ -433,6 +434,49 @@ DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed,
 	}
 }
 
+DLLEXPORT int32_t DLLCALLCONV get_diagnostic_msg(SISProtocol * ID_ref, char * ID_diagnostic_msg, ErrHandle ID_err)
+{
+	if (!dynamic_cast<SISProtocol*>(ID_ref))
+		// Return error for wrong reference
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
+
+	try
+	{
+		char msg[TGM_SIZEMAX_PAYLOAD];
+		// Diagnostic message (P-0-0007)
+		ID_ref->read_parameter(TGM::SERCOS_Param_P, 7, msg);
+
+		strcpy(ID_diagnostic_msg, msg);
+
+		return Err_NoError;
+	}
+	catch (SISProtocol::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+	catch (CSerial::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+}
+
+DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol * ID_ref, UINT32 * ID_diagnostic_num, ErrHandle ID_err)
+{
+	if (!dynamic_cast<SISProtocol*>(ID_ref))
+		// Return error for wrong reference
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
+
+	try
+	{
+		UINT32 num;
+		// Diagnostic number (S-0-0390)
+		ID_ref->read_parameter(TGM::SERCOS_Param_S, 390, num);
+
+		*ID_diagnostic_num = num;
 
 		return Err_NoError;
 	}
@@ -474,4 +518,15 @@ void change_units(SISProtocol * ID_ref)
 	uint64_t scalingtype = 0b0000000000000010;
 	// Velocity data scaling type (S-0-0044)
 	ID_ref->write_parameter(TGM::SERCOS_Param_S, 44, scalingtype);
+}
+
+inline void change_language(SISProtocol * ID_ref, const uint8_t lang_code)
+{
+	// Language selection (S-0-0265):
+	// * 0: German
+	// * 1: English
+	// * 2: French
+	// * 3: Spanish
+	// * 4: Italian
+	ID_ref->write_parameter(TGM::SERCOS_Param_S, 265, (UINT32)lang_code);
 }

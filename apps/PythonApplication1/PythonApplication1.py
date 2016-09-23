@@ -39,6 +39,9 @@ def main():
     result = indralib.open(indraref, b"COM1", 19200, ctypes.byref(indra_error))
     check_result(result)
 
+    # Set standard environment
+    result = indralib.set_stdenvironment(indraref, ctypes.byref(indra_error))
+    check_result(result)
 
 
     # 
@@ -55,11 +58,11 @@ def main():
         result = indralib.speedcontrol_activate(indraref, ctypes.byref(indra_error))
         check_result(result) 
             
-    for i in range(5):
-        speed = ctypes.c_int32(0)
-        result = indralib.get_speed(indraref, ctypes.byref(speed), ctypes.byref(indra_error))
-        check_result(result)
-        print(speed.value, "rpm")
+
+    diagmsg = ctypes.create_string_buffer(256)
+    result = indralib.get_diagnostic_msg(indraref, diagmsg, ctypes.byref(indra_error))
+    check_result(result)
+    print(diagmsg.raw.decode('ascii'))
 
 
     # 
