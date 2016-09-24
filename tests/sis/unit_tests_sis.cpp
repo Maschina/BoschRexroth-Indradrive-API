@@ -19,7 +19,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 
 				sis.set_baudrate(SISProtocol::Baud_19200);
 
@@ -49,7 +49,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 				
 				UINT32 rcvddata;
 				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
@@ -85,7 +85,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 
 				DOUBLE value = 5.2;
 				sis.write_parameter(TGM::SERCOS_Param_S, 36, value);
@@ -126,7 +126,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 
 				for (int i = 1; i < 10; i++)
 				{
@@ -165,7 +165,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 
 				DOUBLE data = 500.2;
 				sis.write_listelm(TGM::SERCOS_Param_P, 4007, 1, data);
@@ -200,7 +200,7 @@ namespace SISProtocolTest
 
 			try
 			{
-				sis.open("COM1");
+				sis.open(_T("COM1"));
 
 				// Activate parameterization level 1 // C0400
 				sis.execute_command(TGM::SERCOS_Param_S, 420);

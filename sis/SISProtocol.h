@@ -60,7 +60,7 @@ public:
 
 	/// API FUNCTIONS
 
-	void open(const char * _port = "COM1");
+	void open(const wchar_t * _port = L"COM1");
 	void close();
 
 	void set_baudrate(init_set_mask_baudrate _baudrate);
@@ -68,6 +68,7 @@ public:
 	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT32& _rcvddata);
 	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, UINT64& _rcvddata);
 	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, DOUBLE& _rcvddata);
+	void read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, char _rcvddata[TGM_SIZEMAX_PAYLOAD]);
 
 	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32& _rcvdelm);
 	void read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT64& _rcvdelm);
@@ -76,7 +77,7 @@ public:
 	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT32 _data);
 	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const UINT64 _data);
 	void write_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, const DOUBLE _data);
-
+	
 	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT32 _rcvdelm);
 	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const UINT64 _rcvdelm);
 	void write_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, const DOUBLE _rcvdelm);
@@ -91,21 +92,24 @@ private:
 	inline void get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, TGM::SERCOS_Commandstatus& _datastatus);
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
-	inline void prepare_and_transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
+	TGM::Map<TRHeader, TRPayload> transceive_param(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, BYTE _service, TGM::Data const * const _data = new TGM::Data(), TGM::SERCOS_Datablock _attribute = TGM::SERCOS_Datablock_operatingdata);
+
+	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
+	TGM::Map<TRHeader, TRPayload> transceive_list(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, BYTE _service, USHORT & _element_size, USHORT & _list_offset, TGM::Data const * const _data = new TGM::Data(), TGM::SERCOS_Datablock _attribute = TGM::SERCOS_Datablock_operatingdata);
 
 	template <class THeader, class TPayload>
 	inline bool check_boundaries(TGM::Map<THeader, TPayload>& _tgm);
 
 	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
 
-	inline UINT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
+	inline INT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
 	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm);
 
 private:
 	/// COMMUNICATION FUNCTIONS
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
-	void transceive(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
+	void transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
 
 	static void throw_rs232_error_events(CSerial::EError _err);
 

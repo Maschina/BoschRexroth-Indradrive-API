@@ -21,7 +21,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\serial\RS232.h">
+    <ClInclude Include="..\..\serial\RS232.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\serial\RS232.cpp">
+    <ClCompile Include="unit_tests_rs232.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests_rs232.cpp">
+    <ClCompile Include="..\..\serial\RS232.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
