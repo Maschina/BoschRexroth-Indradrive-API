@@ -822,22 +822,22 @@ the  motion control and the unit address to the drive.
 <member name="M:SISProtocol.Dispose" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="58">
 <summary>	Destructor. </summary>
 </member>
-<member name="M:SISProtocol.open(System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="61">
+<member name="M:SISProtocol.open(System.Char!System.Runtime.CompilerServices.IsConst*)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="61">
 API FUNCTIONS
 </member>
-<member name="M:SISProtocol.get_parameter_attributes(&lt;unknown type&gt;,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.Byte*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.UInt32*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="88">
+<member name="M:SISProtocol.get_parameter_attributes(&lt;unknown type&gt;,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.Byte*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,System.UInt32*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)" decl="true" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="89">
 TELEGRAM SUPPORTING FUNCTIONS
 </member>
-<member name="T:SISProtocol.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="117">
+<member name="T:SISProtocol.ExceptionGeneric" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="121">
 <summary>	Generic exceptions for SIS protocol. </summary>
 </member>
-<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="153">
+<member name="T:SISProtocol.ExceptionTransceiveFailed" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="157">
 <summary>	Specific exception handling of SIS Protocol transceiving failed. </summary>
 </member>
-<member name="T:SISProtocol.ExceptionSISError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="179">
+<member name="T:SISProtocol.ExceptionSISError" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.h" line="183">
 <summary>	Specific exception handling of SIS Protocol error codes. </summary>
 </member>
-<member name="M:SISProtocol.get_parameter_status(&lt;unknown type&gt;!System.Runtime.CompilerServices.IsConst,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,&lt;unknown type&gt;*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.cpp" line="320">
+<member name="M:SISProtocol.get_parameter_status(&lt;unknown type&gt;!System.Runtime.CompilerServices.IsConst,System.UInt16!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced,&lt;unknown type&gt;*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)" decl="false" source="c:\ae\alternator_testbench\software\api-hardware\indradrive\lib\api\sis\sisprotocol.cpp" line="351">
 Start command
 Delete command
 </member>
