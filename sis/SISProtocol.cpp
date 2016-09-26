@@ -156,7 +156,8 @@ void SISProtocol::read_parameter(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnu
 					(_paramvar, _paramnum, service);
 
 	/// Convert responsed data
-	strcpy_s(_rcvddata, rx_tgm.mapping.payload.data.size, (char*)rx_tgm.mapping.payload.data.data);
+	memcpy(_rcvddata, (char*)rx_tgm.mapping.payload.data.data, rx_tgm.mapping.payload.data.size);
+	_rcvddata[rx_tgm.mapping.payload.data.size] = '\0';
 }
 
 void SISProtocol::read_listelm(TGM::SERCOS_ParamVar _paramvar, USHORT _paramnum, USHORT _elm_pos, UINT32 & _rcvdelm)

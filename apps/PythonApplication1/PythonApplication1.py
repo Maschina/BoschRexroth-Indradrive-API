@@ -58,11 +58,11 @@ def main():
         result = indralib.speedcontrol_activate(indraref, ctypes.byref(indra_error))
         check_result(result) 
             
-
+    # Diagnostic message
     diagmsg = ctypes.create_string_buffer(256)
     result = indralib.get_diagnostic_msg(indraref, diagmsg, ctypes.byref(indra_error))
     check_result(result)
-    print(diagmsg.raw.decode('ascii'))
+    print("Current status:\n" + diagmsg.raw.decode('ascii'))
 
 
     # 
