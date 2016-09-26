@@ -80,17 +80,18 @@ def main():
 
 
     # Set limits
-    result = indralib.speedcontrol_init(indraref, 10000, 1000, ctypes.byref(indra_error))
+    result = indralib.speedcontrol_init(indraref, ctypes.c_double(10000), ctypes.c_double(1000), ctypes.byref(indra_error))
     check_result(result)
 
     # Set speed
-    result = indralib.speedcontrol_write(indraref, 100, 10000, ctypes.byref(indra_error))
+    speed = int(input("Speed [rpm] = ?"))
+    result = indralib.speedcontrol_write(indraref, ctypes.c_int32(speed), ctypes.c_double(10), ctypes.byref(indra_error))
     check_result(result)
 
     input("(Press any key to stop the drive...)")
 
     # Clear speed
-    result = indralib.speedcontrol_write(indraref, 0, 10000, ctypes.byref(indra_error))
+    result = indralib.speedcontrol_write(indraref, ctypes.c_int32(0), ctypes.c_double(10), ctypes.byref(indra_error))
     check_result(result)
 
 

@@ -85,7 +85,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol * ID_ref, ErrHandle
 }
 
 
-DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double ID_max_accel, double ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -105,10 +105,10 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, uint32_t ID_m
 		ID_ref->write_parameter(TGM::SERCOS_Param_S, 349, ID_max_jerk);
 
 		// SPS Global Register G1 (P-0-1371) - Reset Read Trigger
-		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint64_t>(0));
+		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint32_t>(0));
 
 		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
-		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(0));
+		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint32_t>(0));
 
 		return Err_NoError;
 	}
@@ -249,7 +249,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol * ID_ref, ErrHan
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, double ID_max_accel, double ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference

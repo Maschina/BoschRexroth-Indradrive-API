@@ -137,7 +137,7 @@ extern "C" {  /*  using a C++ compiler  */
 	/// API: Sequencer
 
 	DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
-	DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol* ID_ref, uint32_t ID_max_accel, uint32_t ID_max_jerk, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol* ID_ref, double ID_max_accel = 10000, double ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol* ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
@@ -145,7 +145,7 @@ extern "C" {  /*  using a C++ compiler  */
 	/// API: SpeedControl
 
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
-	DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol* ID_ref, uint32_t ID_max_accel = 10000, uint32_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol* ID_ref, double ID_max_accel = 10000, double ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol* ID_ref, int32_t ID_speed, double_t ID_accel, ErrHandle ID_err = ErrHandle());
 
 
