@@ -512,8 +512,20 @@ void change_opmode(SISProtocol * ID_ref, const uint64_t opmode)
 	}
 }
 
+inline SPEEDUNITS get_units(SISProtocol * ID_ref)
+{
+	uint64_t curunits;
+	// Scaling of speed units (S-0-0044)
+	ID_ref->read_parameter(TGM::SERCOS_Param_S, 44, curunits);
+
+	return SPEEDUNITS(static_cast<uint16_t>(curunits));
+}
+
 void change_units(SISProtocol * ID_ref)
 {
+	SPEEDUNITS units = get_units(ID_ref);
+	if (units.bits.type_of_scaling == 0b010 && !units.bits.automode && !units.bits.scale_units && !units.bits.time_units && !units.bits.data_rel) return;
+
 	// Set required units (preferred scaling, rotary scaling, [rpm])
 	uint64_t scalingtype = 0b0000000000000010;
 	// Velocity data scaling type (S-0-0044)

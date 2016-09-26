@@ -75,6 +75,55 @@ extern "C" {  /*  using a C++ compiler  */
 	} OPSTATE;
 
 
+	typedef struct _speedunits_t
+	{
+		union
+		{
+			struct bits_t
+			{
+				/// Bit 0-2: Type of scaling
+				/// * 001: Translational scaling
+				/// * 010: Rotatory scaling
+				uint16_t type_of_scaling : 3;
+
+				/// Bit 3: Auto mode - 0: Preferred scaling, 1: Scaling by parameters
+				uint16_t automode : 1;
+
+				/// Bit 4: Units for translational/rotatory scaling - 0: Millimeter/Revolutions, 1: Inch/reserved
+				uint16_t scale_units : 1;
+
+				/// Bit 5: Time units - 0: Minute, 1: Second
+				uint16_t time_units : 1;
+
+				/// Bit 6: Data relation - 0: At motor shaft, 1: At load
+				uint16_t data_rel : 1;
+
+				/// Bit 7-15: reserved
+				uint16_t res7 : 9;
+
+				bits_t(uint16_t _S_0_0044 = 0) :
+					// Bit 0-2 @ S-0-0044
+					type_of_scaling((_S_0_0044) & 0b111),
+					// Bit 3 @ S-0-0044
+					automode((_S_0_0044 >> 3) & 0b1),
+					// Bit 4 @ S-0-0044
+					scale_units((_S_0_0044 >> 4) & 0b1),
+					// Bit 5 @ S-0-0044
+					time_units((_S_0_0044 >> 5) & 0b1),
+					// Bit 6 @ S-0-0044
+					data_rel((_S_0_0044 >> 6) & 0b1),
+					// Bit 7-15 @ S-0-0044
+					res7((_S_0_0044 >> 7) & 0b111111111)
+				{}
+			} bits;
+
+			uint16_t value;
+		};
+
+		_speedunits_t(uint16_t _S_0_0044 = 0) : bits(_S_0_0044) {}
+	} SPEEDUNITS;
+
+
 	typedef struct SISProtocol SISProtocol;
 
 
@@ -117,6 +166,7 @@ extern "C" {  /*  using a C++ compiler  */
 	/// Internal helper functions
 
 	inline void change_opmode(SISProtocol * ID_ref, const uint64_t opmode);
+	inline SPEEDUNITS get_units(SISProtocol * ID_ref);
 	inline void change_units(SISProtocol * ID_ref);
 	inline void change_language(SISProtocol * ID_ref, const uint8_t lang_code = 1);
 
