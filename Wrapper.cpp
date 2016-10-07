@@ -85,7 +85,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol * ID_ref, ErrHandle
 }
 
 
-DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double ID_max_accel, double ID_max_jerk, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double_t ID_max_accel, double_t ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -122,7 +122,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double ID_max
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, int32_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -136,7 +136,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, int32_t ID_s
 		for (uint16_t i = 1; i <= ID_set_length; i++)
 		{
 			// Speed in min^-1 (P-0-4007)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4007, i, static_cast<uint32_t>(abs(ID_speeds[i])));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4007, i, abs(ID_speeds[i]));
 
 			// Acceleration in rad/s^2 (P-0-4008)
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4008, i, ID_accels[i]);
@@ -148,7 +148,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, int32_t ID_s
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4009, i, ID_jerks[i]);
 
 			// Mode (P-0-4019)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i, static_cast<uint32_t>(0b10000000 & ((stde::sgn<int32_t>(ID_speeds[i]) == 1 ? 0b01 : 0b10) << 2)));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i, static_cast<uint32_t>(0b10000000 & ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b01 : 0b10) << 2)));
 
 			// Pos (P-0-4006)
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4006, i, static_cast<uint64_t>(0));
@@ -249,7 +249,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol * ID_ref, ErrHan
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, double ID_max_accel, double ID_max_jerk, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, double_t ID_max_accel, double_t ID_max_jerk, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -280,7 +280,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol * ID_ref, double ID_
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, int32_t ID_speed, double_t ID_accel, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, double_t ID_speed, double_t ID_accel, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -291,7 +291,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, int32_t I
 	try
 	{
 		// Rotation direction
-		uint32_t rotmode = static_cast<uint32_t>((stde::sgn<int32_t>(ID_speed) == 1 ? 1 : 0) << 10);
+		uint32_t rotmode = static_cast<uint32_t>((stde::sgn<double_t>(ID_speed) == 1 ? 1 : 0) << 10);
 		// Control Mode (P-0-1200)
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1200, rotmode);
 
@@ -299,7 +299,7 @@ DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol * ID_ref, int32_t I
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1203, ID_accel);
 
 		// Speed in rpm (S-0-0036)
-		ID_ref->write_parameter(TGM::SERCOS_Param_S, 36, static_cast<uint32_t>(abs(ID_speed)));
+		ID_ref->write_parameter(TGM::SERCOS_Param_S, 36, abs(ID_speed));
 
 		return Err_NoError;
 	}
@@ -406,7 +406,7 @@ DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol * ID_ref, uint8_t * ID_ops
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double_t * ID_speed, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -416,7 +416,7 @@ DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double * ID_speed,
 
 	try
 	{
-		double speed;
+		double_t speed;
 		// Velocity feedback value (S-0-0040)
 		ID_ref->read_parameter(TGM::SERCOS_Param_S, 40, speed);
 
@@ -462,7 +462,7 @@ DLLEXPORT int32_t DLLCALLCONV get_diagnostic_msg(SISProtocol * ID_ref, char * ID
 	}
 }
 
-DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol * ID_ref, UINT32 * ID_diagnostic_num, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol * ID_ref, uint32_t * ID_diagnostic_num, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
