@@ -4,6 +4,11 @@
 #include <cstring>
 #include <string>
 
+/// Including Labviewv.lib in case of project is compiled for LabVIEW
+#ifdef USE_LABVIEW_ENV
+#pragma comment(lib,"labviewv.lib")
+#endif
+
 
 typedef struct GenericErrHandle_t {
 
