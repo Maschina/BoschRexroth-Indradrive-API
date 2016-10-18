@@ -133,34 +133,34 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_
 	try
 	{
 			
-		for (uint16_t i = 1; i <= ID_set_length; i++)
+		for (uint16_t i = 0; i < ID_set_length; i++)
 		{
 			// Speed in min^-1 (P-0-4007)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4007, i, abs(ID_speeds[i]));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4007, i + 1, abs(ID_speeds[i]));
 
 			// Acceleration in rad/s^2 (P-0-4008)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4008, i, ID_accels[i]);
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4008, i + 1, ID_accels[i]);
 
 			// Deceleration in rad/s^2 (P-0-4063)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i, ID_accels[i]);
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i + 1, ID_accels[i]);
 
 			// Jerk in rad/s^3 (P-0-4009)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4009, i, ID_jerks[i]);
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4009, i + 1, ID_jerks[i]);
 
 			// Mode (P-0-4019)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i, static_cast<uint32_t>(0b10000000 & ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b01 : 0b10) << 2)));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i + 1, static_cast<uint32_t>(0b10000000 | ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b01 : 0b10) << 2)));
 
 			// Pos (P-0-4006)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4006, i, static_cast<uint64_t>(0));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4006, i + 1, static_cast<uint64_t>(0));
 
 			// Wait (P-0-4018)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4018, i, static_cast<uint64_t>(0));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4018, i + 1, static_cast<uint64_t>(0));
 
 			// Delay (P-0-4063)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i, static_cast<uint64_t>(0));
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i + 1, static_cast<uint64_t>(0));
 
 			// Timers in cs (P-0-1389)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 1389, i, ID_delays[i]);
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 1389, i + 1, ID_delays[i]);
 		}		
 
 		// Time triggers for cam (P-0-1370)

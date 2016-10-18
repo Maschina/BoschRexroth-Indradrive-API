@@ -17,11 +17,11 @@ void SISProtocol::open(const wchar_t * _port)
 	STACK;
 
 	LPCTSTR cport = (LPCTSTR)_port;
-	CSerial::EBaudrate cbaudrate = CSerial::EBaud19200;
-	CSerial::EDataBits cdata = CSerial::EData8;
-	CSerial::EParity cparity = CSerial::EParNone;
-	CSerial::EStopBits cstopbits = CSerial::EStop1;
-	CSerial::EHandshake chandshake = CSerial::EHandshakeOff;
+	CSerial::EBaudrate cbaudrate	= CSerial::EBaud19200;
+	CSerial::EDataBits cdata		= CSerial::EData8;
+	CSerial::EParity cparity		= CSerial::EParNone;
+	CSerial::EStopBits cstopbits	= CSerial::EStop1;
+	CSerial::EHandshake chandshake	= CSerial::EHandshakeOff;
 
 	try
 	{
@@ -528,6 +528,10 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 {
 	STACK;
 
+	// Lock mutex to set the semaphore, so that the SIS access be reentrant
+	mutex_sis.lock();
+	OutputDebugStringA("Mutex locking ...\r\n");
+
 	// Transceiver lengths
 	size_t tx_payload_len = tx_tgm.mapping.payload.get_size();
 	size_t tx_header_len = tx_tgm.mapping.header.get_size();
@@ -607,6 +611,10 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 		}
 		
 	} while (bContd);
+
+	// Unlock mutex to unset the semaphore
+	mutex_sis.unlock();
+	OutputDebugStringA("Mutex unlocking ...\r\n");
 }
 
 

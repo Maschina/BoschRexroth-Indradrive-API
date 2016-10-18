@@ -3,6 +3,7 @@
 
 #include <Windows.h>
 #include <string>
+#include <mutex>
 
 #include "poppydebugtools.h"
 #include "helpers.h"
@@ -115,6 +116,8 @@ private:
 
 private:
 	CSerial m_serial;
+
+	std::mutex mutex_sis;
 };
 
 
