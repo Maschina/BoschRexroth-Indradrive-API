@@ -82,7 +82,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="StatusUpdate.cs" />
-    <Page Include="controls\SpeedLiveTracker.xaml">
+    <Page Include="controls\LiveTracker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -95,8 +95,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ComPorts.cs" />
-    <Compile Include="controls\SpeedLiveTracker.xaml.cs">
-      <DependentUpon>SpeedLiveTracker.xaml</DependentUpon>
+    <Compile Include="controls\LiveTracker.xaml.cs">
+      <DependentUpon>LiveTracker.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataSequenceItem.cs" />
     <Compile Include="Helpers.cs" />

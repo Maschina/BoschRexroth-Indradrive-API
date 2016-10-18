@@ -46,7 +46,7 @@ namespace WpfApplication1
             
             indralib = new Indradrive(ref listErrors);
 
-            dataSequence.ItemsSource = new List<DataSequenceItem>();
+            dataSequence.ItemsSource = new List<DataSequenceItem>();            
         }
         
 
@@ -72,8 +72,7 @@ namespace WpfApplication1
             status = new StatusUpdate(
                 new TimeSpan(0, 0, 0, 0, 500), 
                 ref indralib, 
-                ref LiveTracker.lblSpeed,
-                ref lblDiagnostic
+                ref oLiveTracker
                 );
             status.Run();
         }
@@ -109,7 +108,7 @@ namespace WpfApplication1
 
             /// ... and write it back to the datagrid
             dataSequence.ItemsSource = sequence;
-            dataSequence.Items.Refresh();
+            //dataSequence.Items.Refresh();
 
             Console.WriteLine("Updated Cell[{0}:{1}] to {2} (Raw input was: {3})", row, col, sequence[row].Get(col), text);
         }
@@ -119,7 +118,7 @@ namespace WpfApplication1
         {
             if (!connected) return;
             if (operationmode != opmode.speed) return;
-                        
+
             /// Make sure that RELEASE is given before doing any rotation
             Byte state = 0;
             indralib.get_opstate(ref state);
@@ -130,15 +129,18 @@ namespace WpfApplication1
                 return;
             }
 
-            /// Perform set point control
-
             indralib.speedcontrol_init(1000, 1000);
 
+            /// Perform set point control
             UInt32 speed = 0;
-            if (Helpers.ConvertString2UInt(txtSpeed.Text, out speed))
+            Double accel = 0;
+            if (Helpers.ConvertString2UInt(txtSpeed.Text, out speed) && Helpers.ConvertString2Double(txtAccel.Text, out accel))
             {
-                indralib.speedcontrol_write((int)speed, 1000);
+                indralib.speedcontrol_write((Double)speed, accel);
             }
+
+            txtSpeed.SelectAll();
+            txtSpeed.Focus();
         }
 
 
@@ -169,7 +171,7 @@ namespace WpfApplication1
             switch (mode)
             {
                 case 1:
-                    mode_label = "Sequencer";
+                    mode_label = "Sequence Control";
                     operationmode = opmode.sequence;
                     break;
                 case 2:
@@ -181,14 +183,14 @@ namespace WpfApplication1
                     break;
             }
 
-            lblMode.Content = mode_label;
+            oLiveTracker.lblMode.Content = mode_label;
         }
 
 
         private void btnRunSequence_Click(object sender, RoutedEventArgs e)
         {
             if (!connected) return;
-            if (operationmode != opmode.speed) return;
+            if (operationmode != opmode.sequence) return;
             
             /// Make sure that RELEASE is given before doing any rotation
             Byte state = 0;
@@ -227,6 +229,29 @@ namespace WpfApplication1
                 (UInt16)sequence.Count,
                 1
                 );
+        }
+
+        private void btnSequencerModeActivate_Click(object sender, RoutedEventArgs e)
+        {
+            if (!connected) return;
+
+            indralib.sequencer_activate();
+
+            get_opmode();
+        }
+
+        private void txtSpeed_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) btnSetSpeed_Click(sender, e);
+        }
+
+        private void txtAccel_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                txtSpeed.Focus();
+                txtSpeed.SelectAll();
+            }
         }
     }
 }

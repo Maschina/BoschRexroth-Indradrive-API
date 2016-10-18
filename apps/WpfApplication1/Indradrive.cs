@@ -107,7 +107,12 @@ namespace WpfApplication1
             if (ret != 0)
             {
                 String err = Encoding.ASCII.GetString(indraerr.msg).TrimEnd((Char)0);
-                listboxerr.Items.Add(err);
+
+                Console.WriteLine(err);
+                listboxerr.Dispatcher.BeginInvoke((System.Windows.Forms.MethodInvoker)(() =>
+                {
+                    listboxerr.Items.Add(err);
+                }));
             }
 
             return ret;

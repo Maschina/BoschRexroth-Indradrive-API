@@ -11,8 +11,7 @@ namespace WpfApplication1
 {
     class StatusUpdate
     {
-        private Label       m_speedlabel;
-        private Label       m_diaglabel;
+        private LiveTracker m_livetracker;
         private TimeSpan    m_period;
 
         private Indradrive  m_indradrlib;
@@ -21,12 +20,11 @@ namespace WpfApplication1
         private Timer timerDiagUpdate;
 
 
-        public StatusUpdate(TimeSpan period, ref Indradrive indralib, ref Label speedlabel, ref Label diaglabel)
+        public StatusUpdate(TimeSpan period, ref Indradrive indralib, ref LiveTracker livetracker)
         {
             m_period        = period;
             m_indradrlib    = indralib;
-            m_speedlabel    = speedlabel;
-            m_diaglabel     = diaglabel;
+            m_livetracker   = livetracker;
         }
 
 
@@ -42,16 +40,28 @@ namespace WpfApplication1
             Double speed = 0.0;
             m_indradrlib.get_speed(ref speed);
 
-            m_speedlabel.Content = speed.ToString();
+            // Invoking element since it will be accessed from other than the owner's thread
+            m_livetracker.Dispatcher.BeginInvoke((System.Windows.Forms.MethodInvoker)(() =>
+            {
+                m_livetracker.lblSpeed.Content = speed.ToString();
+                m_livetracker.addSpeedgraphValue(speed);
+            }));
         }
 
 
         private void getDiagnostic(Object state)
         {
-            Byte[] diag = new Byte[256];
-            m_indradrlib.get_diagnostic_msg(ref diag);
+            Byte[] diag_raw = new Byte[256];
+            
+            m_indradrlib.get_diagnostic_msg(diag_raw);
 
-            m_diaglabel.Content = diag.ToString();
+            String diag = Encoding.ASCII.GetString(diag_raw).TrimEnd((Char)0);
+
+            // Invoking element since it will be accessed from other than the owner's thread
+            m_livetracker.Dispatcher.BeginInvoke((System.Windows.Forms.MethodInvoker)(() =>
+            {
+                m_livetracker.lblDiagnostic.Content = diag;
+            }));
         }
     }
 }

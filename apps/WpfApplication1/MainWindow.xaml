@@ -12,26 +12,16 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="Auto" MinWidth="477"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" ></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10">
-            <WrapPanel Orientation="Horizontal">
-                <Label Content="Mode:" />
-                <Label x:Name="lblMode" Content="-" />
-            </WrapPanel>
-            <WrapPanel Orientation="Horizontal">
-                <Label Content="Diagnostic:" />
-                <Label x:Name="lblDiagnostic" Content="-" />
-            </WrapPanel>
-            <wpfapp:SpeedLiveTracker x:Name="LiveTracker" MinHeight="313"/>
-        </StackPanel>
-        
+        <wpfapp:LiveTracker x:Name="oLiveTracker" Grid.Row="0" Grid.Column="1" Width="Auto"/>
+
         <WrapPanel Orientation="Vertical">
             <WrapPanel Orientation="Horizontal" Margin="10">
                 <Label x:Name="label" Content="Port:" Height="Auto"/>
@@ -47,16 +37,27 @@
             <Expander Header="Speed Control Mode" Margin="10">
                 <StackPanel Margin="10,4,0,0">
                     <Button x:Name="btnSpeedModeActivate" Content="Activate" Width="Auto" FontWeight="Bold" Margin="0,0,0,10" Click="btnSpeedModeActivate_Click"/>
-                    <WrapPanel Orientation="Horizontal">
-                        <Label Content="Speed [rpm]:" Height="Auto" FontSize="10"/>
-                        <TextBox Name="txtSpeed" PreviewTextInput="IntegerValidationTextBox" Text="0" Width="45" FontSize="10" TextAlignment="Right"/>
-                        <Button x:Name="btnSetSpeed" Content="Set" Width="Auto" FontSize="10" Click="btnSetSpeed_Click"/>
-                    </WrapPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Accel [rad/s²]:" Height="Auto" FontSize="10" Width="75" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="0" />
+                        <TextBox Name="txtAccel" PreviewTextInput="IntegerValidationTextBox" Text="0" Width="45" FontSize="10" TextAlignment="Right" Grid.Column="1" Grid.Row="0" KeyUp="txtAccel_KeyUp" />
+                        <Label Content="Speed [rpm]:" Height="Auto" FontSize="10" Width="75" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="1"/>
+                        <TextBox Name="txtSpeed" PreviewTextInput="IntegerValidationTextBox" Text="0" Width="45" FontSize="10" TextAlignment="Right" Grid.Column="1" Grid.Row="1" KeyUp="txtSpeed_KeyUp"/>
+                        <Button x:Name="btnSetSpeed" Content="Set" Width="Auto" FontSize="10" Click="btnSetSpeed_Click" Grid.Column="2" Grid.RowSpan="2"/>
+                    </Grid>
                 </StackPanel>
             </Expander>
             <Expander Header="Sequencer Mode" Margin="10">
                 <StackPanel Margin="10,4,0,0">
-                    <Button x:Name="btnSequencerModeActivate" Content="Activate" Width="Auto" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Button x:Name="btnSequencerModeActivate" Content="Activate" Width="Auto" FontWeight="Bold" Margin="0,0,0,10" Click="btnSequencerModeActivate_Click"/>
 
                     <DataGrid x:Name="dataSequence" CanUserResizeColumns="True" CanUserResizeRows="False" HeadersVisibility="Column" AutoGenerateColumns="False" CellEditEnding="dataSequence_CellEditEnding">
                         <DataGrid.Columns>
@@ -110,7 +111,7 @@
             </Expander>
         </WrapPanel>
 
-        <ListBox x:Name="listErrors" Grid.Row="1" Grid.ColumnSpan="2" Height="Auto" />
+        <ListBox x:Name="listErrors" Grid.Row="1" Grid.ColumnSpan="2" Height="Auto" FontSize="9" />
 
 
     </Grid>
