@@ -92,8 +92,8 @@ namespace WpfApplication1
         public int get_speed(ref Double speed) { return CheckResult(get_speed(idref, ref speed, ref indraerr)); }
 
         [DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int get_diagnostic_msg(int ID_ref, ref Byte[] ID_diagnostic_msg, ref ErrHandle ID_err);
-        public int get_diagnostic_msg(ref Byte[] ID_diagnostic_msg) { return CheckResult(get_diagnostic_msg(idref, ref ID_diagnostic_msg, ref indraerr)); }
+        private static extern int get_diagnostic_msg(int ID_ref, Byte[] ID_diagnostic_msg, ref ErrHandle ID_err);
+        public int get_diagnostic_msg(Byte[] ID_diagnostic_msg) { return CheckResult(get_diagnostic_msg(idref, ID_diagnostic_msg, ref indraerr)); }
 
         [DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         private static extern int get_diagnostic_num(int ID_ref, ref UInt32 ID_diagnostic_num, ref ErrHandle ID_err);
