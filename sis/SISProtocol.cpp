@@ -530,7 +530,6 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 
 	// Lock mutex to set the semaphore, so that the SIS access be reentrant
 	mutex_sis.lock();
-	OutputDebugStringA("Mutex locking ...\r\n");
 
 	// Transceiver lengths
 	size_t tx_payload_len = tx_tgm.mapping.payload.get_size();
@@ -614,7 +613,6 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 
 	// Unlock mutex to unset the semaphore
 	mutex_sis.unlock();
-	OutputDebugStringA("Mutex unlocking ...\r\n");
 }
 
 

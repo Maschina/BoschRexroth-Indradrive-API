@@ -12,10 +12,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
             <Label Content="Mode:" />
@@ -25,7 +25,7 @@
             <Label Content="Diagnostic:" />
             <Label x:Name="lblDiagnostic" Content="-" />
         </WrapPanel>
-        <lvc:CartesianChart MinWidth="300" Width="Auto" MinHeight="300" Grid.Row="2" Grid.Column="0">
+        <lvc:CartesianChart MinWidth="300" Width="Auto" MinHeight="300" Height="Auto" Grid.Row="2" Grid.Column="0" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
             <lvc:CartesianChart.Series>
                 <lvc:LineSeries Values="{Binding ChartValues}" Title="Speed" PointGeometrySize="10" StrokeThickness="2" />
             </lvc:CartesianChart.Series>

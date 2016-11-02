@@ -87,7 +87,7 @@ namespace WpfApplication1
         private void SetAxisLimits(DateTime now)
         {
             AxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
-            AxisMin = now.Ticks - TimeSpan.FromSeconds(8).Ticks; //we only care about the last 8 seconds
+            AxisMin = now.Ticks - TimeSpan.FromSeconds(15).Ticks; //we only care about the last 8 seconds
         }
         
 
@@ -103,8 +103,8 @@ namespace WpfApplication1
 
             SetAxisLimits(now);
 
-            //lets only use the last 30 values
-            if (ChartValues.Count > 30) ChartValues.RemoveAt(0);
+            //lets only use the last 50 values
+            if (ChartValues.Count > 50) ChartValues.RemoveAt(0);
         }
     }
 
