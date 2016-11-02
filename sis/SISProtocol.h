@@ -5,7 +5,7 @@
 #include <string>
 #include <mutex>
 
-#include "poppydebugtools.h"
+#include "debug.h"
 #include "helpers.h"
 #include "RS232.h"
 #include "Telegrams.h"

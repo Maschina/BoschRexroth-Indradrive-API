@@ -6,6 +6,7 @@
 #include "SISProtocol.h"
 #include "RS232.h"
 #include "errors.h"
+#include "debug.h"
 
 
 /*  building a DLL  */

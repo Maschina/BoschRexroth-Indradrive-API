@@ -3,6 +3,7 @@
 
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 #include <numeric>
 #include <type_traits>
 

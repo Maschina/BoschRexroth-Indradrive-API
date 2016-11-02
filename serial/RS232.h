@@ -30,7 +30,7 @@
 
 #include "ftd2xx.h"
 #include "helpers.h"
-#include "PoppyDebugTools.h"
+#include "debug.h"
 
 
 

@@ -288,6 +288,7 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="debug.h" />
     <ClInclude Include="errors.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="resource.h" />
