@@ -53,14 +53,14 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -130,7 +130,19 @@
     <Import Project="UserDirectories.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLabview|Win32'">
+    <TargetName>$(ProjectName)-LV</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
+    <TargetName>$(ProjectName)-LV</TargetName>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -145,8 +157,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin
-copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin</Command>
+      <Command>copy $(SystemRoot)\System32\msvcp140d.dll $(SolutionDir)bin\
+copy $(SystemRoot)\System32\vcruntime140d.dll $(SolutionDir)bin\
+copy $(SolutionDir)res\ucrtbased.dll $(SolutionDir)bin\
+copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin\
+copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin\</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -179,9 +194,13 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\
+      <Command>copy $(SystemRoot)\System32\msvcp140d.dll $(SolutionDir)..\
+copy $(SystemRoot)\System32\vcruntime140d.dll $(SolutionDir)..\
+copy $(SolutionDir)res\ucrtbased.dll $(SolutionDir)..\
+copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\
 copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)..\</Command>
     </PostBuildEvent>
     <Xdcmake>
@@ -238,7 +257,10 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin</Command>
+      <Command>copy $(SystemRoot)\System32\msvcp140.dll $(SolutionDir)bin\
+copy $(SystemRoot)\System32\vcruntime140.dll $(SolutionDir)bin\
+copy $(SystemRoot)\System32\ucrtbase.dll $(SolutionDir)bin\
+copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
@@ -254,9 +276,13 @@ python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(Proje
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command>
+      <Command>copy $(SystemRoot)\System32\msvcp140.dll $(SolutionDir)..\
+copy $(SystemRoot)\System32\vcruntime140.dll $(SolutionDir)..\
+copy $(SystemRoot)\System32\ucrtbase.dll $(SolutionDir)..\
+copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

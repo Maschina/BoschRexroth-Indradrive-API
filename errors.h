@@ -4,9 +4,12 @@
 #include <cstring>
 #include <string>
 
-/// Including Labviewv.lib in case of project is compiled for LabVIEW
+
 #ifdef USE_LABVIEW_ENV
+/// Including Labviewv.lib in case of project is compiled for LabVIEW
 #pragma comment(lib,"labviewv.lib")
+/// Including extcode.h in case of project is compiled for LabVIEW
+#include "extcode.h"
 #endif
 
 
