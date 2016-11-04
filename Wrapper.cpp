@@ -123,7 +123,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double_t ID_m
 }
 
 
-DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference

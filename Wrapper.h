@@ -139,7 +139,7 @@ extern "C" {  /*  using a C++ compiler  */
 
 	DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol* ID_ref, double_t ID_max_accel = 10000, double_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
-	DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol* ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol* ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 

@@ -228,8 +228,7 @@ namespace WpfApplication1
                 accels.ToArray(), 
                 jerks.ToArray(), 
                 delays.ToArray(), 
-                (UInt16)sequence.Count,
-                1
+                (UInt16)sequence.Count
                 );
         }
 

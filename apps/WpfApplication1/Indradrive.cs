@@ -69,8 +69,8 @@ namespace WpfApplication1
         public int sequencer_init(Double ID_max_accel, Double ID_max_jerk) { return CheckResult(sequencer_init(idref, ID_max_accel, ID_max_jerk, ref indraerr)); }
 
         [DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int sequencer_write(int ID_ref, Double[] ID_speeds, Double[] ID_accels, Double[] ID_jerks, UInt32[] ID_delays, UInt16 ID_set_length, Byte ID_direction, ref ErrHandle ID_err);
-        public int sequencer_write(Double[] ID_speeds, Double[] ID_accels, Double[] ID_jerks, UInt32[] ID_delays, UInt16 ID_set_length, Byte ID_direction) { return CheckResult(sequencer_write(idref, ID_speeds, ID_accels, ID_jerks, ID_delays, ID_set_length, ID_direction, ref indraerr)); }
+        private static extern int sequencer_write(int ID_ref, Double[] ID_speeds, Double[] ID_accels, Double[] ID_jerks, UInt32[] ID_delays, UInt16 ID_set_length, ref ErrHandle ID_err);
+        public int sequencer_write(Double[] ID_speeds, Double[] ID_accels, Double[] ID_jerks, UInt32[] ID_delays, UInt16 ID_set_length) { return CheckResult(sequencer_write(idref, ID_speeds, ID_accels, ID_jerks, ID_delays, ID_set_length, ref indraerr)); }
 
         [DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         private static extern int sequencer_softtrigger(int ID_ref, ref ErrHandle ID_err);
