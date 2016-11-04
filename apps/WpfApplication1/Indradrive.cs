@@ -99,6 +99,10 @@ namespace WpfApplication1
         private static extern int get_diagnostic_num(int ID_ref, ref UInt32 ID_diagnostic_num, ref ErrHandle ID_err);
         public int get_diagnostic_num(ref UInt32 ID_diagnostic_num) { return CheckResult(get_diagnostic_num(idref, ref ID_diagnostic_num, ref indraerr)); }
 
+        [DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int clear_error(int ID_ref, ref ErrHandle ID_err);
+        public int clear_error() { return CheckResult(clear_error(idref, ref indraerr)); }
+
 
         // Helpers
 

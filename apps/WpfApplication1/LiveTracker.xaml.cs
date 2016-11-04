@@ -17,6 +17,8 @@ namespace WpfApplication1
         private double _axisMax;
         private double _axisMin;
 
+        private Indradrive m_indradrlib;
+
         public LiveTracker()
         {
             InitializeComponent();
@@ -51,6 +53,8 @@ namespace WpfApplication1
 
             DataContext = this;
         }
+
+        public void SetIndradriveLib(Indradrive _lib) { m_indradrlib = _lib; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -105,6 +109,11 @@ namespace WpfApplication1
 
             //lets only use the last 50 values
             if (ChartValues.Count > 50) ChartValues.RemoveAt(0);
+        }
+
+        private void buttonClearError_Click(object sender, RoutedEventArgs e)
+        {
+            m_indradrlib.clear_error();
         }
     }
 

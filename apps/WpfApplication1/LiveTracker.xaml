@@ -24,6 +24,7 @@
         <WrapPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
             <Label Content="Diagnostic:" />
             <Label x:Name="lblDiagnostic" Content="-" />
+            <Button x:Name="buttonClearError" Content="Clear error" Width="75" Click="buttonClearError_Click"/>
         </WrapPanel>
         <lvc:CartesianChart MinWidth="300" Width="Auto" MinHeight="300" Height="Auto" Grid.Row="2" Grid.Column="0" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
             <lvc:CartesianChart.Series>

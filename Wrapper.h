@@ -128,14 +128,14 @@ extern "C" {  /*  using a C++ compiler  */
 	typedef struct SISProtocol SISProtocol;
 
 
-	/// API: Fundumentals
+	/// API: Fundumentals =====================================================
 
 	DLLEXPORT SISProtocol* DLLCALLCONV init();
 	DLLEXPORT int32_t DLLCALLCONV open(SISProtocol* ID_ref, const wchar_t* ID_comport = L"COM1", uint32_t ID_combaudrate = 19200, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV close(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 
-	/// API: Sequencer
+	/// API: Sequencer ========================================================
 
 	DLLEXPORT int32_t DLLCALLCONV sequencer_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol* ID_ref, double_t ID_max_accel = 10000, double_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
@@ -143,28 +143,30 @@ extern "C" {  /*  using a C++ compiler  */
 	DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 
-	/// API: SpeedControl
+	/// API: SpeedControl =====================================================
 
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_activate(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_init(SISProtocol* ID_ref, double_t ID_max_accel = 10000, double_t ID_max_jerk = 1000, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV speedcontrol_write(SISProtocol* ID_ref, double_t ID_speed, double_t ID_accel, ErrHandle ID_err = ErrHandle());
 
 
-	/// API: Configuration
+	/// API: Configuration ====================================================
 
 	DLLEXPORT int32_t DLLCALLCONV set_stdenvironment(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 	
-	/// API: Status
+	/// API: Status ===========================================================
 
+	/// <summary> Receive . </summary>
 	DLLEXPORT int32_t DLLCALLCONV get_drivemode(SISProtocol* ID_ref, uint32_t * ID_drvmode, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_opstate(SISProtocol* ID_ref, uint8_t * ID_opstate, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_speed(SISProtocol * ID_ref, double_t * ID_speed, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_diagnostic_msg(SISProtocol* ID_ref, char * ID_diagnostic_msg, ErrHandle ID_err = ErrHandle());
 	DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol* ID_ref, uint32_t * ID_diagnostic_num, ErrHandle ID_err = ErrHandle());
+	DLLEXPORT int32_t DLLCALLCONV clear_error(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
 
 
-	/// Internal helper functions
+	/// Internal helper functions =============================================
 
 	inline void change_opmode(SISProtocol * ID_ref, const uint64_t opmode);
 	inline SPEEDUNITS get_units(SISProtocol * ID_ref);

@@ -502,6 +502,32 @@ DLLEXPORT int32_t DLLCALLCONV get_diagnostic_num(SISProtocol * ID_ref, uint32_t 
 }
 
 
+DLLEXPORT int32_t DLLCALLCONV clear_error(SISProtocol * ID_ref, ErrHandle ID_err)
+{
+	if (!dynamic_cast<SISProtocol*>(ID_ref))
+		// Return error for wrong reference
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
+
+	try
+	{
+		// Clear error (S-0-0099) // Command C0500
+		ID_ref->execute_command(TGM::SERCOS_Param_S, 99);
+
+		return Err_NoError;
+	}
+	catch (SISProtocol::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+	catch (CSerial::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_GetStatus);
+	}
+}
+
+
 void change_opmode(SISProtocol * ID_ref, const uint64_t opmode)
 {
 	uint64_t curopmode;

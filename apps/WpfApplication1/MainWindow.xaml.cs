@@ -46,6 +46,8 @@ namespace WpfApplication1
             
             indralib = new Indradrive(ref listErrors);
 
+            oLiveTracker.SetIndradriveLib(indralib);
+
             dataSequence.ItemsSource = new List<DataSequenceItem>();            
         }
         
