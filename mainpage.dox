@@ -1,0 +1,182 @@
+/// @mainpage
+/// @author Robert Hartmann (ATV PTS SDAE), Infineon Technologies AG
+/// @author Application Engineering for Alternator Control ICs
+/// 		
+/// @tableofcontents
+/// 		
+/// @section intro_sec Introduction
+/// The Indradrive API provides an universal programming interface to the Indradrive M devices.
+/// A dedicated DLL (IndradriveAPI.dll, or IndradriveAPI-LV.dll for LabVIEW) handles the user inputs
+/// and converts them to SIS protocol telegrams. These telegrams are transfered to the Indradrive device
+/// via RS232 interface (refer to Indradrive User's Manual for more information).
+/// The API uses the reply telegram to extract the required data or identifies potentials errors and provides it back to the user.
+/// 
+/// @subsection ss_Drivemodes Drive modes
+/// The API is designed to support two dedicated drive modes:
+/// * @ref sss_SpeedControl "Speed Control"
+/// * @ref sss_Sequencer "Sequencer"
+///  
+/// @subsubsection sss_SpeedControl Speed Control
+/// The principle of the Speed Control is depicted below:
+/// @image html Indradrive-Drivemodes-SpeedControl.png "Principle of Speed Control"
+/// Baiscally, Speed Control offers non-realtime-capable way to quickly setup a new kinematic point (controlled via speed and acceleration).
+/// 
+/// Based on the requested speed and acceleration, the motor connected to the Indradrive system is cranking or down to the respective kinematic point.
+/// 
+/// The time between providing the data to the API and reaction of the motor depends on the Operating System (most likely Windows), calculation and creation of the SIS telegram and the baudrate to transfer the telegram.
+/// The time to go from the current kinematic point to the requested kinematic point can be determined as the following:
+/// \f[
+/// t = t_{i+1} - t_i = \frac{v_{\mbox{target}} - v_{\mbox{current}}}{a}
+///	\f]
+///	whereas \f$a\f$ is the acceleration and \f$v_{\mbox{target}} - v_{\mbox{current}}\f$ the difference between current and targeted speed.
+///
+/// @remarks The Speed Control drive mode cannot be used for real-time applications, since the jitter caused by OS and telegram transmission is unpredictable. Use the Sequencer drive mode for real-time applications instead.
+/// 
+/// The Speed Control drive mode is properly controlled in the following order:
+/// -# Check the current drive mode by using get_drivemode()
+///		- If drive mode "Sequencer" is selected, proceed like this:  
+///			-# Check, if Indradrive is in "bb" operation state by using get_opstate()  
+///			-# Call speedcontrol_activate()  
+///		- If drive mode "Speed Control" is selected, do not do anything and proceed with the next point  
+///	-# Initialize the right units by using speedcontrol_init()
+///	-# Write the target kinematic point by using speedcontrol_write()
+///	
+///	@attention Speed Control commands the Indradrive to control the next kinematic point. This kinematic operates continuously until the next kinematic point is given or the emergency brake has been used. There is no automatic or time-limited	stop system implemented.
+/// 
+/// @subsubsection sss_Sequencer Sequencer
+/// The principle of the Sequencer is depicted below:
+/// @image html Indradrive-Drivemodes-Sequencer.png "Principle of Sequencer"
+/// Sequencer offers real-time capable operation of a pre-programmed kinematic sequence upon receiving a trigger signal.
+/// Thus, Sequencer can be used if operations in a time-critical application is required.
+/// 
+/// The Sequencer routine is implemented into Indradrive's built-in PLC. If the routine is neither properly programmed nor running, the Sequencer operation mode is not working correctly.
+/// 
+/// In contrast to Speed Control, the Sequencer will be pre-programmed with a specific kinematic sequence (an example is shown in the figure above).
+/// Upon receiving an hardware or a software trigger, the Sequencer routine within the PLC immediately starts operating based on the first given kinematic point.
+/// After the pre-programmed elapsed time delay, the next kinematic point will be operated accordingly. As soon as the last kinematic point has been processed, the Indradrive motor goes back into standstill state (stop mode).
+/// 
+/// @attention If the PLC routine for the Sequencer is neither properly programmed nor running, the Sequencer drive mode cannot correctly operate.
+/// 
+/// Planning the kinematic sequence premises some calculations to be done for the jerk, if the delay, speed and acceleration is know for each sequence element.
+/// The following formula can be used for calculing the respective jerk, \f$r\f$:
+/// \f[
+/// r_i = \frac{a_i^2}{a_i (t_i-t_{i-1}) - v_i}
+///	\f]
+///	whereas \f$t_i-t_{i-1}\f$ is the Delay i to get from the previous kinematic point to the next requested kinematic point, \f$a_i\f$ is the acceleration and \f$v_i\f$ is the speed.
+/// 
+/// The Sequencer drive mode is properly controlled in the following order:
+/// -# Check the current drive mode by using get_drivemode()
+///		- If drive mode "Speed Control" is selected, proceed like this:
+///			-# Check, if Indradrive is in "bb" operation state by using get_opstate()
+///			-# Call sequencerl_activate()
+///		- If drive mode "Sequencer" is selected, do not do anything and proceed with the next point
+///	-# Initialize the right units by using sequencer_init()
+///	-# Write the whole kinematic sequence by using sequencer_write()
+///	-# Trigger the operation by using sequencer_softtrigger(), or use the hardware trigger (refer to Indradrive's User's Manual)
+///
+/// @subsection ss_APIModules API Modules
+/// As an overview, the API provides following modules:
+/// Module | Description
+/// ------ | -----------
+/// Fundamentals | Provides functions for communication establishment
+/// Status | Get information for diagnostic, drive modes, operation states, or even actual speed information
+/// Configuration | Setting up essential required configurations
+/// Sequencer | Programming functions for "Sequencer" drive mode
+/// Speed Control | Programming functions for "Speed Control" drive mode
+///   
+/// @section sec_Installation Installation
+/// The API package consists of:
+/// - IndradriveAPI.dll, or IndradriveAPI-LV.dll (for LabVIEW)  
+/// - msvcp140.dll  
+/// - vcruntime140.dll  
+///  
+/// Installation is very easy, if IndradriveAPI.dll, or IndradriveAPI-LV.dll is already present: Just copy all the mentioned DLLs from above into your binary folder, where your target application will be started from.
+/// 
+/// If the DLL IndradriveAPI.dll, or IndradriveAPI-LV.dll is missing, you have to compile the respective file first by doing the following steps:
+/// -# Install Visual Studio 2015, or later (alternatively, install Visual Studio 2015 Express for Desktop)
+/// -# Fetch the source code repository
+/// -# Open the text editor of your choice and copy in the following text:
+///		- If you have LabVIEW installed on your computer, use this code (and adjust the cintools folder to your LabVIEW version)
+///		@code{.xml}
+///		<?xml version="1.0" encoding="utf-8"?>
+///		<Project ToolsVersion = "4.0" xmlns = "http://schemas.microsoft.com/developer/msbuild/2003">
+///		<ImportGroup Label = "PropertySheets" / >
+///		<PropertyGroup Label = "UserMacros" / >
+///		<PropertyGroup / >
+///		<ItemDefinitionGroup>
+///		<ClCompile>
+///		<AdditionalIncludeDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools; sis; serial; ..\..\sis; ..\..\serial; ..\..; ..; .; % (AdditionalIncludeDirectories)< / AdditionalIncludeDirectories>
+///		< / ClCompile>
+///		<Link>
+///		<AdditionalLibraryDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools; serial; % (AdditionalLibraryDirectories)< / AdditionalLibraryDirectories>
+///		<AdditionalDependencies> % (AdditionalDependencies)< / AdditionalDependencies>
+///		< / Link>
+///		< / ItemDefinitionGroup>
+///		<ItemGroup / >
+///		< / Project>
+///		@endcode
+///		- If LabVIEW is not installed on your computer, use this code:  
+///		@code{.xml}
+///		<?xml version="1.0" encoding="utf-8"?>
+///		<Project ToolsVersion = "4.0" xmlns = "http://schemas.microsoft.com/developer/msbuild/2003">
+///		<ImportGroup Label = "PropertySheets" / >
+///		<PropertyGroup Label = "UserMacros" / >
+///		<PropertyGroup / >
+///		<ItemDefinitionGroup>
+///		<ClCompile>
+///		<AdditionalIncludeDirectories>sis; serial; ..\..\sis; ..\..\serial; ..\..; ..; .; % (AdditionalIncludeDirectories)< / AdditionalIncludeDirectories>
+///		< / ClCompile>
+///		<Link>
+///		<AdditionalLibraryDirectories>serial; % (AdditionalLibraryDirectories)< / AdditionalLibraryDirectories>
+///		<AdditionalDependencies> % (AdditionalDependencies)< / AdditionalDependencies>
+///		< / Link>
+///		< / ItemDefinitionGroup>
+///		<ItemGroup / >
+///		< / Project>
+///		@endcode
+/// -# Save this file as <c>UserDirectories.props</c> to the root directory of the source code (same level as <c>IndradriveAPI.vcxproj</c>)
+/// -# Open the Visual Studio solution called <c>Indradrive.sln</c>
+/// -# Choose configuration "Release" or "ReleaseLabview" (for LabView specific build)
+/// -# Build the solution
+///		- For "Release", the final DLLs are located in the bin/ folder  
+///		- For "ReleaseLabview", the final DLL are located in the ../ folder
+/// 
+/// @section sec_Usage Usage
+///	
+/// @subsection ss_overview API Function Overview
+/// The following tables provides an overview of exported functions that can be accessed through the API DLL:
+///
+/// Module | API function  | Brief description
+/// -------| ------------- | -----------------
+/// Fundamentals | init() | @copybrief init()
+/// Fundamentals | open() | @copybrief open()
+/// Fundamentals | close() | @copybrief close()
+/// Sequencer | sequencer_activate() | @copybrief sequencer_activate()
+/// Sequencer | sequencer_init() | @copybrief sequencer_init()
+/// Sequencer | sequencer_write() | @copybrief sequencer_write()
+/// Sequencer | sequencer_softtrigger() | @copybrief sequencer_softtrigger()
+/// Speed Control | speedcontrol_activate() | @copybrief speedcontrol_activate()
+/// Speed Control | speedcontrol_init() | @copybrief speedcontrol_init()
+/// Speed Control | speedcontrol_write() | @copybrief speedcontrol_write()
+/// Configuration | set_stdenvironment() | @copybrief set_stdenvironment()
+/// Status | get_drivemode() | @copybrief get_drivemode()
+/// Status | get_opstate() | @copybrief get_opstate()
+/// Status | get_speed() | @copybrief get_speed()
+/// Status | get_diagnostic_msg() | @copybrief get_diagnostic_msg()
+/// Status | get_diagnostic_num() | @copybrief get_diagnostic_num()
+/// Status | clear_error() | @copybrief clear_error()
+/// 
+/// @section sec_Examples Examples
+/// This sections gives some examples for C\# and Python.
+/// However, through the nature of DLL, the API can be also called by other programming languages and development environments, such as LabVIEW, Matlab, etc.
+/// 		 
+/// @subsection ss_Examples_CS C\# Examples
+/// The following code defines a C\# class than can be copied in into a seperated .cs file. The <c>Indradrive</c> is accessible within the WpfApplication1 namespace (or whatever namespace you are writing).	
+/// @include apps/WpfApplication1/Indradrive.cs
+///	 
+/// @subsection ss_Examples_PY Python Examples
+/// @include apps/PythonApplication1/PythonApplication1.py
+/// 
+/// @example apps/WpfApplication1/Indradrive.cs
+/// @example apps/PythonApplication1/PythonApplication1.py
+///

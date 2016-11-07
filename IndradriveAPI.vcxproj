@@ -165,6 +165,7 @@ copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin\</Comman
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
     <CustomBuildStep>
       <Command>
@@ -205,6 +206,7 @@ copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)..\</Command
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
     <CustomBuildStep>
       <Command>
@@ -262,6 +264,9 @@ copy $(SystemRoot)\System32\vcruntime140.dll $(SolutionDir)bin\
 copy $(SystemRoot)\System32\ucrtbase.dll $(SolutionDir)bin\
 copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin\</Command>
     </PostBuildEvent>
+    <Xdcmake>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Xdcmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
     <ClCompile>
@@ -284,6 +289,9 @@ copy $(SystemRoot)\System32\vcruntime140.dll $(SolutionDir)..\
 copy $(SystemRoot)\System32\ucrtbase.dll $(SolutionDir)..\
 copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command>
     </PostBuildEvent>
+    <Xdcmake>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Xdcmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -332,6 +340,9 @@ copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)..\</Command
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IndradriveAPI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mainpage.dox" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

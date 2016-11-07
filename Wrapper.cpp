@@ -1,3 +1,6 @@
+/// @file
+/// Implementation of API functions that are exported to the API DLL
+
 #include "Wrapper.h"
 
 
@@ -123,7 +126,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_init(SISProtocol * ID_ref, double_t ID_m
 }
 
 
-DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, uint8_t ID_direction, ErrHandle ID_err)
+DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_speeds[], double_t ID_accels[], double_t ID_jerks[], uint32_t ID_delays[], const uint16_t ID_set_length, ErrHandle ID_err)
 {
 	if (!dynamic_cast<SISProtocol*>(ID_ref))
 		// Return error for wrong reference
@@ -192,7 +195,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 	{
 		uint32_t qb0stat;
 
-		/// FEED DATA
+		// FEED DATA:
 
 		// SPS Global Register G1 (P-0-1371) - Reset Read Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint64_t>(0));
@@ -201,9 +204,9 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint64_t>(1));
 					
 		// Check status (P-0-1410)
-		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); /// TODO: Check RESULT_READ_OK bit (0b100000)
+		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); // TODO: Check RESULT_READ_OK bit (0b100000)
 
-		/// TRIGGER
+		// TRIGGER:
 
 		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(0));
@@ -212,7 +215,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(1));
 
 		// Check status (P-0-1410)
-		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); /// TODO: Check Drive started bit (0b1000)
+		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); // TODO: Check Drive started bit (0b1000)
 
 		return Err_NoError;
 	}

@@ -37,29 +37,34 @@
 class SISProtocol
 {
 public:
-	/// <summary>	Generic exception handling for SIS Protocol. </summary>
+	/// Generic exception handling for SIS Protocol.
 	class ExceptionGeneric;
-	/// <summary>	Specific exception handling of SIS Protocol for failed transceiving. </summary>
+	/// Specific exception handling of SIS Protocol for failed transceiving.
 	class ExceptionTransceiveFailed;
 
 	class ExceptionSISError;
 
-	/// <summary>	Baudrate mask that can be utilized for the Command Telegram Subservice 0x07 </summary>
+	/// Baudrate mask that can be utilized for the Command Telegram Subservice 0x07.
 	enum init_set_mask_baudrate
 	{
+		///< An enum constant representing the option for 9600 baud
 		Baud_9600	= 0b00000000,
+		///< An enum constant representing the option for 19200 baud
 		Baud_19200	= 0b00000001,
+		///< An enum constant representing the option for 38400 baud
 		Baud_38400	= 0b00000010,
+		///< An enum constant representing the option for 57600 baud
 		Baud_57600	= 0b00000100,
+		///< An enum constant representing the option for 115200 baud
 		Baud_115200 = 0b00001000
 	};
 
-	/// <summary>	Default constructor. </summary>
+	/// Default constructor.
 	SISProtocol();
-	/// <summary>	Destructor. </summary>
+	/// Destructor.
 	virtual ~SISProtocol();
 
-	/// API FUNCTIONS
+	
 
 	void open(const wchar_t * _port = L"COM1");
 	void close();
@@ -87,7 +92,6 @@ public:
 
 
 private:
-	/// TELEGRAM SUPPORTING FUNCTIONS
 
 	inline void get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, UINT8& _scalefactor, size_t& _datalen);
 	inline void get_parameter_status(const TGM::SERCOS_ParamVar _paramvar, const USHORT &_paramnum, TGM::SERCOS_Commandstatus& _datastatus);
@@ -107,7 +111,6 @@ private:
 	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm);
 
 private:
-	/// COMMUNICATION FUNCTIONS
 
 	template <class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 	void transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<TRHeader, TRPayload>& rx_tgm);
@@ -120,8 +123,9 @@ private:
 	std::mutex mutex_sis;
 };
 
-
-/// <summary>	Generic exceptions for SIS protocol. </summary>
+/// Generic exceptions for SIS protocol.
+///
+/// @sa	std::exception
 class SISProtocol::ExceptionGeneric : public std::exception
 {
 public:
@@ -156,8 +160,9 @@ protected:
 	std::string m_message;
 };
 
-
-/// <summary>	Specific exception handling of SIS Protocol transceiving failed. </summary>
+/// Specific exception handling of SIS Protocol transceiving failed.
+///
+/// @sa	SISProtocol::ExceptionGeneric
 class SISProtocol::ExceptionTransceiveFailed : public SISProtocol::ExceptionGeneric
 {
 public:
@@ -182,8 +187,9 @@ public:
 	}
 };
 
-
-/// <summary>	Specific exception handling of SIS Protocol error codes. </summary>
+/// Specific exception handling of SIS Protocol error codes.
+///
+/// @sa	SISProtocol::ExceptionGeneric
 class SISProtocol::ExceptionSISError : public SISProtocol::ExceptionGeneric
 {
 public:
