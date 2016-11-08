@@ -19,6 +19,7 @@
 /// @subsubsection sss_SpeedControl Speed Control
 /// The principle of the Speed Control is depicted below:
 /// @image html Indradrive-Drivemodes-SpeedControl.png "Principle of Speed Control"
+/// @image latex Indradrive-Drivemodes-SpeedControl.pdf "Principle of Speed Control"
 /// Baiscally, Speed Control offers non-realtime-capable way to quickly setup a new kinematic point (controlled via speed and acceleration).
 /// 
 /// Based on the requested speed and acceleration, the motor connected to the Indradrive system is cranking or down to the respective kinematic point.
@@ -46,6 +47,7 @@
 /// @subsubsection sss_Sequencer Sequencer
 /// The principle of the Sequencer is depicted below:
 /// @image html Indradrive-Drivemodes-Sequencer.png "Principle of Sequencer"
+/// @image latex Indradrive-Drivemodes-Sequencer.pdf "Principle of Sequencer"
 /// Sequencer offers real-time capable operation of a pre-programmed kinematic sequence upon receiving a trigger signal.
 /// Thus, Sequencer can be used if operations in a time-critical application is required.
 /// 

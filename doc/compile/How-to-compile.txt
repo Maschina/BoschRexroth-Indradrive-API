@@ -1,0 +1,19 @@
+How to compile the Help/Documentation files for Indradrive
+----------------------------------------------------------
+
+1. Download and install Doxygen (http://www.stack.nl/~dimitri/doxygen/download.html)
+2. For PDF report output, download and install Miktex (https://miktex.org/download)
+3. For HTML Help report output (.chm file), make sure to have HTML Help Workshop installed (normally located at: C:\Program Files\HTML Help Workshop)
+4. Open command line (Windows bash, cmd.exe) by opening Windows start menu, type "cmd" and press ENTER
+5. Cd into the current directory ("compile" path)
+6. Insert into command line "<path-to-doxygen>doxygen.exe Doxyfile.conf" and press ENTER
+
+For PDF report output:
+7. Via command line, Cd into ./out/latex
+8. Type in "make.bat" and press ENTER
+9. Result will be refman.pdf
+
+For HTML Help report output:
+10. Goto "C:\Program Files\HTML Help Workshop" and open "hhw.exe"
+11. Open "index.hhp" from "./out/html/"
+12. Compile

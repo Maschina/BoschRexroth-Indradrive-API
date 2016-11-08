@@ -4,9 +4,8 @@
 #ifndef _WRAPPER_H_
 #define _WRAPPER_H_
 
-
+/// Doxygen's mainpage documentation
 #include "mainpage.dox"
-
 
 #include <Windows.h>
 
@@ -16,7 +15,7 @@
 #include "debug.h"
 
 
-/*  building a DLL  */
+/// Macro to indicate that a static function shall be exported for the target DLL
 #define DLLEXPORT __declspec(dllexport)
 #define DLLCALLCONV __cdecl
 
@@ -45,94 +44,142 @@ extern "C" {  /*  using a C++ compiler  */
 	/// Velocity Control.
 	#define DRIVEMODE_SPEEDCONTROL	0b10
 
-
-	typedef struct _opstate_t
+	/// Structure is used for loading the payload of the Reception Telegram from the Indradrive SERCOS parameter P-0-
+	/// 0115.
+	/// 
+	/// The structure is designed to be loaded with an integer, but automatically structured into its components. Thus,
+	/// it is possible extract the exact information that are requested (e.g. Operate State of Indradrive M device).
+	/// 
+	/// The following code demonstrates a possible usage of this struct:
+	/// @code{.cpp}
+	/// uint64_t curopstate;
+	/// SISProtocol_ref->read_parameter(TGM::SercosParamP, 115, curopstate);
+	/// 
+	/// OPSTATE opstate(static_cast<uint16_t>(curopstate));
+	/// int foo = opstate.Value;
+	/// @endcode.
+	///
+	/// @sa	SISProtocol
+	/// @sa	SISProtocol::read_parameter
+	typedef struct OPSTATE
 	{
 		union
 		{
-			struct bits_t
+			struct Bits
 			{
-				/* Bit 0-1:
-				 * 00: Control section / power section not ready for operation (e.g., drive error or phase 2)
-				 * 01: Control section ready for operation "bb"
-				 * 10: Control section and power section ready for op. "Ab"
-				 * 11: Drive with torque "AF"
-				 */
-				uint8_t ready_for_operation : 2;
+				/// Bit 0-1 of parameter's payload:
+				/// * 0b00: Control section / power section not ready for operation(e.g., drive error or phase 2)
+				/// * 0b01 : Control section ready for operation "bb"
+				/// * 0b10 : Control section and power section ready for op. "Ab"
+				/// * 0b11 : Drive with torque "AF".
+				uint8_t OperateState : 2;
 
-				/// Bit 2: Drive Halt acknowledgment - 1: Drive Halt is active and axis is in standstill
-				uint8_t drive_halted : 1;
+				/// Bit 2 of parameter's payload: Drive Halt acknowledgment
+				/// * 0: Drive Halt not active
+				/// * 1: Drive Halt is active and axis is in standstill
+				uint8_t DriveHalted : 1;
 
-				/// Bit 3: Drive error - 0: No error, 1: Drive error
-				uint8_t drive_error : 1;
+				/// Bit 3 of parameter's payload: Drive error
+				/// * 0: No error  
+				/// * 1: Drive error
+				uint8_t DriveError : 1;
 
-				bits_t(uint16_t _P_0_0115 = 0) :
-					// Bit 14-15 @ P-0-0115
-					ready_for_operation((_P_0_0115 >> 14) & 0b11),
-					// Bit 4 @ P-0-0115
-					drive_halted((_P_0_0115 >> 4) & 0b1),
-					// Bit 13 @ P-0-0115
-					drive_error((_P_0_0115 >> 13) & 0b1)
+				/// Constructor.
+				///
+				/// @param	P_0_0115	(Optional) Payload data of SERCOS P-0-0115 parameter feedback. Default: 0.
+				Bits(uint16_t P_0_0115 = 0) :
+					/// Bit 14-15 @ P-0-0115.
+					OperateState((P_0_0115 >> 14) & 0b11),
+					/// Bit 4 @ P-0-0115.
+					DriveHalted((P_0_0115 >> 4) & 0b1),
+					/// Bit 13 @ P-0-0115.
+					DriveError((P_0_0115 >> 13) & 0b1)
 				{}
-			} bits;
+			} Bits;
 
-			uint8_t value;
+			/// Raw and unstructured data value
+			uint8_t Value;
 		};
 
-		_opstate_t(uint16_t _P_0_0115 = 0) : bits(_P_0_0115) {}
+		/// Constructor.
+		///
+		/// @param	P_0_0115	(Optional) Payload data of SERCOS P-0-0115 parameter feedback. Default: 0.
+		OPSTATE(uint16_t P_0_0115 = 0) : Bits(P_0_0115) {}
 	} OPSTATE;
 
 
-	/// Structure to store speed units as retrieved from Indradrive device.
-	typedef struct _speedunits_t
+	/// Structure is used for loading the payload of the Reception Telegram from the Indradrive SERCOS parameter S-0-
+	/// 0044
+	/// 
+	/// The structure is designed to be loaded with an integer, but automatically structured into its components. Thus,
+	/// it is possible extract the exact information that are requested (e.g. Operate State of Indradrive M device).
+	typedef struct SPEEDUNITS
 	{
 		union
 		{
-			struct bits_t
+			struct Bits
 			{
-				/// Bit 0-2: Type of scaling
-				/// * 001: Translational scaling
-				/// * 010: Rotatory scaling.
+				/// Bit 0-2 of parameter's payload: Type of scaling
+				/// * 0b001: Translational scaling
+				/// * 0b010: Rotatory scaling.
 				uint16_t type_of_scaling : 3;
 
-				/// Bit 3: Auto mode - 0: Preferred scaling, 1: Scaling by parameters
+				/// Bit 3 of parameter's payload: Auto mode
+				/// * 0: Preferred scaling  
+				/// * 1: Scaling by parameters
 				uint16_t automode : 1;
 
-				/// Bit 4: Units for translational/rotatory scaling - 0: Millimeter/Revolutions, 1: Inch/reserved
+				/// Bit 4 of parameter's payload: Units for translational/rotatory scaling
+				/// * 0: Millimeter/Revolutions  
+				/// * 1: Inch/reserved
 				uint16_t scale_units : 1;
 
-				/// Bit 5: Time units - 0: Minute, 1: Second
+				/// Bit 5 of parameter's payload: Time units
+				/// * 0: Minute  
+				/// * 1: Second
 				uint16_t time_units : 1;
 
-				/// Bit 6: Data relation - 0: At motor shaft, 1: At load
+				/// Bit 6 of parameter's payload: Data relation
+				/// * 0: At motor shaft  
+				/// * 1: At load
 				uint16_t data_rel : 1;
 
-				/// Bit 7-15: reserved
+				/// Bit 7-15 of parameter's payload: reserved
 				uint16_t res7 : 9;
 
-				bits_t(uint16_t _S_0_0044 = 0) :
+				/// Constructor.
+				///
+				/// @param	S_0_0044	(Optional) Reception Telegram's payload data
+				Bits(uint16_t S_0_0044 = 0) :
 					// Bit 0-2 @ S-0-0044
-					type_of_scaling((_S_0_0044) & 0b111),
+					type_of_scaling((S_0_0044) & 0b111),
 					// Bit 3 @ S-0-0044
-					automode((_S_0_0044 >> 3) & 0b1),
+					automode((S_0_0044 >> 3) & 0b1),
 					// Bit 4 @ S-0-0044
-					scale_units((_S_0_0044 >> 4) & 0b1),
+					scale_units((S_0_0044 >> 4) & 0b1),
 					// Bit 5 @ S-0-0044
-					time_units((_S_0_0044 >> 5) & 0b1),
+					time_units((S_0_0044 >> 5) & 0b1),
 					// Bit 6 @ S-0-0044
-					data_rel((_S_0_0044 >> 6) & 0b1),
+					data_rel((S_0_0044 >> 6) & 0b1),
 					// Bit 7-15 @ S-0-0044
-					res7((_S_0_0044 >> 7) & 0b111111111)
+					res7((S_0_0044 >> 7) & 0b111111111)
 				{}
-			} bits;
+			} Bits;
 
-			uint16_t value;
+			/// Raw and unstructured data value
+			uint16_t Value;
 		};
 
-		_speedunits_t(uint16_t _S_0_0044 = 0) : bits(_S_0_0044) {}
+		/// Constructor.
+		///
+		/// @param	S_0_0044	(Optional) Reception Telegram's payload data
+		SPEEDUNITS(uint16_t S_0_0044 = 0) : Bits(S_0_0044) {}
 	} SPEEDUNITS;
 
-
+	
+	/// Faking the actual SISProtocol class to a struct so that the C compiler can handle compilation of this file.
+	/// The SISProtocol files itself should be automically compiled using the C++ compilation process. This is
+	/// automatically handled using extern "C".
 	typedef struct SISProtocol SISProtocol;
 
 
@@ -162,7 +209,7 @@ extern "C" {  /*  using a C++ compiler  */
 
 	/// Opens the communication port to the Indradrive device.
 	/// 
-	/// @attention Baudrate selection is not support. Default of 19200 bits/s is used.
+	/// @attention Baudrate selection is not support. Default of 19200 Bits/s is used.
 	///
 	/// @remarks	This function is exported to the Indradrive API DLL.
 	///
@@ -181,7 +228,7 @@ extern "C" {  /*  using a C++ compiler  */
 	///
 	/// @param [in]		ID_ref		  	API reference. Pointer can be casted in from UINT32.
 	/// @param [in]		ID_comport	  	(Optional) Communication port. Default: L"COM1".
-	/// @param [in]		ID_combaudrate	(Optional) Communication baudrate in [bits/s]. Default: 19200 bits/s.
+	/// @param [in]		ID_combaudrate	(Optional) Communication baudrate in [Bits/s]. Default: 19200 Bits/s.
 	/// @param [out]	ID_err		  	(Optional) Error handle.
 	///
 	/// @return	Error handle return code (ErrHandle()).
@@ -528,7 +575,7 @@ extern "C" {  /*  using a C++ compiler  */
 	/// 			@endcode.
 	///
 	/// @param [in]		ID_ref  	API reference. Pointer can be casted in from UINT32.
-	/// @param [out]	ID_speed	Pointer that provides the speed information as double value in [1/min]. Sign
+	/// @param [out]	ID_speed	Pointer that provides the speed information as double Value in [1/min]. Sign
 	/// 							represents the rotation direction:
 	/// 							* Positive sign: Clockwise direction  
 	/// 							* Negative sign: Counter-clockwise direction.
