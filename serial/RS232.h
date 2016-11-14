@@ -115,32 +115,32 @@ public:
 	typedef enum
 	{
 		EBaudUnknown = -1,			// Unknown
-		EBaud110     = CBR_110,		// 110 bits/sec
-		EBaud300     = CBR_300,		// 300 bits/sec
-		EBaud600     = CBR_600,		// 600 bits/sec
-		EBaud1200    = CBR_1200,	// 1200 bits/sec
-		EBaud2400    = CBR_2400,	// 2400 bits/sec
-		EBaud4800    = CBR_4800,	// 4800 bits/sec
-		EBaud9600    = CBR_9600,	// 9600 bits/sec
-		EBaud14400   = CBR_14400,	// 14400 bits/sec
-		EBaud19200   = CBR_19200,	// 19200 bits/sec (default)
-		EBaud38400   = CBR_38400,	// 38400 bits/sec
-		EBaud56000   = CBR_56000,	// 56000 bits/sec
-		EBaud57600   = CBR_57600,	// 57600 bits/sec
-		EBaud115200  = CBR_115200,	// 115200 bits/sec
-		EBaud128000  = CBR_128000,	// 128000 bits/sec
-		EBaud256000  = CBR_256000,	// 256000 bits/sec
+		EBaud110     = CBR_110,		// 110 Bits/sec
+		EBaud300     = CBR_300,		// 300 Bits/sec
+		EBaud600     = CBR_600,		// 600 Bits/sec
+		EBaud1200    = CBR_1200,	// 1200 Bits/sec
+		EBaud2400    = CBR_2400,	// 2400 Bits/sec
+		EBaud4800    = CBR_4800,	// 4800 Bits/sec
+		EBaud9600    = CBR_9600,	// 9600 Bits/sec
+		EBaud14400   = CBR_14400,	// 14400 Bits/sec
+		EBaud19200   = CBR_19200,	// 19200 Bits/sec (default)
+		EBaud38400   = CBR_38400,	// 38400 Bits/sec
+		EBaud56000   = CBR_56000,	// 56000 Bits/sec
+		EBaud57600   = CBR_57600,	// 57600 Bits/sec
+		EBaud115200  = CBR_115200,	// 115200 Bits/sec
+		EBaud128000  = CBR_128000,	// 128000 Bits/sec
+		EBaud256000  = CBR_256000,	// 256000 Bits/sec
 	}
 	EBaudrate;
 
-	/// <summary>	Data bits (5-8) </summary>
+	/// <summary>	Data Bits (5-8) </summary>
 	typedef enum
 	{
 		EDataUnknown = -1,			// Unknown
-		EData5       =  5,			// 5 bits per byte
-		EData6       =  6,			// 6 bits per byte
-		EData7       =  7,			// 7 bits per byte
-		EData8       =  8			// 8 bits per byte (default)
+		EData5       =  5,			// 5 Bits per byte
+		EData6       =  6,			// 6 Bits per byte
+		EData7       =  7,			// 7 Bits per byte
+		EData8       =  8			// 8 Bits per byte (default)
 	}
 	EDataBits;
 
@@ -156,7 +156,7 @@ public:
 	}
 	EParity;
 
-	/// <summary>	Stop bits. </summary>
+	/// <summary>	Stop Bits. </summary>
 	typedef enum
 	{
 		EStopUnknown = -1,			// Unknown
@@ -245,9 +245,9 @@ public:
 	///
 	/// <param name="lpszDevice"> 	(Optional) COM port, stated as char*. Keep in mind to state ports
 	/// 							higher than COM9 as the following: "\\\\.\\COMx". </param>
-	/// <param name="dwInQueue">  	(Optional) queue of INS. Make sure that this value is neither
+	/// <param name="dwInQueue">  	(Optional) queue of INS. Make sure that this Value is neither
 	/// 							below 16 or above 254. </param>
-	/// <param name="dwOutQueue"> 	(Optional) queue of outs. Make sure that this value is neither
+	/// <param name="dwOutQueue"> 	(Optional) queue of outs. Make sure that this Value is neither
 	/// 							below 16 ore above 254. </param>
 	/// <param name="fOverlapped">	(Optional) true if overlapped. </param>
 	///=================================================================================================
@@ -265,7 +265,7 @@ public:
 	/// Setup the communication settings such as baudrate, databits, parity and stopbits. The default
 	/// settings are applied when the device has been opened. Call this function if these settings do
 	/// not apply for your application. If you prefer to use integers instead of the enumerated types
-	/// then just cast the integer to the required type. So the following two initializations are
+	/// then just cast the integer to the required Type. So the following two initializations are
 	/// equivalent:
 	/// 
 	///   Setup(EBaud9600,EData8,EParNone,EStop1)
@@ -279,9 +279,9 @@ public:
 	/// </summary>
 	///
 	/// <param name="eBaudrate">	(Optional) the baudrate. </param>
-	/// <param name="eDataBits">	(Optional) the data bits. </param>
+	/// <param name="eDataBits">	(Optional) the data Bits. </param>
 	/// <param name="eParity">  	(Optional) the parity. </param>
-	/// <param name="eStopBits">	(Optional) the stop bits. </param>
+	/// <param name="eStopBits">	(Optional) the stop Bits. </param>
 	///
 	/// <returns>	A LONG. </returns>
 	///=================================================================================================
@@ -432,7 +432,7 @@ public:
 	///=================================================================================================
 	/// <summary>	Determine what caused the event to trigger. </summary>
 	///
-	/// <returns>	The event type. </returns>
+	/// <returns>	The event Type. </returns>
 	///=================================================================================================
 	EEvent GetEventType (void);
 
@@ -491,7 +491,7 @@ protected:
 	LONG	m_lLastError;
 	/// <summary>	File handle. </summary>
 	HANDLE	m_hFile;
-	/// <summary>	Event type. </summary>
+	/// <summary>	Event Type. </summary>
 	EEvent	m_eEvent;
 	/// <summary>	Event mask. </summary>
 	DWORD	m_dwEventMask;
