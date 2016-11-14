@@ -138,29 +138,29 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_
 		{
 			// Speed in min^-1 (P-0-4007)
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4007, i + 1, abs(ID_speeds[i]));
-
-			// Acceleration in rad/s^2 (P-0-4008)
+															   
+			// Acceleration in rad/s^2 (P-0-4008)			   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4008, i + 1, ID_accels[i]);
-
-			// Deceleration in rad/s^2 (P-0-4063)
+															   
+			// Deceleration in rad/s^2 (P-0-4063)			   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i + 1, ID_accels[i]);
-
-			// Jerk in rad/s^3 (P-0-4009)
+															   
+			// Jerk in rad/s^3 (P-0-4009)					   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4009, i + 1, ID_jerks[i]);
-
-			// Mode (P-0-4019)
-			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i + 1, static_cast<uint32_t>(0b10000000 | ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b10 : 0b01) << 2)));
-
-			// Pos (P-0-4006)
+															   
+			// Mode (P-0-4019)								   
+			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4019, i + 1, static_cast<uint32_t>(0b10000000 | ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b01 : 0b10) << 2)));
+															   
+			// Pos (P-0-4006)								   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4006, i + 1, static_cast<uint64_t>(0));
-
-			// Wait (P-0-4018)
+															   
+			// Wait (P-0-4018)								   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4018, i + 1, static_cast<uint64_t>(0));
-
-			// Delay (P-0-4063)
+															   
+			// Delay (P-0-4063)								   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 4063, i + 1, static_cast<uint64_t>(0));
-
-			// Timers in cs (P-0-1389)
+															   
+			// Timers in cs (P-0-1389)						   
 			ID_ref->write_listelm(TGM::SERCOS_Param_P, 1389, i + 1, ID_delays[i]);
 		}		
 
@@ -192,10 +192,15 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 	{
 		uint32_t qb0stat;
 
-		/// FEED DATA
+		/// RESET TRIGGER
 
 		// SPS Global Register G1 (P-0-1371) - Reset Read Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint64_t>(0));
+
+		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
+		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(0));
+
+		/// READ CUSTOM DATA
 
 		// SPS Global Register G1 (P-0-1371) - Set Read Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1371, static_cast<uint64_t>(1));
@@ -203,10 +208,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 		// Check status (P-0-1410)
 		ID_ref->read_parameter(TGM::SERCOS_Param_P, 1410, qb0stat); /// TODO: Check RESULT_READ_OK bit (0b100000)
 
-		/// TRIGGER
-
-		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
-		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(0));
+		/// TRIGGER		
 
 		// SPS Global Register G2 (P-0-1372) - Set Sequencer Trigger
 		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(1));

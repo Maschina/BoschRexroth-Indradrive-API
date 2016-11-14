@@ -513,11 +513,11 @@ void SISProtocol::get_parameter_attributes(TGM::SERCOS_ParamVar _paramvar, const
 
 	_datalen = 1;
 	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_listel_2byte) _datalen = 2;
-	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_listel_4byte) _datalen = 4;
-	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_listel_8byte) _datalen = 8;
-	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_2byte) _datalen = 2;
-	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_4byte) _datalen = 4;
-	if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_8byte) _datalen = 8;
+	else if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_listel_4byte) _datalen = 4;
+	else if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_listel_8byte) _datalen = 8;
+	else if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_2byte) _datalen = 2;
+	else if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_4byte) _datalen = 4;
+	else if (sercos_attribute.bits.data_len == TGM::SERCOS_DATALEN_param_8byte) _datalen = 8;
 
 	_scalefactor = 0xFF & sercos_attribute.bits.scale_factor;
 }
