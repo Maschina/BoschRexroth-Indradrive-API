@@ -165,7 +165,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_
 															   
 			// Timers in cs (P-0-1389)						   
 			ID_ref->write_listelm(TGM::SercosParamP, 1389, i + 1, ID_delays[i]);
-		}		
+		}
 
 		// Time triggers for cam (P-0-1370)
 		ID_ref->write_parameter(TGM::SercosParamP, 1370, static_cast<uint32_t>(ID_set_length));
@@ -201,7 +201,7 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 		ID_ref->write_parameter(TGM::SercosParamP, 1371, static_cast<uint64_t>(0));
 
 		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
-		ID_ref->write_parameter(TGM::SERCOS_Param_P, 1372, static_cast<uint64_t>(0));
+		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(0));
 
 		/// READ CUSTOM DATA
 

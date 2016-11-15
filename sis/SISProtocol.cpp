@@ -601,9 +601,17 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 			{
 				if (rx_tgm.Mapping.Payload.Status)
 				{
-					std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.Bytes, tx_header_len + tx_payload_len);
-					//std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.bytes, rx_header_len + rx_payload_len);
-					throw SISProtocol::ExceptionSISError(rx_tgm.Mapping.Payload.Status, rx_tgm.Mapping.Payload.Error, tx_hexstream);
+					std::string tx_hexstream = hexprint_bytestream(tx_tgm.Raw.Bytes, tx_header_len + tx_payload_len);
+					
+					USHORT error = rx_tgm.Mapping.Payload.Error;
+
+					if (error == 0x800C || error == 0x800B || error == 0x8001)
+					{
+						mutex_sis.unlock();
+						transceiving<TCHeader, TCPayload, TRHeader, TRPayload>(tx_tgm, rx_tgm);
+					}
+					else
+						throw SISProtocol::ExceptionSISError(rx_tgm.Mapping.Payload.Status, rx_tgm.Mapping.Payload.Error, tx_hexstream);
 				}
 					
 				bContd = false;
