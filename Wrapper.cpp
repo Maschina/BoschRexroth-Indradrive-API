@@ -136,7 +136,8 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_
 
 	try
 	{
-			
+		ID_ref->write_listelm(TGM::SercosParamP, 4019, 1, static_cast<uint32_t>(0b10000100));
+
 		for (uint16_t i = 0; i < ID_set_length; i++)
 		{
 			// Speed in min^-1 (P-0-4007)
@@ -151,8 +152,8 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_write(SISProtocol * ID_ref, double_t ID_
 			// Jerk in rad/s^3 (P-0-4009)					   
 			ID_ref->write_listelm(TGM::SercosParamP, 4009, i + 1, ID_jerks[i]);
 															   
-			// Mode (P-0-4019)								   
-			ID_ref->write_listelm(TGM::SercosParamP, 4019, i + 1, static_cast<uint32_t>(0b10000000 | ((stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b10 : 0b01) << 2)));
+			// Mode (P-0-4019)							
+			ID_ref->write_listelm(TGM::SercosParamP, 4019, i + 2, static_cast<uint32_t>(stde::sgn<double_t>(ID_speeds[i]) == 1 ? 0b10000100 : 0b10001000));
 															   
 			// Pos (P-0-4006)								   
 			ID_ref->write_listelm(TGM::SercosParamP, 4006, i + 1, static_cast<uint64_t>(0));
