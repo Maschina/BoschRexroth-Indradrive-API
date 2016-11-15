@@ -229,7 +229,7 @@ namespace TGM
 	{
 	public:
 		/// Generic raw Bytes, comprising byte arrays
-		Bytestream raw;
+		Bytestream Raw;
 
 		/// Specialized Bytes class, comprising structure payload head and Bytes
 #pragma pack(push,1)

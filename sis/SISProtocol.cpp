@@ -329,6 +329,9 @@ void SISProtocol::write_listelm(TGM::SercosParamVar _paramvar, USHORT _paramnum,
 
 	UINT64 inval = static_cast<UINT64>(_rcvdelm * std::pow(10, scalefactor));
 
+	// Re-adjusting list size, if needed
+	set_parameter_listsize(_paramvar, _paramnum, datalen, _elm_pos);
+	
 	TGM::Data Bytes;
 	set_sized_data(Bytes, datalen, inval);
 
@@ -442,7 +445,7 @@ TGM::Map<TRHeader, TRPayload> SISProtocol::transceive_param(TGM::SercosParamVar 
 	tx_tgm.Mapping.Header.set_DatL(tx_tgm.Mapping.Payload.get_size());
 	
 	// Calculate Checksum
-	tx_tgm.Mapping.Header.calc_checksum(&tx_tgm.raw);
+	tx_tgm.Mapping.Header.calc_checksum(&tx_tgm.Raw);
 
 	if (!check_boundaries(tx_tgm))
 		throw SISProtocol::ExceptionGeneric(-1, "Boundaries are out of spec. Telegram is not ready to be sent.");
@@ -458,6 +461,31 @@ TGM::Map<TRHeader, TRPayload> SISProtocol::transceive_param(TGM::SercosParamVar 
 
 	return rx_tgm;
 }
+
+
+void SISProtocol::set_parameter_listsize(TGM::SercosParamVar param_variant, USHORT & param_number, const size_t &datalen, const USHORT & segment_position)
+{
+	USHORT size = datalen;
+	USHORT pos = 0;
+	auto rx_tgm = transceive_list
+		<TGM::Header, TGM::Commands::SercosList, TGM::Header, TGM::Reactions::SercosList>
+		(param_variant, param_number, SIS_SERVICE_SERCOS_LIST_READ, size, pos);
+
+	UINT32 param_header = rx_tgm.Mapping.Payload.Bytes.toUINT32();
+	UINT16 param_size_max = param_header >> 16;
+	UINT16 param_size_cur = param_header & 0xFFFF;
+
+	param_size_cur = std::max<UINT16>(param_size_cur, segment_position * datalen);
+
+	if (param_size_cur > param_size_max) return;
+
+	TGM::Data *new_header = new TGM::Data((UINT32)((param_size_max << 16) | param_size_cur));
+
+	transceive_list
+		<TGM::Header, TGM::Commands::SercosList, TGM::Header, TGM::Reactions::SercosList>
+		(param_variant, param_number, SIS_SERVICE_SERCOS_LIST_WRITE, size, pos, new_header);
+}
+
 
 template<class TCHeader, class TCPayload, class TRHeader, class TRPayload>
 TGM::Map<TRHeader, TRPayload> SISProtocol::transceive_list(TGM::SercosParamVar _paramvar, const USHORT & _paramnum, BYTE _service, USHORT & _element_size, USHORT & _list_offset, TGM::Data const * const _data, TGM::SercosDatablock _attribute)
@@ -479,7 +507,7 @@ TGM::Map<TRHeader, TRPayload> SISProtocol::transceive_list(TGM::SercosParamVar _
 	tx_tgm.Mapping.Header.set_DatL(tx_tgm.Mapping.Payload.get_size());
 
 	// Calculate Checksum
-	tx_tgm.Mapping.Header.calc_checksum(&tx_tgm.raw);
+	tx_tgm.Mapping.Header.calc_checksum(&tx_tgm.Raw);
 
 	if (!check_boundaries(tx_tgm))
 		throw SISProtocol::ExceptionGeneric(-1, "Boundaries are out of spec. Telegram is not ready to be sent.");
@@ -544,7 +572,7 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 	m_serial.Purge();	
 
 	// Write ...
-	m_serial.Write(tx_tgm.raw.Bytes, tx_header_len + tx_payload_len);
+	m_serial.Write(tx_tgm.Raw.Bytes, tx_header_len + tx_payload_len);
 	
 	// Read ...
 	bool bContd = true;
@@ -571,7 +599,7 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 		if (event & CSerial::EEventRecv)
 		{
 			// Read header Bytes
-			m_serial.Read(rx_tgm.raw.Bytes + rcvd_rcnt, RS232_BUFFER - rcvd_rcnt, &rcvd_cur, 0, RS232_READ_TIMEOUT);
+			m_serial.Read(rx_tgm.Raw.Bytes + rcvd_rcnt, RS232_BUFFER - rcvd_rcnt, &rcvd_cur, 0, RS232_READ_TIMEOUT);
 
 			// Loop back if nothing received
 			if (rcvd_cur == 0) continue;
@@ -590,8 +618,8 @@ void SISProtocol::transceiving(TGM::Map<TCHeader, TCPayload>& tx_tgm, TGM::Map<T
 			// Length of payload is zero --> No payload received
 			if (rx_payload_len == 0)
 			{
-				std::string tx_hexstream = hexprint_bytestream(tx_tgm.raw.Bytes, tx_header_len + tx_payload_len);
-				std::string rx_hexstream = hexprint_bytestream(rx_tgm.raw.Bytes, rx_header_len);
+				std::string tx_hexstream = hexprint_bytestream(tx_tgm.Raw.Bytes, tx_header_len + tx_payload_len);
+				std::string rx_hexstream = hexprint_bytestream(rx_tgm.Raw.Bytes, rx_header_len);
 				throw SISProtocol::ExceptionTransceiveFailed(-1, sformat("Reception Telegram received without payload, but just the header.\nRecption Header bytestream: %s.\nCommand Telegram bytestream was: %s.", rx_hexstream.c_str(), tx_hexstream.c_str()), true);
 			}
 				

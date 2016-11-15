@@ -130,7 +130,8 @@ private:
 	static std::string hexprint_bytestream(const BYTE * _bytestream, const size_t _len);
 
 	inline INT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
-	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64 & _rcvdelm);
+	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64& _rcvdelm);
+	inline void set_parameter_listsize(TGM::SercosParamVar param_variant, USHORT& param_number, const size_t& datalen, const USHORT& segment_position);
 
 private:
 
