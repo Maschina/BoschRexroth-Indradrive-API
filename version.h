@@ -5,10 +5,10 @@
 
 // Will be automatically increased by AutoIncreaseBuildNrs.exe
 // cmd: AutoIncreaseBuildNrs.exe version.h
-#define VER_BUILDNR 1
+#define VER_BUILDNR 3
 // Will be automatically increased by get-git-rev-HEAD.py
 // cmd: python get-git-rev-HEAD.py $(MSBuildProjectDir) version.h
-#define VER_BUILD					5307753
+#define VER_BUILD					9797d6a
 
 
 #define VERSION_MAJOR				0

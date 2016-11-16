@@ -25,6 +25,10 @@
 #define SIS_ADDR_UNIT			0x01
 
 
+/// Defines the maximum iterations of checking the successful executing of a Indradrive command
+#define MAX_COMMANDCHECK_ITERATIONS 300
+
+
 /// Class to hold functions an members for the SIS protocol support.
 class SISProtocol
 {
@@ -51,6 +55,7 @@ public:
 	} SIS_SERVICES;
 
 	/// Baudrate mask that can be utilized for the TypeCommand Telegram Subservice 0x07.
+	/// @todo This enum is not yet implemented into the code.
 	typedef enum BAUDRATE
 	{
 		/// An enum constant representing the option for 9600 baud
@@ -131,7 +136,7 @@ private:
 
 	inline INT64 get_sized_data(TGM::Data& rx_data, const size_t &datalen);
 	inline void set_sized_data(TGM::Data& tx_data, const size_t &datalen, UINT64& _rcvdelm);
-	inline void set_parameter_listsize(TGM::SercosParamVar param_variant, USHORT& param_number, const size_t& datalen, const USHORT& segment_position);
+	inline void set_parameter_listsize(TGM::SercosParamVar param_variant, USHORT& param_number, const size_t& datalen, const USHORT& segment_position, bool retain_following_segments = false);
 
 private:
 
