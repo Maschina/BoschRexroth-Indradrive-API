@@ -157,6 +157,8 @@
 /// Sequencer | sequencer_init() | @copybrief sequencer_init()
 /// Sequencer | sequencer_write() | @copybrief sequencer_write()
 /// Sequencer | sequencer_softtrigger() | @copybrief sequencer_softtrigger()
+/// Sequencer | sequencer_hardtrigger() | @copybrief sequencer_hardtrigger()
+/// Sequencer | sequencer_getstatus() | @copybrief sequencer_getstatus()
 /// Speed Control | speedcontrol_activate() | @copybrief speedcontrol_activate()
 /// Speed Control | speedcontrol_init() | @copybrief speedcontrol_init()
 /// Speed Control | speedcontrol_write() | @copybrief speedcontrol_write()

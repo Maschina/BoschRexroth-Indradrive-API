@@ -195,6 +195,72 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 	try
 	{
 		uint32_t qb0stat;
+		int iterations;
+
+		// FEED DATA:
+
+		// SPS Global Register G1 (P-0-1371) - Reset Read Trigger
+		ID_ref->write_parameter(TGM::SercosParamP, 1371, static_cast<uint64_t>(0));
+
+		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
+		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(0));
+
+		// READ CUSTOM DATA ...
+
+		iterations = 0;
+		do
+		{
+			// Check status (P-0-1410)
+			ID_ref->read_parameter(TGM::SercosParamP, 1410, qb0stat);
+
+			if (iterations > 300) return set_error(ID_err, "RESULT_READ_OK was not set. Input parameters cannot be accepted.", Err_Block_SeqWrite);
+		} while (qb0stat & 0b100000 >> 5);
+
+		// SPS Global Register G1 (P-0-1371) - Set Read Trigger
+		ID_ref->write_parameter(TGM::SercosParamP, 1371, static_cast<uint64_t>(1));
+					
+
+		// TRIGGER:
+
+		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
+		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(0));
+
+		// SPS Global Register G2 (P-0-1372) - Set Sequencer Trigger
+		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(1));
+
+		
+		iterations = 0;
+		do
+		{
+			// Check status (P-0-1410)
+			ID_ref->read_parameter(TGM::SercosParamP, 1410, qb0stat);
+
+			if (iterations > 300) return set_error(ID_err, "bDriveStarted was not set. Input parameters cannot be accepted.", Err_Block_SeqWrite);
+		} while (qb0stat & 0b1000 >> 3);
+
+		return Err_NoError;
+	}
+	catch (SISProtocol::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
+	}
+	catch (CSerial::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
+	}
+}
+
+DLLEXPORT int32_t DLLCALLCONV sequencer_hardtrigger(SISProtocol * ID_ref, ErrHandle ID_err)
+{
+	if (!dynamic_cast<SISProtocol*>(ID_ref))
+		// Return error for wrong reference
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
+
+	try
+	{
+		uint32_t qb0stat;
 
 		// FEED DATA:
 
@@ -208,20 +274,38 @@ DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol * ID_ref, ErrHan
 
 		// SPS Global Register G1 (P-0-1371) - Set Read Trigger
 		ID_ref->write_parameter(TGM::SercosParamP, 1371, static_cast<uint64_t>(1));
-					
+
 		// Check status (P-0-1410)
 		ID_ref->read_parameter(TGM::SercosParamP, 1410, qb0stat); // TODO: Check RESULT_READ_OK bit (0b100000)
 
-		// TRIGGER:
+		return Err_NoError;
+	}
+	catch (SISProtocol::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
+	}
+	catch (CSerial::ExceptionGeneric &ex)
+	{
+		return set_error(ID_err, char2str(ex.what()), Err_Block_SeqWrite);
+	}
+}
 
-		// SPS Global Register G2 (P-0-1372) - Reset Sequencer Trigger
-		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(0));
 
-		// SPS Global Register G2 (P-0-1372) - Set Sequencer Trigger
-		ID_ref->write_parameter(TGM::SercosParamP, 1372, static_cast<uint64_t>(1));
+DLLEXPORT int32_t DLLCALLCONV sequencer_getstatus(SISProtocol * ID_ref, uint16_t * ID_status, ErrHandle ID_err)
+{
+	if (!dynamic_cast<SISProtocol*>(ID_ref))
+		// Return error for wrong reference
+		return set_error(
+			ID_err, sformat("Reference pointing to invalid location '%p'.", ID_ref),
+			Err_Invalid_Pointer);
 
-		// Check status (P-0-1410)
-		ID_ref->read_parameter(TGM::SercosParamP, 1410, qb0stat); // TODO: Check Drive started bit (0b1000)
+	try
+	{
+		uint32_t plc_status;
+		// PLC register / Status value (P-0-1410)
+		ID_ref->read_parameter(TGM::SercosParamP, 1410, plc_status);
+
+		*ID_status = static_cast<uint16_t>(plc_status & 0xFFFF);
 
 		return Err_NoError;
 	}

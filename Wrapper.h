@@ -342,9 +342,6 @@ extern "C" {  /*  using a C++ compiler  */
 	///
 	/// @remarks	This function is exported to the Indradrive API DLL.
 	///
-	/// @remarks	By special PLC software (if configured), the Indradrive can be triggered by both software trigger and
-	/// 			hardware trigger. The hardware trigger is realized through a 24V rising edge input line.
-	///
 	/// @remarks	Refer to @ref sec_Examples "Examples" for detailed code examples.
 	///
 	/// @remarks	How to call with C\#:
@@ -358,6 +355,59 @@ extern "C" {  /*  using a C++ compiler  */
 	///
 	/// @return	Error handle return code (ErrHandle()).
 	DLLEXPORT int32_t DLLCALLCONV sequencer_softtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+
+	/// Hardware-Trigger to start operation of the "Sequencer" drive mode.
+	/// By special PLC software (if configured), the hardware trigger is realized through a 24V rising edge input line.
+	///
+	/// @remarks	This function is exported to the Indradrive API DLL.
+	/// 
+	/// @remarks	Refer to @ref sec_Examples "Examples" for detailed code examples.
+	///
+	/// @remarks	How to call with C\#:
+	/// 			@code{.cs}
+	/// 			[DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+	/// 			private static extern int sequencer_hardtrigger(int ID_ref, ref ErrHandle ID_err);
+	/// 			@endcode.
+	///
+	/// @param [in]		ID_ref	API reference. Pointer can be casted in from UINT32.
+	/// @param [out]	ID_err	(Optional) Error handle.
+	///
+	/// @return	Error handle return code (ErrHandle()).
+	DLLEXPORT int32_t DLLCALLCONV sequencer_hardtrigger(SISProtocol* ID_ref, ErrHandle ID_err = ErrHandle());
+
+	/// Get the status of the "Sequencer" drive mode.
+	/// The information is derived from the PLC that reports the actual status within an internal register.
+	///
+	/// @remarks	This function is exported to the Indradrive API DLL.
+	/// 
+	/// @remarks	Refer to @ref sec_Examples "Examples" for detailed code examples.
+	///
+	/// @remarks	How to call with C\#:
+	/// 			@code{.cs}
+	/// 			[DllImport(dllpath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+	/// 			private static extern int sequencer_getstatus(int ID_ref, ref UInt16 status, ref ErrHandle ID_err);
+	/// 			@endcode.
+	///
+	/// @remarks	How to call with Python:
+	/// 			@code{.py}
+	/// 			plcstatus = ctypes.c_uint16(0)
+	/// 			result = indralib.sequencer_getstatus(indraref, ctypes.byref(plcstatus), ctypes.byref(indra_error))
+	/// 			@endcode.
+	///
+	/// @param [in]		ID_ref	API reference. Pointer can be casted in from UINT32.
+	/// @param [out]	ID_status	Pointer that provides the respective information:
+	/// 							* Bit 0 - bSeqFinished, if true then end of the sequence has been reached.
+	/// 							* Bit 1 - bCamTick, if true then cam is currently shifting to the next position.
+	/// 							* Bit 2 - bDriveStopped, if true then drive has been stopped by PLC.
+	/// 							* Bit 3 - bDriveStarted, if true then drive has been started by PLC.
+	/// 							* Bit 4 - ERROR_T_PARAM, if true then error has been occurred while reading input parameters.
+	/// 							* Bit 5 - RESULT_READ_OK, if true then reading input parameters have been processed correctly.
+	/// 							* Bit 6 - RESULT_SEQUENCER_OK, if true then sequencer is/was running well.
+	/// 							* Bit 7 - ERROR_T_CAM, if true then sequencer processing had some issues.
+	/// @param [out]	ID_err	(Optional) Error handle.
+	///
+	/// @return	Error handle return code (ErrHandle()).
+	DLLEXPORT int32_t DLLCALLCONV sequencer_getstatus(SISProtocol* ID_ref, uint16_t * ID_status, ErrHandle ID_err = ErrHandle());
 
 #pragma endregion API Sequencer
 
