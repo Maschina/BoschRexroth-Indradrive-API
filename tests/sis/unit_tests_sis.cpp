@@ -52,7 +52,7 @@ namespace SISProtocolTest
 				sis.open(_T("COM1"));
 				
 				UINT32 rcvddata;
-				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
+				sis.read_parameter(TGM::SercosParamS, 36, rcvddata);
 				Logger::WriteMessage(sformat("S-0-0036=%d", rcvddata).c_str());
 
 				sis.close();
@@ -87,16 +87,16 @@ namespace SISProtocolTest
 			{
 				sis.open(_T("COM1"));
 
-				DOUBLE value = 5.2;
-				sis.write_parameter(TGM::SERCOS_Param_S, 36, value);
+				DOUBLE Value = 5.2;
+				sis.write_parameter(TGM::SercosParamS, 36, Value);
 
 				DOUBLE rcvddata;
-				sis.read_parameter(TGM::SERCOS_Param_S, 36, rcvddata);
+				sis.read_parameter(TGM::SercosParamS, 36, rcvddata);
 				Logger::WriteMessage(sformat("S-0-0036=%f", rcvddata).c_str());
 
 				sis.close();
 
-				Assert::AreEqual<BYTE>(value, rcvddata);
+				Assert::AreEqual<BYTE>(Value, rcvddata);
 			}
 			catch (SISProtocol::ExceptionTransceiveFailed &ex)
 			{
@@ -131,7 +131,7 @@ namespace SISProtocolTest
 				for (int i = 1; i < 10; i++)
 				{
 					DOUBLE rcvddata;
-					sis.read_listelm(TGM::SERCOS_Param_P, 4007, i, rcvddata);
+					sis.read_listelm(TGM::SercosParamP, 4007, i, rcvddata);
 					Logger::WriteMessage(sformat("P-0-4007:%d=%f", i, rcvddata).c_str());
 				}
 
@@ -168,7 +168,7 @@ namespace SISProtocolTest
 				sis.open(_T("COM1"));
 
 				DOUBLE data = 500.2;
-				sis.write_listelm(TGM::SERCOS_Param_P, 4007, 1, data);
+				sis.write_listelm(TGM::SercosParamP, 4007, 1, data);
 
 				sis.close();
 			}
@@ -203,10 +203,10 @@ namespace SISProtocolTest
 				sis.open(_T("COM1"));
 
 				// Activate parameterization level 1 // C0400
-				sis.execute_command(TGM::SERCOS_Param_S, 420);
+				sis.execute_command(TGM::SercosParamS, 420);
 
 				// Leave parameterization level 1 // C0200
-				sis.execute_command(TGM::SERCOS_Param_S, 422);
+				sis.execute_command(TGM::SercosParamS, 422);
 
 				sis.close();
 			}

@@ -1,3 +1,7 @@
+/// @file
+/// Contains enums, structs and unions to make Telegram creation, transmission and reception as flexible as possible.
+/// For example, by defining different Telegram structs (such as Telegram Command header , Telegram Reception payload, etc) and using unions for each of these types, Telegrams can be easily created, debugged and later provided to a transmission caller in raw byte format.
+
 #ifndef _TELEGRAMS_BITFIELDS_H_
 #define _TELEGRAMS_BITFIELDS_H_
 
@@ -5,275 +9,311 @@
 #include <vector>
 
 
+/// Grouping structs/enums/unions for a SIS Telegram.
 namespace TGM
 {
-	enum Header_Type : BYTE {
-		Type_Command, 
-		Type_Reaction 
+	/// Values that represent Telegram header types.
+	enum HeaderType : BYTE {
+		/// Telegram for command
+		TypeCommand, 
+		/// Telegram for reception
+		TypeReaction 
 	};
 
-	enum SERCOS_ParamVar : BYTE {
-		SERCOS_Param_S,
-		SERCOS_Param_P
+	/// Values that represent SERCOS Parameter variants.
+	enum SercosParamVar : BYTE {
+		/// SERCOS S Parameter (e.g. S-0-xxxx)
+		SercosParamS,
+		/// SERCOS P Parameter (e.g. P-0-xxxx)
+		SercosParamP
 	};
 
-	enum SERCOS_Datablock : BYTE {
-		SERCOS_Datablock_channel_not_active,
-		SERCOS_Datablock_ident_number,
-		SERCOS_Datablock_name,
-		SERCOS_Datablock_attribute,
-		SERCOS_Datablock_unit,
-		SERCOS_Datablock_minval,
-		SERCOS_Datablock_maxval,
-		SERCOS_Datablock_operatingdata
+	/// Values that represent SERCOS Parameter Bytes block to be processed. Using this in the Telegram's control byte
+	/// will inform or request what is/should stored in the payload.
+	enum SercosDatablock : BYTE {
+		/// Channel not active (read-only)
+		Datablock_ChannelNotActive,
+		/// Getting the SERCOS parameter identification number (read-only)
+		Datablock_IdentNumber,
+		/// Getting the SERCOS parameter name (read-only)
+		Datablock_Name,
+		/// Getting the SERCOS parameter Datablock (read-only).
+		/// Response be represented by SercosParamAttribute.
+		Datablock_Attribute,
+		/// Getting the SERCOS parameter unit information
+		Datablock_Unit,
+		/// Getting the SERCOS parameter possible min Value
+		Datablock_Minval,
+		/// Getting the SERCOS parameter possible max Value
+		Datablock_Maxval,
+		/// Getting the SERCOS operation Bytes (actual content of the parameter)
+		Datablock_OperationData
 	};
 
-	enum SERCOS_Commandrequest : BYTE {
-		SERCOS_Commandrequest_not_set = 0x0,
-		SERCOS_Commandrequest_cancel = 0x1,
-		SERCOS_Commandrequest_set = 0x3
+	/// Values that represent SERCOS command requests value. Mainly used for write_parameter() in SISProtocol class
+	/// to initiate or cancel processing a command (e.g. entering parametrization level).
+	///
+	/// @sa	SISProtocol
+	/// @sa	write_parameter()
+	enum SercosCommandrequest : BYTE {
+		Commandrequest_NotSet	= 0x0,
+		Commandrequest_Cancel	= 0x1,
+		Commandrequest_Set		= 0x3
 	};
 
-	enum SERCOS_Commandstatus : BYTE {
-		SERCOS_Commandstatus_not_set = 0x0,
-		SERCOS_Commandstatus_ok = 0x3,
-		SERCOS_Commandstatus_canceled = 0x5,
-		SERCOS_Commandstatus_busy = 0x7,
-		SERCOS_Commandstatus_error = 0xF
+	/// Values that represent SERCOS command status. Mainly used for get_parameter_status() in SISProtocol class to
+	/// retrieve feedback of the command processing (e.g. entering parametrization level finished?).
+	///
+	/// @sa	SISProtocol
+	/// @sa	get_parameter_status()
+	enum SercosCommandstatus : BYTE {
+		Commandstatus_NotSet	= 0x0,
+		Commandstatus_OK		= 0x3,
+		Commandstatus_Canceled	= 0x5,
+		Commandstatus_Busy		= 0x7,
+		Commandstatus_Error		= 0xF
 	};
 
-	enum SERCOS_TX : BYTE {
-		SERCOS_TX_in_progress,
-		SERCOS_TX_final
+	/// Values that represent information in the SIS Telegram's Control Byte about the type of the Command Telegram
+	/// or Reception Telegram.
+	///
+	/// @sa	SercosParamControl
+	enum SercosTxProgress : BYTE {
+		/// An enum constant representing that Telegram will be followed by another Telegram.
+		TxProgress_InProgress,
+		/// An enum constant representing that this is a single Telegram (not followed by another Telegram).
+		TxProgress_Final
 	};
 
-	enum SERCOS_DATALEN : UINT32 {
-		SERCOS_DATALEN_res1			= 0b000,
-		SERCOS_DATALEN_param_2byte	= 0b001,
-		SERCOS_DATALEN_param_4byte	= 0b010,
-		SERCOS_DATALEN_param_8byte	= 0b011,
-		SERCOS_DATALEN_listel_1byte = 0b100,
-		SERCOS_DATALEN_listel_2byte = 0b101,
-		SERCOS_DATALEN_listel_4byte = 0b110,
-		SERCOS_DATALEN_listel_8byte = 0b111,
+	/// Values that represent the information stored in a Parameter attributes (can be retrieved by attribute datablock).
+	/// @sa SercosParamAttribute
+	enum SercosDatalen : UINT32 {
+		Datalen_Res1		= 0b000,
+		Datalen_2ByteParam	= 0b001,
+		Datalen_4ByteParam	= 0b010,
+		Datalen_8ByteParam	= 0b011,
+		Datalen_1ByteList	= 0b100,
+		Datalen_2ByteList	= 0b101,
+		Datalen_4ByteList	= 0b110,
+		Datalen_8ByteList	= 0b111,
 	};
 
+
+/// Grouping unions that merge together both raw and structured information.
 	namespace Bitfields
 	{
-		/// <summary>	Control byte consisting of several bit fields. Size: 8 bit. </summary>
-		typedef struct _header_cntrl_t
+		/// Control byte consisting of several bit fields. Size: 8 bit.
+		typedef struct HeaderControl
 		{
 			union
 			{
-				struct bits_t
+				struct Bits
 				{
-					///=================================================================================================
-					/// <summary>
-					/// Bit 0-2: Number of sub-addresses in the address block: num_sub_addresses=[0..7].
-					/// </summary>
-					///=================================================================================================
-					BYTE num_sub_addresses : 3;
+					/// Bit 0-2 of Control Byte: Number of sub-addresses in the address block: NumSubAddresses=[0..7].
+					BYTE NumSubAddresses : 3;
 
-					/// <summary>	Bit 3: Running telegram number. 0: not support, 1: additional byte. </summary>
-					BYTE num_running_tgm : 1;
+					/// Bit 3 of Control Byte: Running telegram number. Byte represents:
+					/// * 0: not support  
+					/// * 1: additional byte
+					BYTE NumRunningTgm : 1;
 
-					/// <summary>	Bit 4: Telegram type. 0: Command telegram, 1: Reaction telegram. </summary>
-					Header_Type type : 1;
+					/// Bit 4 of Control Byte: Telegram Type, represented by HeaderType.
+					HeaderType Type : 1;
 
-					///=================================================================================================
-					/// <summary>
-					/// Bit 5-7: Status data for the reaction telegram.
+					/// Bit 5-7 of Control Byte: Status Bytes for the reaction telegram. Byte represents:
 					/// * 000: no error, request was processed  
 					/// * 001: transmission request being processed  
 					/// * 010: transmission cannot presently be processed  
 					/// * 100: warning  
 					/// * 110: error.
-					/// </summary>
-					///=================================================================================================
-					BYTE status_react_tgm : 3;
+					BYTE StatusReactionTgm : 3;
 
-					bits_t(Header_Type _type = Type_Command) :
-						num_sub_addresses(0),
-						num_running_tgm(0),
-						type(_type),
-						status_react_tgm(0)
+					/// Constructor.
+					///
+					/// @param	type	(Optional) Header type, represented by TGM::HeaderType.
+					///
+					/// @sa	HeaderType
+					Bits(HeaderType type = TypeCommand) :
+						NumSubAddresses(0),
+						NumRunningTgm(0),
+						Type(type),
+						StatusReactionTgm(0)
 					{}
-				} bits;
+				} Bits;
 
-				BYTE value;
+				/// Representation of the raw value.
+				BYTE Value;
 			};
 
-			_header_cntrl_t(Header_Type _type = Type_Command) :
-				bits(Type_Command)
-			{}
+			/// Constructor.
+			///
+			/// @param	type	(Optional) Header type, represented by HeaderType.
+			///
+			/// @sa	HeaderType
+			HeaderControl(HeaderType type = TypeCommand) : Bits(TypeCommand) {}
+		} HeaderControl;
 
-		} Header_Cntrl;
 
-
-		///=================================================================================================
-		/// <summary>
-		/// The  control  byte  specifies  how  a  data  block  element  of  a  parameter  is accessed.
-		/// The control byte is read out of the command telegram and copied into the response  telegram.
-		/// </summary>
-		///================================================================================================= 
-		typedef struct sercos_parcontrol_t
+		/// The control byte specifies how a Bytes block element of a parameter is accessed. The control byte is read out
+		/// of the command telegram and copied into the response telegram.
+		typedef struct SercosParamControl
 		{
 			union
 			{
-				struct bits_t
+				struct Bits
 				{
 					BYTE res1 : 1;
 					BYTE res2 : 1;
 
-					///=================================================================================================
-					/// <summary>
-					/// The transmission of a consecutive telegram is controlled with this bit (lists are written in
-					/// several steps):
-					/// * 0: transmission in prog.
+					/// The transmission of a consecutive telegram is controlled with this bit (lists are written in several steps):
+					/// * 0: transmission in progress
 					/// * 1: final transmission.
-					/// </summary>
-					///=================================================================================================
-					SERCOS_TX tx_status : 1;
+					SercosTxProgress TxProgress : 1;
 
-					///=================================================================================================
-					/// <summary>
-					/// The type of the SERCOS parameter: 
-					/// * b000: channel not active   
-					/// * b001: ident number (write access)
-					/// * b010: name   
-					/// * b011: attribute (read access)
-					/// * b100: unit (read access)
-					/// * b101: min.input value (read access)
-					/// * b110: max.input value (read access)
-					/// * b111: operating data (write access)
-					/// </summary>
-					///=================================================================================================
-					SERCOS_Datablock attribute : 3;
+					/// SERCOS parameter datablock, represented by SercosDatablock.
+					SercosDatablock Datablock : 3;
 
 					BYTE res6 : 1;
 					BYTE res7 : 1;
 
-					bits_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
-						res1(0), res2(0), tx_status(SERCOS_TX_final), attribute(_attribute), res6(0), res7(0)
+					/// Constructor.
+					///
+					/// @param	datablock	(Optional) SERCOS Datablock, represented by SercosDatablock.
+					///
+					/// @sa	SercosDatablock
+					Bits(SercosDatablock datablock = Datablock_OperationData) :
+						res1(0), res2(0), TxProgress(TxProgress_Final), Datablock(datablock), res6(0), res7(0)
 					{}
+				} Bits;
 
-				} bits;
-
-				BYTE value;
+				/// Representation of the raw value.
+				BYTE Value;
 			};
 
-			sercos_parcontrol_t(SERCOS_Datablock _attribute = SERCOS_Datablock_operatingdata) :
-				bits(_attribute)
-			{}
+			/// Constructor.
+			///
+			/// @param	datablock	(Optional) SERCOS Datablock, represented by SercosDatablock..
+			SercosParamControl(SercosDatablock datablock = Datablock_OperationData) : Bits(datablock) {}
 
-			sercos_parcontrol_t(BYTE _value) :
-				value(_value)
-			{}
+			/// Constructor.
+			///
+			/// @param	value	Raw byte data of the Control Byte.
+			SercosParamControl(BYTE value) : Value(value) {}
+		} SercosParamControl;
 
-		} Sercos_ParControl;
 
-
-		/// <summary>	Identification of the parameter. Size: 16 bit. </summary>
-		typedef struct sercos_param_ident_t
+		/// Identification of the parameter. Size: 16 bit.
+		typedef struct SercosParamIdent
 		{
 			union
 			{
-				struct bits_t
+				struct Bits
 				{
-					/// <summary>	Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as param_no. </summary>
-					USHORT param_no : 12;
+					/// Bit 0-11: The parameter number [0..4095], e.g. P-0-*1177*, includes 1177 as ParamNumber.
+					USHORT ParamNumber : 12;
 
-					/// <summary>	Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as param_set. </summary>
-					USHORT param_set : 3;
+					/// Bit 12-15: The parameter block [0..7], e.g. P-*0*-1177, includes 0 as ParamSet.
+					USHORT ParamSet : 3;
 
-					///=================================================================================================
-					/// <summary>
 					/// Bit 16: Parameter variant:
 					/// * 0: S-Parameter (drive)  
 					/// * 1: P-Parameter (drive).
-					/// </summary>
-					///=================================================================================================
-					USHORT param_variant : 1;
+					USHORT ParamVariant : 1;
 
-					/// <summary>	Default constructor. </summary>
-					bits_t(SERCOS_ParamVar _param_variant = TGM::SERCOS_Param_S, USHORT _param_num = 0) :
-						param_no(_param_num),
-						param_set(0),
-						param_variant(_param_variant)
+					/// Default constructor.
+					///
+					/// @param	param_variant	(Optional) The parameter variant, represented by SercosParamVar.
+					/// @param	param_num	  	(Optional) The parameter number.
+					Bits(SercosParamVar param_variant = TGM::SercosParamS, USHORT param_num = 0) :
+						ParamNumber(param_num),
+						ParamSet(0),
+						ParamVariant(param_variant)
 					{}
+				} Bits;
 
-				} bits;
-
-				USHORT value;
+				USHORT Value;
 			};
 
-			sercos_param_ident_t(SERCOS_ParamVar _param_variant = TGM::SERCOS_Param_S, USHORT _param_num = 0) :
-				bits(_param_variant, _param_num)
+			/// Constructor.
+			///
+			/// @param	param_variant	(Optional) The parameter variant, represented by SercosParamVar.
+			/// @param	param_num	  	(Optional) The parameter number.
+			SercosParamIdent(SercosParamVar param_variant = TGM::SercosParamS, USHORT param_num = 0) :
+				Bits(param_variant, param_num)
 			{}
-			
-		} Sercos_Param_Ident;
+		} SercosParamIdent;
 
 
-		typedef struct sercos_attribute_t
+		/// Attribute for a SERCOS parameter that is callable via SercosDatablock.
+		///
+		/// @sa	SercosDatablock
+		typedef struct SercosParamAttribute
 		{
 			union
 			{
-				struct bits_t
+				struct Bits
 				{
-					/// <summary>	Bit 0-15: Conversion factor: The conversion factor is an unsigned integer used to convert numeric data to display format.The conversion factor shall be set to a value of 1, if a conversion is not required(e.g. for binary numbers, character strings or floating - point numbers). </summary>
-					UINT32 conv_factor : 16;
+					/// Bit 0-15 of Reception Telegram's payload: Conversion factor: The conversion factor is an unsigned integer used to convert numeric Bytes to
+					/// display format. The conversion factor shall be set to a Value of 1, if a conversion is not required (e.g. for
+					/// binary numbers, character strings or floating - point numbers).
+					UINT32 ConversionFactor : 16;
 
-					/// <summary>	Bit 16-18: The data length is required so that the Master is able to complete Service Channel data transfers correctly. </summary>
-					SERCOS_DATALEN data_len : 3;
+					/// Bit 16-18 of Reception Telegram's payload: The Bytes length is required so that the Master is able to complete Service Channel Bytes transfers
+					/// correctly.
+					SercosDatalen DataLen : 3;
 
-					/// <summary>	Bit 19: Indicates whether this data calls a procedure in a drive: 0 Operation data or parameter 1 Procedure command. </summary>
-					UINT32 func_of_data : 1;
+					/// Bit 19 of Reception Telegram's payload: Indicates whether this Bytes calls a procedure in a drive:
+					/// * 0 Operation Bytes or parameter   
+					/// * 1 Procedure command.
+					UINT32 DataFunction : 1;
 
-					/// <summary>	Bit 20-22: Format Used to convert the operation data, and min/max input values to the correct display format. </summary>
-					UINT32 data_disp : 3;
+					/// Bit 20-22 of Reception Telegram's payload: Format used to convert the operation Bytes, and min/max input values to the correct display format.
+					UINT32 DataDisplay : 3;
 
-					/// <summary>	Bit 23. </summary>
+					/// Bit 23 of Reception Telegram's payload.
 					UINT32 res5 : 1;
 
-					/// <summary>	Bit 24-27: Decimal point: Places after the decimal point indicates the position of the decimal point of appropriate operation data.Decimal point is used to define fixed point decimal numbers.For all other display formats the decimal point shall be = 0. </summary>
-					UINT32 scale_factor : 4;
+					/// Bit 24-27 of Reception Telegram's payload: Decimal point: Places after the decimal point indicates the position of the decimal point of
+					/// appropriate operation Bytes. Decimal point is used to define fixed point decimal numbers. For all other display
+					/// formats the decimal point shall be = 0.
+					UINT32 ScaleFactor : 4;
 
-					/// <summary>	Bit 28. </summary>
+					/// Bit 28 of Reception Telegram's payload.
 					UINT32 is_writeonly_phase2 : 1;
 
-					/// <summary>	Bit 29. </summary>
+					/// Bit 29 of Reception Telegram's payload.
 					UINT32 is_writeonly_phase3 : 1;
 
-					/// <summary>	Bit 30. </summary>
+					/// Bit 30 of Reception Telegram's payload.
 					UINT32 is_writeonly_phase4 : 1;
 
-					/// <summary>	Bit 31. </summary>
+					/// Bit 31 of Reception Telegram's payload.
 					UINT32 res10 : 1;
 
-					/// <summary>	Default constructor. </summary>
-					bits_t() :
-						conv_factor(0), 
-						data_len(SERCOS_DATALEN_param_2byte), 
-						func_of_data(0), 
-						data_disp(0),
+					/// Default constructor.
+					Bits() :
+						ConversionFactor(0), 
+						DataLen(Datalen_2ByteParam), 
+						DataFunction(0), 
+						DataDisplay(0),
 						res5(0),
-						scale_factor(0),
+						ScaleFactor(0),
 						is_writeonly_phase2(0),
 						is_writeonly_phase3(0),
 						is_writeonly_phase4(0),
 						res10(0)
 					{}
+				} Bits;
 
-				} bits;
-
-				UINT32 value;
+				/// Raw data value.
+				UINT32 Value;
 			};
 
-			sercos_attribute_t(UINT32 _value = 0) :
-				value(_value)
-			{}
-
-		} Sercos_Attribute;
+			/// Constructor.
+			///
+			/// @param	_value	(Optional) Raw data value of the Reception Telegram's payload.
+			SercosParamAttribute(UINT32 _value = 0) : Value(_value) {}
+		} SercosParamAttribute;
 	}
 }
 

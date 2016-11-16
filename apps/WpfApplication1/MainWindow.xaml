@@ -1,0 +1,118 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApplication1"
+        xmlns:wpfapp="clr-namespace:WpfApplication1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="458.7" Width="803.8" Closing="Window_Closing">
+    <Window.Resources>
+        <local:ComPorts x:Key="ComPorts"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="387" ></RowDefinition>
+            <RowDefinition Height="Auto" MinHeight="50"/>
+        </Grid.RowDefinitions>
+
+        <wpfapp:LiveTracker x:Name="oLiveTracker" Grid.Row="0" Grid.Column="1" Width="Auto" Height="Auto"/>
+
+        <WrapPanel Orientation="Vertical">
+            <WrapPanel Orientation="Horizontal" Margin="10">
+                <Label x:Name="label" Content="Port:" Height="Auto"/>
+                <ComboBox x:Name="cboxComPorts" 
+                          Height="Auto"
+                          ItemsSource="{StaticResource ComPorts}"
+                          IsReadOnly="True"
+                          IsEditable="False"
+                          SelectedIndex="0" Padding="4,5,4,3"/>
+                <Button x:Name="btnOpen" Content="Open" Width="Auto" Height="Auto" Margin="2,0,0,0" FontWeight="Bold" Click="btnOpen_Click"/>
+            </WrapPanel>
+
+            <Expander Header="Speed Control Mode" Margin="10">
+                <StackPanel Margin="10,4,0,0">
+                    <Button x:Name="btnSpeedModeActivate" Content="Activate" Width="Auto" FontWeight="Bold" Margin="0,0,0,10" Click="btnSpeedModeActivate_Click"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Accel [rad/s²]:" Height="Auto" FontSize="10" Width="75" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="0" />
+                        <TextBox Name="txtAccel" PreviewTextInput="IntegerValidationTextBox" Text="0" Width="45" FontSize="10" TextAlignment="Right" Grid.Column="1" Grid.Row="0" KeyUp="txtAccel_KeyUp" />
+                        <Label Content="Speed [rpm]:" Height="Auto" FontSize="10" Width="75" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="1"/>
+                        <TextBox Name="txtSpeed" PreviewTextInput="IntegerValidationTextBox" Text="0" Width="45" FontSize="10" TextAlignment="Right" Grid.Column="1" Grid.Row="1" KeyUp="txtSpeed_KeyUp"/>
+                        <Button x:Name="btnSetSpeed" Content="Set" Width="Auto" FontSize="10" Click="btnSetSpeed_Click" Grid.Column="2" Grid.RowSpan="2"/>
+                    </Grid>
+                </StackPanel>
+            </Expander>
+            <Expander Header="Sequencer Mode" Margin="10">
+                <StackPanel Margin="10,4,0,0">
+                    <Button x:Name="btnSequencerModeActivate" Content="Activate" Width="Auto" FontWeight="Bold" Margin="0,0,0,10" Click="btnSequencerModeActivate_Click"/>
+
+                    <DataGrid x:Name="dataSequence" CanUserResizeColumns="True" CanUserResizeRows="False" HeadersVisibility="Column" AutoGenerateColumns="False" CellEditEnding="dataSequence_CellEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding SpeedString}" CanUserSort="False" CanUserReorder="False">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock TextAlignment="Center" Margin="5,2">Speed<LineBreak/><Run Foreground="#FFAAAAAA" FontSize="10">[rpm]</Run></TextBlock>
+                                </DataGridTextColumn.Header>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding AccelDecelString}" CanUserSort="False" CanUserReorder="False">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock TextAlignment="Center" Margin="5,2">Accel/Decel<LineBreak/><Run Foreground="#FFAAAAAA" FontSize="10">[rad/s²]</Run></TextBlock>
+                                </DataGridTextColumn.Header>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding JerkString}" CanUserSort="False" CanUserReorder="False">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock TextAlignment="Center" Margin="5,2">Jerk<LineBreak/><Run Foreground="#FFAAAAAA" FontSize="10">[rad/s³]</Run></TextBlock>
+                                </DataGridTextColumn.Header>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding DelayString}" CanUserSort="False" CanUserReorder="False">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock TextAlignment="Center" Margin="5,2">Delay<LineBreak/><Run Foreground="#FFAAAAAA" FontSize="10">[cs]</Run></TextBlock>
+                                </DataGridTextColumn.Header>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button x:Name="btnAddSequence" Width="Auto" FontSize="9" Click="btnAddSequence_Click" Content="Add Sequence Item" />
+
+                    <Button x:Name="btnRunSequence" Width="Auto" Content="Run!" Margin="0,10,0,0" Click="btnRunSequence_Click" />
+                </StackPanel>
+            </Expander>
+        </WrapPanel>
+
+        <ListBox x:Name="listErrors" Grid.Row="1" Grid.ColumnSpan="2" Height="Auto" FontSize="9" />
+
+
+    </Grid>
+</Window>

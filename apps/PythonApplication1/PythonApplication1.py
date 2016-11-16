@@ -58,11 +58,11 @@ def main():
         result = indralib.speedcontrol_activate(indraref, ctypes.byref(indra_error))
         check_result(result) 
             
-
+    # Diagnostic message
     diagmsg = ctypes.create_string_buffer(256)
     result = indralib.get_diagnostic_msg(indraref, diagmsg, ctypes.byref(indra_error))
     check_result(result)
-    print(diagmsg.raw.decode('ascii'))
+    print("Current status:\n" + diagmsg.raw.decode('ascii'))
 
 
     # 
@@ -80,18 +80,17 @@ def main():
 
 
     # Set limits
-    result = indralib.speedcontrol_init(indraref, 10000, 1000, ctypes.byref(indra_error))
+    result = indralib.speedcontrol_init(indraref, ctypes.c_double(10000), ctypes.c_double(1000), ctypes.byref(indra_error))
     check_result(result)
 
-    # Set speed
-    result = indralib.speedcontrol_write(indraref, 100, 10000, ctypes.byref(indra_error))
-    check_result(result)
+    while True:
+        speed_str = input("Speed [rpm] = ?")
+        if (speed_str == ""): break
 
-    input("(Press any key to stop the drive...)")
-
-    # Clear speed
-    result = indralib.speedcontrol_write(indraref, 0, 10000, ctypes.byref(indra_error))
-    check_result(result)
+        # Set speed
+        speed = int(speed_str)
+        result = indralib.speedcontrol_write(indraref, ctypes.c_double(speed), ctypes.c_double(10), ctypes.byref(indra_error))
+        check_result(result)
 
 
 

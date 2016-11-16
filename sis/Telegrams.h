@@ -1,8 +1,13 @@
+/// @file
+/// Contains struct definitions for different types of Telegrams
+
 #ifndef _TELEGRAMS_H_
 #define _TELEGRAMS_H_
 
+
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 #include <numeric>
 #include <type_traits>
 
@@ -16,38 +21,45 @@
 
 
 
+/// Grouping structs/enums/unions for a SIS Telegram.
 namespace TGM
 {
-	///=================================================================================================
-	/// <summary>
-	/// Struct to hold payload data in a command payload. Payload data is third part of a regular Telegram: Header +
-	/// Payload data + Payload header.
-	/// </summary>
-	///=================================================================================================
-	typedef struct _data_t
+	/// Struct to hold payload Bytes in a command payload. Payload Bytes is third part of a regular Telegram: Header +
+	/// Payload Bytes + Payload header.
+	typedef struct Data
 	{
-		BYTE	data[TGM_SIZEMAX_PAYLOAD];
-		size_t	size;
+		/// Actual payload Bytes [TGM_SIZEMAX_PAYLOAD].
+		BYTE	Bytes[TGM_SIZEMAX_PAYLOAD];
+		/// Size of the payload Bytes.
+		size_t	Size;
 
-		/// <summary>	Default constructor. </summary>
-		_data_t(std::vector<BYTE> _data = std::vector<BYTE>())
+		/// Default constructor.
+		///
+		/// @param	_PayloadData	(Optional) The data vector.
+		Data(std::vector<BYTE> _data = std::vector<BYTE>())
 		{
 			clear();
 
 			for (std::vector<BYTE>::iterator it = _data.begin(); it != _data.end(); ++it)
 				operator<<(*it);
 
-			size = _data.size();
+			Size = _data.size();
 		}
 
-		_data_t(UINT8 _data)
+		/// Constructor.
+		///
+		/// @param	_PayloadData	Single data byte.
+		Data(UINT8 _data)
 		{
 			clear();
 
 			operator<<(_data);
 		}
 
-		_data_t(UINT16 _data)
+		/// Constructor.
+		///
+		/// @param	_PayloadData	Single data word (2 bytes).
+		Data(UINT16 _data)
 		{
 			clear();
 
@@ -55,7 +67,10 @@ namespace TGM
 			operator<<((_data & 0xFF00) >> 8);
 		}
 
-		_data_t(UINT32 _data)
+		/// Constructor.
+		///
+		/// @param	_PayloadData	Single data integer (4 bytes).
+		Data(UINT32 _data)
 		{
 			clear();
 
@@ -65,7 +80,10 @@ namespace TGM
 			operator<<((_data & 0xFF000000) >> 24);
 		}
 
-		_data_t(UINT64 _data)
+		/// Constructor.
+		///
+		/// @param	_PayloadData	Single UINT64 data (8 bytes).
+		Data(UINT64 _data)
 		{
 			clear();
 
@@ -79,180 +97,205 @@ namespace TGM
 			operator<<((_data & 0xFF00000000000000) >> 54);
 		}
 
+		/// Ats the given index.
+		///
+		/// @param	_idx	The index.
+		///
+		/// @return	Data byte.
 		BYTE at(UINT32 _idx)
 		{
-			return data[_idx];
+			return Bytes[_idx];
 		}
 
+		/// Converts this object to a vector.
+		///
+		/// @return	This object as a std::vector&lt;BYTE&gt;
 		std::vector<BYTE> toVector()
 		{
 			std::vector<BYTE> out;
 
-			for (int i = 0; i < size; i++)
-				out.push_back(data[i]);
+			for (int i = 0; i < Size; i++)
+				out.push_back(Bytes[i]);
 
 			return out;
 		}
 
+		/// Converts this object to an uint 64.
+		///
+		/// @return	This object as an UINT64.
 		UINT64 toUINT64()
 		{
 			UINT64 out = 0;
 
-			for (int i = 0; i < std::min<size_t>(size, 8); i++)
-				out |= data[i] << (i * 8);
+			for (int i = 0; i < std::min<size_t>(Size, 8); i++)
+				out |= Bytes[i] << (i * 8);
 
 			return out;
 		}
 
+		/// Converts this object to an uint 32.
+		///
+		/// @return	This object as an UINT32.
 		UINT32 toUINT32()
 		{
 			UINT32 out = 0;
 
-			for (int i = 0; i < std::min<size_t>(size, 4); i++)
-				out |= data[i] << (i * 8);
+			for (int i = 0; i < std::min<size_t>(Size, 4); i++)
+				out |= Bytes[i] << (i * 8);
 
 			return out;
 		}
 
+		/// Converts this object to an uint 16.
+		///
+		/// @return	This object as an UINT16.
 		UINT16 toUINT16()
 		{
 			UINT16 out = 0;
 
-			for (int i = 0; i < std::min<size_t>(size, 2); i++)
-				out |= data[i] << (i * 8);
+			for (int i = 0; i < std::min<size_t>(Size, 2); i++)
+				out |= Bytes[i] << (i * 8);
 
 			return out;
 		}
 
+		/// Converts this object to an uint 8.
+		///
+		/// @return	This object as an UINT8.
 		UINT8 toUINT8()
 		{
 			return toBYTE();
 		}
 
+		/// Converts this object to a byte.
+		///
+		/// @return	This object as a BYTE.
 		BYTE toBYTE()
 		{
-			return size > 0 ? (BYTE)data[0] : (BYTE)0;
+			return Size > 0 ? (BYTE)Bytes[0] : (BYTE)0;
 		}
 
+		/// Clears this object to its blank/initial state.
 		void clear()
 		{
-			memset(data, 0, sizeof(data));
-			size = 0;
+			memset(Bytes, 0, sizeof(Bytes));
+			Size = 0;
 		}
 
-		_data_t& operator<<(const BYTE& rhs)
+		/// Bitwise left shift operator.
+		///
+		/// @param	rhs	The right hand side.
+		///
+		/// @return	The shifted result.
+		Data& operator<<(const BYTE& rhs)
 		{
-			data[size++] = rhs;
+			Bytes[Size++] = rhs;
 			return *this;
 		}
 
-		size_t get_size() { return size; }
-		void set_size(size_t _size) { size = _size; }
+		/// Gets the size.
+		///
+		/// @return	The size.
+		size_t get_size() { return Size; }
+
+		/// Sets a size.
+		///
+		/// @param	_size	The size.
+		void set_size(size_t _size) { Size = _size; }
 
 	} Data;
 
 
-	/// <summary>	Container for Telegram in raw data. </summary>
-	typedef struct _container_t
+	/// Container for Telegram in raw Bytes.
+	typedef struct Bytestream
 	{
-		/// <summary>	The raw data. Size: 254 bytes </summary>
-		BYTE	bytes[TGM_SIZEMAX];
+		/// The raw Bytes. Size: 254 bytes.
+		BYTE Bytes[TGM_SIZEMAX];
 
-		/// <summary>	Default constructor. </summary>
-		_container_t() { clear(); }
+		/// Default constructor.
+		Bytestream() { clear(); }
 
-		/// <summary>	Clears this object to its blank/initial state. </summary>
+		/// Clears this object to its blank/initial state.
 		void clear()
 		{
-			memset(bytes, 0, sizeof(bytes));
+			memset(Bytes, 0, sizeof(Bytes));
 		}
 	} Bytestream;
 
 
-	/// <summary>	Templated mapping union to transfer raw TGM data from/to specialized data class. </summary>
+	/// Templated mapping union to transfer raw TGM Bytes from/to specialized Bytes class.
 	template <class THeader, class TPayload>
 	union Map
 	{
 	public:
-		/// Generic raw data, comprising byte arrays
-		Bytestream raw;
+		/// Generic raw Bytes, comprising byte arrays
+		Bytestream Raw;
 
-		/// Specialized data class, comprising structure payload head and data
+		/// Specialized Bytes class, comprising structure payload head and Bytes
 #pragma pack(push,1)
-		struct _mapping_t
+		struct Mapping
 		{
-			THeader		header;
-			TPayload	payload;
+			/// The Telegram header.
+			THeader		Header;
+			/// The Telegram payload.
+			TPayload	Payload;
 
-			_mapping_t(THeader& _header, TPayload _payload) :
-				header(_header),
-				payload(_payload)
+			/// Constructor.
+			///
+			/// @param [in]	_header 	The Telegram header.
+			/// @param [in]	_payload	The Telegram payload.
+			Mapping(THeader& _header, TPayload _payload) :
+				Header(_header),
+				Payload(_payload)
 			{};
-		} mapping;
+		} Mapping;
 #pragma pack(pop)
 
-		/// <summary>	Default constructor. </summary>
+		/// Default constructor.
+		///
+		/// @param [in]	_header 	(Optional) The Telegram header.
+		/// @param [in]	_payload	(Optional) The Telegram payload.
 		Map(THeader& _header = THeader(), TPayload& _payload = TPayload()) :
-			mapping(_header, _payload)
+			Mapping(_header, _payload)
 		{};
-		/// <summary>	Destructor. </summary>
+		/// Destructor.
 		~Map() {};
 
+		/// Sets the header/payload even after initialization.
+		///
+		/// @param [in]	_header 	The Telegram header.
+		/// @param [in]	_payload	The Telegram payload.
 		void set(THeader& _header, TPayload& _payload)
 		{
-			mapping = _mapping_t(_header, _payload);
+			Mapping = Mapping(_header, _payload);
 		}
 	};
 
 
-	///=================================================================================================
-	/// <summary>
-	/// The Telegram Header contains all information required for conducting orderly telegram traffic.
-	/// </summary>
-	///=================================================================================================
 #pragma pack(push,1)
-	typedef struct _header_t
+	/// The Telegram Header contains all information required for conducting orderly telegram traffic..
+	typedef struct Header
 	{
-		/// <summary>	Start symbol: STX (0x02). </summary>
+		/// Start symbol: STX (0x02).
 		BYTE StZ = 0x02;
 
-		///=================================================================================================
-		/// <summary>
-		/// The checksum byte. It is generated by adding all sub-sequential telegram symbols as well as
-		/// the start symbol StZ and concluding negation. In other words, the sum of all telegram symbols
-		/// always equals 0 if the transmission was successful.
-		/// </summary>
-		///=================================================================================================
+		/// The checksum byte. It is generated by adding all sub-sequential telegram symbols as well as the start symbol
+		/// StZ and concluding negation. In other words, the sum of all telegram symbols always equals 0 if the transmission
+		/// was successful.
 		BYTE CS;
 
-		///=================================================================================================
-		/// <summary>
-		/// The length of the sub-sequential user data and the variable part are in the frame protocol. Up
-		/// to 247 bytes (255 - 7{subaddresses} - 1{running telegram number}) user data can be
-		/// transmitted in one telegram.
-		/// </summary>
-		///=================================================================================================
+		/// The length of the sub-sequential user Bytes and the variable part are in the frame protocol. Up to 247 bytes
+		/// (255 - 7{subaddresses} - 1{running telegram number}) user Bytes can be transmitted in one telegram.
 		BYTE DatL;
 
-		///=================================================================================================
-		/// <summary>
-		/// Repetition of DatL takes place here. The telegram length is generated from the DatLW and the
-		/// fixed part of the frame protocol (byte 1-8), i.e. telegram length = DatLW + 8.
-		/// </summary>
-		///=================================================================================================
+		/// Repetition of DatL takes place here. The telegram length is generated from the DatLW and the fixed part of
+		/// the frame protocol (byte 1-8), i.e. telegram length = DatLW + 8.
 		BYTE DatLW;
 
-		///=================================================================================================
-		/// <summary>
 		/// Control byte consisting of several bit fields. Use TGM::Bitfields::Cntrl and toByte() for configuration.
-		/// </summary>
-		///=================================================================================================
 		BYTE Cntrl;
 
-		///=================================================================================================
-		/// <summary>
-		/// This specifies the service that the sender requests from the recipient or that the recipient
-		/// has executed.
+		/// This specifies the service that the sender requests from the recipient or that the recipient has executed.
 		/// * 0x00 ... 0x0F     General services:
 		/// * 0x00				User identification
 		/// * 0x01				Data transmission aborted
@@ -269,55 +312,50 @@ namespace TGM
 		/// * 0xD0 ... 0xDF     Special services for HMI - System
 		/// * 0xE0 ... 0xEF     Special services for DISC
 		/// * 0xF0 ... 0xFF     temporarily reserved.
-		/// </summary>
-		///=================================================================================================
 		BYTE Service;
 
-		///=================================================================================================
-		/// <summary>
 		/// Address of sender:
 		/// * AdrS = [0..126]: specifies a single station
 		/// * AdrS = 127:  Special address for a SIS master in case of service or
 		/// emergencies (this address may not be used during active communication).
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrS;
 
-		///=================================================================================================
-		/// <summary>
 		/// Address of Recipient:
 		/// * AdrE = [0..126]: specifies a single station,
-		/// * AdrE = 128: Special address for point - to - point communication(the
-		/// recipient's response is not dependent on its actual station number with this special address).
+		/// * AdrE = 128: Special address for point-to-point communication (the recipient's response is not dependent on its
+		/// actual station number with this special address).
 		/// * AdrE = [129..199]: reserved,
 		/// * AdrE = [200..253]: addresses logical groups,
-		/// * AdrE = 254: specifies a broadcast to all stations on a hierarchical
-		/// level(this address can only be listed once, as the last address in the list),
+		/// * AdrE = 254: specifies a broadcast to all stations on a hierarchical level(this address can only be listed once,
+		/// as the last address in the list),
 		/// * AdrE = 255: specifies a global broadcast.
 		/// Telegrams with AdrE = [200..255] are not answered with a response telegram.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrE;
 
-		/// <summary>	Default constructor. </summary>
-		_header_t(BYTE _addr_master = 0, BYTE _addr_slave = 0, BYTE _service = 0, TGM::Bitfields::Header_Cntrl _cntrl = TGM::Bitfields::Header_Cntrl()) :
+		/// Default constructor.
+		///
+		/// @param	_addr_master	(Optional) The address master id.
+		/// @param	_addr_slave 	(Optional) The address slave id.
+		/// @param	_service		(Optional) The service id.
+		/// @param	_cntrl			(Optional) The Control Byte, represented by TGM::Bitfields::HeaderControl.
+		///
+		/// @sa	TGM::Bitfields::HeaderControl
+		Header(BYTE _addr_master = 0, BYTE _addr_slave = 0, BYTE _service = 0, TGM::Bitfields::HeaderControl _cntrl = TGM::Bitfields::HeaderControl()) :
 			StZ(0x02),
 			CS(0),
 			DatL(get_size()),
 			DatLW(get_size()),
-			Cntrl(_cntrl.value),
+			Cntrl(_cntrl.Value),
 			Service(_service),
 			AdrS(_addr_master),
 			AdrE(_addr_slave)
 		{}
 
-		///=================================================================================================
-		/// <summary>	Gets the sum without carry of all header bytes for checksum calculation. </summary>
+		/// Gets the sum without carry of all header bytes for checksum calculation.
 		///
-		/// <param name="exclude_cs">	(Optional) true to exclude checksum from calculation. </param>
+		/// @param	exclude_cs	(Optional) true to exclude checksum from calculation.
 		///
-		/// <returns>	The sum. </returns>
-		///=================================================================================================
+		/// @return	The sum.
 		BYTE get_sum(bool exclude_cs = true)
 		{
 			BYTE res = StZ + DatL + DatLW + Cntrl + Service + AdrS + AdrE;
@@ -327,36 +365,34 @@ namespace TGM
 			return res;
 		}
 
+		/// Gets the size.
+		///
+		/// @return	The size.
 		size_t get_size() { return sizeof(*this); }
 
-		///=================================================================================================
-		/// <summary>
-		/// Sets length of Telegram, stored in DatL and DatLW (copy). By default, the length of the telegram is defined by
-		/// the payload length (head + data).
-		/// </summary>
+		/// Sets length of Telegram, stored in DatL and DatLW (copy). By default, the length of the telegram is defined
+		/// by the payload length (head + Bytes).
 		///
-		/// <param name="_payload_len">	Length of the payload. </param>
-		///=================================================================================================
+		/// @param	_payload_len	Length of the payload.
 		inline void set_DatL(size_t _payload_len) { DatL = DatLW = (BYTE)_payload_len; }
 
+		/// Gets Telegram's length.
+		///
+		/// @return	The length of Telegram.
 		inline size_t get_DatL() { return DatL; }
 
-		///=================================================================================================
-		/// <summary>
-		/// Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically
-		/// assigned to CS. This function will use DatL parameter for the appropriate length
-		/// determination.
-		/// </summary>
+		/// Calculates the Telegram checksum, stored in CS. The calculated checksum will automatically assigned to CS.
+		/// This function will use DatL parameter for the appropriate length determination.
 		///
-		/// <param name="_payload">	   	[in] Bytestream of payload (head + data) with the raw data. </param>
-		/// <param name="_payload_len">	Length of the payload. </param>
-		///=================================================================================================
+		/// @param 	   	_payload_len	Length of the payload.
+		///
+		/// @param [in]	_payload	Bytestream of payload (head + Bytes) with the raw Bytes.
 		void calc_checksum(TGM::Bytestream * _payload)
 		{
 			// Sum of payload
 			BYTE sum_of_payload = 0;
 			for (int i = TGM_SIZE_HEADER; i < TGM_SIZE_HEADER + get_DatL(); i++)
-				sum_of_payload += (BYTE)_payload->bytes[i];
+				sum_of_payload += (BYTE)_payload->Bytes[i];
 			
 			// Calc difference
 			BYTE diff_cs = get_sum() + sum_of_payload;
@@ -367,394 +403,387 @@ namespace TGM
 	} Header;
 #pragma pack(pop)
 
-	/// <summary>	Extended Telegram Header to be used for Routing and Sequential Telegrams. </summary>
+
 #pragma pack(push,1)
-	typedef struct _header_ext_t : Header
+	/// Extended Telegram Header to be used for Routing and Sequential Telegrams.
+	///
+	/// @sa	Header
+	typedef struct HeaderExt : Header
 	{
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 1 of recipient. Bit 0-2 of Cntrl byte:  000.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES1;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 2 of recipient. Bit 0-2 of Cntrl byte:  001.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES2;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 3 of recipient. Bit 0-2 of Cntrl byte:  010.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES3;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 4 of recipient. Bit 0-2 of Cntrl byte:  011.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES4;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 5 of recipient. Bit 0-2 of Cntrl byte:  100.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES5;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 6 of recipient. Bit 0-2 of Cntrl byte:  101.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES6;
 
-		///=================================================================================================
-		/// <summary>
 		/// Expanded part of the telegram header. Subaddress 7 of recipient. Bit 0-2 of Cntrl byte:  110.
-		/// </summary>
-		///=================================================================================================
 		BYTE AdrES7;
 
-		///=================================================================================================
-		/// <summary>
-		/// Expanded part of the telegram header. Sequential telegram number (packet number) , if bit 3
-		/// in Cntrl byte is set.
-		/// </summary>
-		///=================================================================================================
+		/// Expanded part of the telegram header. Sequential telegram number (packet number) , if bit 3 in Cntrl byte is
+		/// set.
 		BYTE PaketN;
 
-	} Header_Ext;
+	} HeaderExt;
 #pragma pack(pop)
 
 
+/// Grouping SIS Telegram Payload struct definitions for commands.
 	namespace Commands
 	{
-		///=================================================================================================
-		/// <summary>
-		/// Representation of the PAYLOAD for a Subservice command. A Command Telegram is for regular subservices,
-		/// such communication init, or device identification. User for master communication (active communicator).
-		/// </summary>
-		///=================================================================================================
+		
 #pragma pack(push,1)
-		typedef struct _subservice_payload_t
+		/// Representation of the PAYLOAD for a Subservice command. A Command Telegram is for regular subservices, such
+		/// communication init, or device identification. User for master communication (active communicator).
+		typedef struct Subservice
 		{
-			BYTE	address;
-			BYTE	subservice;
+			/// The recipient address.
+			BYTE	RecipientAddr;
+			/// The subservice number.
+			BYTE	ServiceNumber;
+			/// The Payload content.
+			Data	Bytes;
 
-			Data	data;
-
-			///=================================================================================================
-			/// <summary>	Constructor. </summary>
+			/// Constructor.
 			///
-			/// <param name="_addr">	  	The recipient address. </param>
-			/// <param name="_subservice">	The subservice number. </param>
-			///=================================================================================================
-			_subservice_payload_t(
+			/// @param	_addr	   	(Optional) The recipient address.
+			/// @param	_subservice	(Optional) The subservice number.
+			/// @param	_PayloadData	   	(Optional) The data.
+			Subservice(
 				BYTE _addr = 0, 
 				BYTE _subservice = 0, 
 				Data _data = Data()) : 
-				address(_addr), 
-				subservice(_subservice),
-				data(_data)
+				RecipientAddr(_addr), 
+				ServiceNumber(_subservice),
+				Bytes(_data)
 			{}
 
-			/// <summary>	Clears this object to its blank/initial state. </summary>
-			void clear() { address = subservice = 0; }
+			/// Clears this object to its blank/initial state.
+			void clear() { RecipientAddr = ServiceNumber = 0; }
 
+			/// Gets size of Payload Header
+			///
+			/// @return	The Payload Header size.
 			size_t get_head_size() { return 2; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
+
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
 
 		} Subservice;
 #pragma pack(pop)
 
 
-
-		///=================================================================================================
-		/// <summary>
-		/// Sercos Command Telegram used for reading/writing single parameter from/to slave.
-		/// </summary>
-		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _sercos_param_t
+		/// Sercos Command Telegram used for reading/writing single parameter from/to slave.
+		typedef struct SercosParam
 		{
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
-			BYTE control;
+			/// Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::SercosParamControl and toByte().
+			BYTE Control;
 
-			///=================================================================================================
-			/// <summary>
-			/// The unit address of a drive is read in the command telegram and copied into the response
-			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
-			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
-			/// the  motion control and the unit address to the drive.
-			/// </summary>
-			///=================================================================================================
-			BYTE unit_addr;
+			/// The unit address of a drive is read in the command telegram and copied into the response telegram. For direct
+			/// SIS communication with drives supporting SIS interface, unit address is the same as the SIS address of the
+			/// receiver. Otherwise, the  SIS  address  is  related  to the  motion control and the unit address to the drive.
+			BYTE UnitAddr;
 
-			BYTE param_type;
+			BYTE ParamType;
 
-			///=================================================================================================
-			/// <summary>
-			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
-			/// </summary>
-			///=================================================================================================
-			USHORT param_num;
+			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::SercosParamIdent and
+			/// toByte().
+			USHORT ParamNum;
 
-			/// <summary>	Payload data. </summary>
-			Data data;
+			/// Payload Bytes.
+			Data Bytes;
 
-			_sercos_param_t(
-				TGM::Bitfields::Sercos_ParControl _control = TGM::Bitfields::Sercos_ParControl(), 
-				BYTE _unit_addr = 0, 
-				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(), 
+			/// Constructor.
+			///
+			/// @param	_ControlByte		(Optional) Control Byte.
+			/// @param	_unit_addr  	(Optional) Unit address, which is the same as the SIS address of the receiver.
+			/// @param	_ParamIdent	(Optional) Parameter Identifier (e.g. S-0-4000).
+			/// @param	_PayloadData			(Optional) Payload data.
+			SercosParam(
+				TGM::Bitfields::SercosParamControl _control = TGM::Bitfields::SercosParamControl(), 
+				BYTE _unit_addr = 0,
+				TGM::Bitfields::SercosParamIdent _param_ident = TGM::Bitfields::SercosParamIdent(), 
 				TGM::Data _data = Data()) :
-				control(_control.value),
-				unit_addr(_unit_addr),
-				param_type(0),
-				param_num(_param_ident.value),
-				data(_data)
+				Control(_control.Value),
+				UnitAddr(_unit_addr),
+				ParamType(0),
+				ParamNum(_param_ident.Value),
+				Bytes(_data)
 			{}
 
+			/// Clears this object to its blank/initial state.
 			void clear() 
 			{ 
-				control = 0;
-				unit_addr = 0;
-				param_type = 0;
-				param_num = 0;
-				data.clear();
+				Control = 0;
+				UnitAddr = 0;
+				ParamType = 0;
+				ParamNum = 0;
+				Bytes.clear();
 			}
 
+			/// Gets size of Payload Header
+			///
+			/// @return	The Payload Header size.
 			size_t get_head_size() { return 5; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
 
-		}  Sercos_Param;
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
+
+		}  SercosParam;
 #pragma pack(pop)
 
 
-		///=================================================================================================
-		/// <summary>
-		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
-		/// </summary>
-		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _sercos_list_t
+		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
+		typedef struct SercosList
 		{
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
-			BYTE control;
+			/// Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::SercosParamControl and toByte().
+			BYTE Control;
 
-			///=================================================================================================
-			/// <summary>
-			/// The unit address of a drive is read in the command telegram and copied into the response
-			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
-			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
-			/// the  motion control and the unit address to the drive.
-			/// </summary>
-			///=================================================================================================
-			BYTE unit_addr;
+			/// The unit address of a drive is read in the command telegram and copied into the response telegram. For direct
+			/// SIS communication with drives supporting SIS interface, unit address is the same as the SIS address of the
+			/// receiver. Otherwise, the  SIS  address  is  related  to the  motion control and the unit address to the drive.
+			BYTE UnitAddr;
 
-			BYTE param_type;
+			BYTE ParamType;
 
-			///=================================================================================================
-			/// <summary>
-			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::Sercos_Param_Ident and toByte().
-			/// </summary>
-			///=================================================================================================
-			USHORT param_num;
+			/// Identifier for the parameter. Size: 16 bit. Set coding by TGM::Bitfields::SercosParamIdentification and
+			/// toByte().
+			USHORT ParamNum;
 
-			///=================================================================================================
-			/// <summary>
 			/// Defines the offset in bytes of the segment that has to be read. For example: The 11th element of a list
-			/// consisting of 4-byte elements should be handeled --> list_offset=0x0028.
-			/// </summary>
-			///=================================================================================================
-			USHORT list_offset;
+			/// consisting of 4-byte elements should be handeled --> ListOffset=0x0028.
+			USHORT ListOffset;
 
-			/// <summary>	Size of the element to be handeled. For example: The 11th element of a list
-			/// consisting of 4-byte elements should be handeled --> element_size=0x0004. </summary>
-			USHORT element_size;
+			/// Size of the element to be handeled. For example: The 11th element of a list consisting of 4-byte elements
+			/// should be handeled --> SegmentSize=0x0004.
+			USHORT SegmentSize;
 
-			/// <summary>	Payload data. </summary>
-			Data data;
+			/// Payload Bytes.
+			Data Bytes;
 
-			_sercos_list_t(
-				TGM::Bitfields::Sercos_ParControl _control = TGM::Bitfields::Sercos_ParControl(),
+			/// Constructor.
+			///
+			/// @param	_ControlByte 	(Optional) Control Byte.
+			/// @param	_unit_addr   	(Optional) Unit address, which is the same as the SIS address of the receiver.
+			/// @param	_ParamIdent  	(Optional) Parameter Identifier.
+			/// @param	_ListOffset  	(Optional) List offset.
+			/// @param	_SegmentSize	(Optional) Size of a single segment.
+			/// @param	_PayloadData		 	(Optional) Payload data.
+			SercosList(
+				TGM::Bitfields::SercosParamControl _ControlByte = TGM::Bitfields::SercosParamControl(),
 				BYTE _unit_addr = 0,
-				TGM::Bitfields::Sercos_Param_Ident _param_ident = TGM::Bitfields::Sercos_Param_Ident(),
-				USHORT _list_offset = 0,
-				USHORT _element_size = 0,
-				TGM::Data _data = Data()) :
+				TGM::Bitfields::SercosParamIdent _ParamIdent = TGM::Bitfields::SercosParamIdent(),
+				USHORT _ListOffset = 0,
+				USHORT _SegmentSize = 0,
+				TGM::Data _PayloadData = Data()) :
 
-				control(_control.value),
-				unit_addr(_unit_addr),
-				param_type(0),
-				param_num(_param_ident.value),
-				list_offset(_list_offset),
-				element_size(_element_size),
-				data(_data)
+				Control(_ControlByte.Value),
+				UnitAddr(_unit_addr),
+				ParamType(0),
+				ParamNum(_ParamIdent.Value),
+				ListOffset(_ListOffset),
+				SegmentSize(_SegmentSize),
+				Bytes(_PayloadData)
 			{}
 
+			/// Clears this object to its blank/initial state.
 			void clear()
 			{
-				control = unit_addr = param_num = list_offset = element_size = 0;
-				data.clear();
+				Control = UnitAddr = ParamNum = ListOffset = SegmentSize = 0;
+				Bytes.clear();
 			}
 
+			/// Gets size of payload header.
+			///
+			/// @return	Size of payload header.
 			size_t get_head_size() { return 9; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
 
-		}  Sercos_List;
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
+
+		}  SercosList;
 #pragma pack(pop)
 	}
 
 
 
+/// Grouping SIS Telegram Payload struct definitions for reception.
 	namespace Reactions
 	{
 #pragma pack(push,1)
-		///=================================================================================================
-		/// <summary>
-		/// Representation of the payload for a Subservice reaction. A Reaction Telegram is for regular subservices,
-		/// such communication init, or device identification. This telegram is responded after successful execution of
-		/// previous Command Telegram.
-		/// </summary>
-		///=================================================================================================
-		typedef struct _subservice_payload_t
+		/// Representation of the payload for a Subservice reaction. A Reaction Telegram is for regular subservices, such
+		/// communication init, or device identification. This telegram is responded after successful execution of previous
+		/// Command Telegram.
+		typedef struct Subservice
 		{
-			BYTE	status;
-			BYTE	address;
-			BYTE	subservice;
+			/// Recipient status.
+			BYTE	Status;
 
+			/// Address of the recipient.
+			BYTE	RecipientAddr;
+
+			/// SIS service number.
+			BYTE	ServiceNumber;
+
+			/// Payload Bytes, or error byte.
 			union
 			{
-				Data	data;
-				BYTE	error;
+				Data	Bytes;
+				BYTE	Error;
 			};
 
-			_subservice_payload_t() :
-				status(1),
-				address(0),
-				subservice(0),
-				error(0)
+			/// Default constructor.
+			Subservice() :
+				Status(1),
+				RecipientAddr(0),
+				ServiceNumber(0),
+				Error(0)
 			{}
 
+			/// Clears this object to its blank/initial state.
 			void clear()
 			{
-				status = 1;
-				address = subservice = 0;
-				data.clear();
+				Status = 1;
+				RecipientAddr = ServiceNumber = 0;
+				Bytes.clear();
 			}
 
+			/// Gets payload header size.
+			///
+			/// @return	The payload head size.
 			size_t get_head_size() { return 3; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
+
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
 
 		} Subservice;
 #pragma pack(pop)
 
 
 #pragma pack(push,1)
-		///=================================================================================================
-		/// <summary>
 		/// Representation of the payload for a Sercos Parameter reaction. A Reaction Telegram is for regular subservices,
 		/// such communication init, or device identification. This telegram is responded after successful execution of
 		/// previous Command Telegram.
-		/// </summary>
-		///=================================================================================================
-		typedef struct _sercos_param_payload_t
+		typedef struct SercosParam
 		{
-			BYTE status;
+			/// Recipient status.
+			BYTE Status;
 
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
-			BYTE control;
+			/// Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::SercosParamControl and toByte().
+			BYTE Control;
 
-			///=================================================================================================
-			/// <summary>
-			/// The unit address of a drive is read in the command telegram and copied into the response
-			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
-			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
-			/// the  motion control and the unit address to the drive.
-			/// </summary>
-			///=================================================================================================
-			BYTE unit_addr;
+			/// The unit address of a drive is read in the command telegram and copied into the response telegram. For direct
+			/// SIS communication with drives supporting SIS interface, unit address is the same as the SIS address of the
+			/// receiver. Otherwise, the  SIS  address  is  related  to the  motion control and the unit address to the drive.
+			BYTE UnitAddr;
 
+			/// Payload Bytes, or error byte.
 			union
 			{
-				Data	data;
-				USHORT	error;
+				Data	Bytes;
+				USHORT	Error;
 			};
 
-			_sercos_param_payload_t() :
-				status(1),
-				control(0),
-				unit_addr(0),
-				data(TGM::Data())
+			/// Default constructor.
+			SercosParam() :
+				Status(1),
+				Control(0),
+				UnitAddr(0),
+				Bytes(TGM::Data())
 			{}
 
+			/// Clears this object to its blank/initial state.
 			void clear()
 			{
-				status = 1;
-				control = unit_addr = 0;
-				data.clear();
+				Status = 1;
+				Control = UnitAddr = 0;
+				Bytes.clear();
 			}
-			
-			size_t get_head_size() { return 3; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
 
-		} Sercos_Param;
+			/// Gets payload header size.
+			///
+			/// @return	The payload header size.
+			size_t get_head_size() { return 3; }
+
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
+
+		} SercosParam;
 #pragma pack(pop)
 
 
-		///=================================================================================================
-		/// <summary>
-		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave.
-		/// </summary>
-		///=================================================================================================
 #pragma pack(push,1)
-		typedef struct _sercos_list_t
+		/// Sercos Command Telegram used for reading/writing single elements in lists from/to slave..
+		typedef struct SercosList
 		{
-			BYTE status;
+			/// Recipient status.
+			BYTE Status;
 
-			/// <summary>	Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::Sercos_ParControl and toByte(). </summary>
-			BYTE control;
+			/// Sercos control. Size: 8 bit. Set coding by TGM::Bitfields::SercosParamControl and toByte().
+			BYTE Control;
 
-			///=================================================================================================
-			/// <summary>
-			/// The unit address of a drive is read in the command telegram and copied into the response
-			/// telegram. For direct SIS communication with drives supporting SIS interface, unit address is
-			/// the same as the SIS address of the receiver. Otherwise, the  SIS  address  is  related  to
-			/// the  motion control and the unit address to the drive.
-			/// </summary>
-			///=================================================================================================
-			BYTE unit_addr;
+			/// The unit address of a drive is read in the command telegram and copied into the response telegram. For direct
+			/// SIS communication with drives supporting SIS interface, unit address is the same as the SIS address of the
+			/// receiver. Otherwise, the  SIS  address  is  related  to the  motion control and the unit address to the drive.
+			BYTE UnitAddr;
 			
-			/// <summary>	Payload data, or error byte. </summary>
+			/// Payload Bytes, or error byte.
 			union
 			{
-				Data data;
-				USHORT error;
+				Data Bytes;
+				USHORT Error;
 			};
 			
-			_sercos_list_t() :
-				status(1),
-				control(0),
-				unit_addr(0),
-				data(TGM::Data())
+			/// Default constructor.
+			SercosList() :
+				Status(1),
+				Control(0),
+				UnitAddr(0),
+				Bytes(TGM::Data())
 			{}
 
+			/// Clears this object to its blank/initial state.
 			void clear()
 			{
-				status = 1;
-				control = unit_addr = 0;
-				data.clear();
+				Status = 1;
+				Control = UnitAddr = 0;
+				Bytes.clear();
 			}
 
+			/// Gets payload header size.
+			///
+			/// @return	The payload header size.
 			size_t get_head_size() { return 3; }
-			size_t get_size() { return get_head_size() + data.get_size(); }
 
-		}  Sercos_List;
+			/// Gets the Payload size including Payload Header size.
+			///
+			/// @return	The Payload size.
+			size_t get_size() { return get_head_size() + Bytes.get_size(); }
+
+		}  SercosList;
 #pragma pack(pop)
 	}
 }
