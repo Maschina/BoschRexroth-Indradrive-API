@@ -157,7 +157,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SystemRoot)\System32\msvcp140d.dll $(SolutionDir)bin\
+      <Command>mkdir $(SolutionDir)bin 2&gt; NUL
+copy $(SystemRoot)\System32\msvcp140d.dll $(SolutionDir)bin\
 copy $(SystemRoot)\System32\vcruntime140d.dll $(SolutionDir)bin\
 copy $(SolutionDir)res\ucrtbased.dll $(SolutionDir)bin\
 copy $(SolutionDir)$(Configuration)\$(TargetName).dll $(SolutionDir)bin\
@@ -177,7 +178,7 @@ copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin\</Comman
     </CustomBuildStep>
     <PreBuildEvent>
       <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
+REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Set VER_BUILDNR/VER_BUILD in version.h</Message>
