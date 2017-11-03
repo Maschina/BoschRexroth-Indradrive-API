@@ -36,7 +36,7 @@ saves/
 *.userosscache
 *.sln.docstates
 *.vcxproj.user
-*.props
+*.db
 
 # Build results
 [Dd]ebug/
@@ -47,6 +47,7 @@ x64/
 x86/
 build/
 bld/
+doc/compile/out
 [Bb]in/
 [Oo]bj/
 
