@@ -177,7 +177,7 @@ copy $(SolutionDir)$(Configuration)\$(TargetName).pdb $(SolutionDir)bin\</Comman
       </Message>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>REM $(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
+      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
 REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
     </PreBuildEvent>
     <PreBuildEvent>
