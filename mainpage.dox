@@ -1,6 +1,5 @@
 /// @mainpage
-/// @author Robert Hartmann (ATV PTS SDAE), Infineon Technologies AG
-/// @author Application Engineering for Alternator Control ICs
+/// @author "hokyo" (Robert Hahn)
 /// 		
 /// @tableofcontents
 /// 		
@@ -101,40 +100,40 @@
 ///		- If you have LabVIEW installed on your computer, use this code (and adjust the cintools folder to your LabVIEW version)
 ///		@code{.xml}
 ///		<?xml version="1.0" encoding="utf-8"?>
-///		<Project ToolsVersion = "4.0" xmlns = "http://schemas.microsoft.com/developer/msbuild/2003">
-///		<ImportGroup Label = "PropertySheets" / >
-///		<PropertyGroup Label = "UserMacros" / >
-///		<PropertyGroup / >
+///		<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+///		<ImportGroup Label="PropertySheets" />
+///		<PropertyGroup Label="UserMacros" />
+///		<PropertyGroup />
 ///		<ItemDefinitionGroup>
 ///		<ClCompile>
-///		<AdditionalIncludeDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools; sis; serial; ..\..\sis; ..\..\serial; ..\..; ..; .; % (AdditionalIncludeDirectories)< / AdditionalIncludeDirectories>
-///		< / ClCompile>
+///		<AdditionalIncludeDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+///		</ClCompile>
 ///		<Link>
-///		<AdditionalLibraryDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools; serial; % (AdditionalLibraryDirectories)< / AdditionalLibraryDirectories>
-///		<AdditionalDependencies> % (AdditionalDependencies)< / AdditionalDependencies>
-///		< / Link>
-///		< / ItemDefinitionGroup>
-///		<ItemGroup / >
-///		< / Project>
+///		<AdditionalLibraryDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+///		<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+///		</Link>
+///		</ItemDefinitionGroup>
+///		<ItemGroup />
+///		</Project>
 ///		@endcode
 ///		- If LabVIEW is not installed on your computer, use this code:  
 ///		@code{.xml}
 ///		<?xml version="1.0" encoding="utf-8"?>
-///		<Project ToolsVersion = "4.0" xmlns = "http://schemas.microsoft.com/developer/msbuild/2003">
-///		<ImportGroup Label = "PropertySheets" / >
-///		<PropertyGroup Label = "UserMacros" / >
-///		<PropertyGroup / >
+///		<Project ToolsVersion = "4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+///		<ImportGroup Label="PropertySheets" />
+///		<PropertyGroup Label="UserMacros" />
+///		<PropertyGroup />
 ///		<ItemDefinitionGroup>
 ///		<ClCompile>
-///		<AdditionalIncludeDirectories>sis; serial; ..\..\sis; ..\..\serial; ..\..; ..; .; % (AdditionalIncludeDirectories)< / AdditionalIncludeDirectories>
-///		< / ClCompile>
+///		<AdditionalIncludeDirectories>sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+///		</ClCompile>
 ///		<Link>
-///		<AdditionalLibraryDirectories>serial; % (AdditionalLibraryDirectories)< / AdditionalLibraryDirectories>
-///		<AdditionalDependencies> % (AdditionalDependencies)< / AdditionalDependencies>
-///		< / Link>
-///		< / ItemDefinitionGroup>
-///		<ItemGroup / >
-///		< / Project>
+///		<AdditionalLibraryDirectories>serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+///		<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+///		</Link>
+///		</ItemDefinitionGroup>
+///		<ItemGroup />
+///		</Project>
 ///		@endcode
 /// -# Save this file as <c>UserDirectories.props</c> to the root directory of the source code (same level as <c>IndradriveAPI.vcxproj</c>)
 /// -# Open the Visual Studio solution called <c>Indradrive.sln</c>
@@ -157,6 +156,8 @@
 /// Sequencer | sequencer_init() | @copybrief sequencer_init()
 /// Sequencer | sequencer_write() | @copybrief sequencer_write()
 /// Sequencer | sequencer_softtrigger() | @copybrief sequencer_softtrigger()
+/// Sequencer | sequencer_hardtrigger() | @copybrief sequencer_hardtrigger()
+/// Sequencer | sequencer_getstatus() | @copybrief sequencer_getstatus()
 /// Speed Control | speedcontrol_activate() | @copybrief speedcontrol_activate()
 /// Speed Control | speedcontrol_init() | @copybrief speedcontrol_init()
 /// Speed Control | speedcontrol_write() | @copybrief speedcontrol_write()

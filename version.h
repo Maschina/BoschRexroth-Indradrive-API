@@ -5,14 +5,14 @@
 
 // Will be automatically increased by AutoIncreaseBuildNrs.exe
 // cmd: AutoIncreaseBuildNrs.exe version.h
-#define VER_BUILDNR 1
+#define VER_BUILDNR 9
 // Will be automatically increased by get-git-rev-HEAD.py
 // cmd: python get-git-rev-HEAD.py $(MSBuildProjectDir) version.h
-#define VER_BUILD					5307753
+#define VER_BUILD	0				
 
 
 #define VERSION_MAJOR				0
-#define VERSION_MINOR				6
+#define VERSION_MINOR				7
 #define VERSION_REVISION			VER_BUILDNR
 #define VERSION_BUILD				VER_BUILD
 
@@ -28,7 +28,7 @@
 #define VER_PRODUCT_VERSION_STR		VER_FILE_VERSION_STR
 #define VER_ORIGINAL_FILENAME_STR   "IndradriveWrapper.dll"
 #define VER_INTERNAL_NAME_STR		VER_ORIGINAL_FILENAME_STR
-#define VER_COPYRIGHT_STR			"Copyright (C) Infineon Technologies AG 2016"
+#define VER_COPYRIGHT_STR			""
 
 #ifdef _DEBUG
 #define VER_VER_DEBUG				VS_FF_DEBUG
