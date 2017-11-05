@@ -551,7 +551,7 @@ DLLEXPORT int32_t DLLCALLCONV get_diagnostic_msg(SISProtocol * ID_ref, char * ID
 		// Diagnostic message (S-0-0095)
 		ID_ref->read_parameter(TGM::SercosParamS, 95, msg);
 
-		strncpy(ID_diagnostic_msg, msg+4, TGM_SIZEMAX_PAYLOAD-4);
+		strncpy_s(ID_diagnostic_msg, TGM_SIZEMAX_PAYLOAD - 4, msg + 4, TGM_SIZEMAX_PAYLOAD - 4);
 
 		return Err_NoError;
 	}

@@ -51,7 +51,7 @@ namespace stde
 	inline static char* convert_str_to_char(const std::string _in)
 	{
 		char* _in_c = new char[_in.length() + 1];
-		strcpy(_in_c, _in.c_str());
+		strcpy_s(_in_c, sizeof _in_c, _in.c_str());
 		return _in_c;
 	}
 
@@ -114,7 +114,7 @@ namespace stde
 		va_list ap;
 		while (1) {
 			formatted.reset(new char[n]); /* Wrap the plain char array into the unique_ptr */
-			strcpy(&formatted[0], fmt.c_str());
+			strcpy_s(&formatted[0], sizeof &formatted[0], fmt.c_str());
 			va_start(ap, fmt);
 			final_n = vsnprintf(&formatted[0], n, fmt.c_str(), ap);
 			va_end(ap);
