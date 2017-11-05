@@ -21,9 +21,9 @@ Based on the requested speed and acceleration, the motor connected to the Indrad
 
 The time between providing the data to the API and reaction of the motor depends on the Operating System (most likely Windows), calculation and creation of the SIS telegram and the baudrate to transfer the telegram. The time to go from the current kinematic point to the requested kinematic point can be determined as the following: 
 
-![t=t_{i+1}-t_i=\frac{v_{target}-v_{current}}{a}](https://latex.codecogs.com/gif.download?t%3Dt_%7Bi+1%7D-t_i%3D%5Cfrac%7Bv_%7B%5Ctext%7Btarget%7D%7D-v_%7B%5Ctext%7Bcurrent%7D%7D%7D%7Ba%7D)
+![t=t_{i+1}-t_i=\frac{v_{target}-v_{current}}{a}](https://latex.codecogs.com/gif.latex?t%3Dt_%7Bi&plus;1%7D-t_i%3D%5Cfrac%7Bv_%7Btarget%7D-v_%7Bcurrent%7D%7D%7Ba%7D)
 
-whereas ![a](https://latex.codecogs.com/gif.download?%5Cinline%20a) is the acceleration and ![v_{target}-v_{current}](https://latex.codecogs.com/gif.download?%5Cinline%20v_%7B%5Ctext%7Btarget%7D%7D-v_%7B%5Ctext%7Bcurrent%7D%7D) the difference between current and targeted speed.
+whereas ![a](https://latex.codecogs.com/gif.latex?%5Cinline%20a) is the acceleration and ![v_{target}-v_{current}](https://latex.codecogs.com/gif.latex?%5Cinline%20v_%7B%5Ctext%7Btarget%7D%7D-v_%7B%5Ctext%7Bcurrent%7D%7D) the difference between current and targeted speed.
 
 ##### Remarks
 > The Speed Control drive mode cannot be used for real-time applications, since the jitter caused by OS and telegram transmission is unpredictable. Use the Sequencer drive mode for real-time applications instead.
@@ -55,11 +55,11 @@ In contrast to Speed Control, the Sequencer will be pre-programmed with a specif
 ##### Attention
 > If the PLC routine for the Sequencer is neither properly programmed nor running, the Sequencer drive mode cannot correctly operate.
 
-Planning the kinematic sequence premises some calculations to be done for the jerk, if the delay, speed and acceleration is know for each sequence element. The following formula can be used for calculing the respective jerk, ![r](https://latex.codecogs.com/gif.download?%5Cinline%20r):
+Planning the kinematic sequence premises some calculations to be done for the jerk, if the delay, speed and acceleration is know for each sequence element. The following formula can be used for calculing the respective jerk, ![r](https://latex.codecogs.com/gif.latex?%5Cinline%20r):
 
-![r_i=\frac{a_i^2}{a_i(t_i-t_{i-1})-v_i}](https://latex.codecogs.com/gif.download?r_i%3D%5Cfrac%7Ba_i%5E2%7D%7Ba_i%28t_i-t_%7Bi-1%7D%29-v_i%7D)
+![r_i=\frac{a_i^2}{a_i(t_i-t_{i-1})-v_i}](https://latex.codecogs.com/gif.latex?r_i%3D%5Cfrac%7Ba_i%5E2%7D%7Ba_i%28t_i-t_%7Bi-1%7D%29-v_i%7D)
 
-whereas ![t_i-t_{i-1}](https://latex.codecogs.com/gif.download?%5Cinline%20t_i-t_%7Bi-1%7D) is the Delay i to get from the previous kinematic point to the next requested kinematic point, ![a_i](https://latex.codecogs.com/gif.download?%5Cinline%20a_i) is the acceleration and ![v_i](https://latex.codecogs.com/gif.download?%5Cinline%20v_i) is the speed. 
+whereas ![t_i-t_{i-1}](https://latex.codecogs.com/gif.latex?%5Cinline%20t_i-t_%7Bi-1%7D) is the Delay i to get from the previous kinematic point to the next requested kinematic point, ![a_i](https://latex.codecogs.com/gif.latex?%5Cinline%20a_i) is the acceleration and ![v_i](https://latex.codecogs.com/gif.latex?%5Cinline%20v_i) is the speed. 
 
 The Sequencer drive mode is properly controlled in the following order:
 1. Check the current drive mode by using `get_drivemode()`
