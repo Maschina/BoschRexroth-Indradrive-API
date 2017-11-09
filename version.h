@@ -12,7 +12,7 @@
 
 
 #define VERSION_MAJOR				0
-#define VERSION_MINOR				8
+#define VERSION_MINOR				9
 #define VERSION_REVISION			VER_BUILDNR
 #define VERSION_BUILD				VER_BUILD
 
