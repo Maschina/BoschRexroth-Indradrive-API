@@ -17,7 +17,7 @@ namespace WpfApplication1
         }
 
         private int idref;
-        private const string dllpath = "..\\..\\..\\..\\bin\\IndradriveAPI.dll";
+        private const string dllpath = "..\\..\\..\\..\\bin\\x86\\IndradriveAPI.dll";
 
         private ErrHandle indraerr;
         private ListBox listboxerr;

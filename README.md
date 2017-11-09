@@ -1,16 +1,16 @@
-# Indradrive API
-###### A Multi-purpose Dynamic Library for **Bosch Rexroth Indradrive M** (MPB-04 Firmware) based on **SIS protocol**
+# **Bosch Rexroth Indradrive API**
+###### A Multi-purpose Dynamic Library for Bosch Rexroth Indradrive M (MPB-04 Firmware) based on *SIS protocol*
 
-## Introduction
+# Introduction
 
 The Indradrive API provides an universal programming interface to the Indradrive M devices. A dedicated DLL (IndradriveAPI.dll, or IndradriveAPI-LV.dll for LabVIEW) handles the user inputs and converts them to SIS protocol telegrams. These telegrams are transfered to the Indradrive device via RS232 interface (refer to Indradrive User's Manual for more information). The API uses the reply telegram to extract the required data or identifies potentials errors and provides it back to the user.
 
-### Drive modes
+## Drive modes
 The API is designed to support two dedicated drive modes:
 * Speed Control
 * Sequencer
 
-#### Speed Control
+### Speed Control
 The principle of the Speed Control is depicted below: 
 
 ![Speed Control Principle](https://github.com/Hokyo/BoschRexroth-Indradrive-API/blob/develop/doc/compile/Indradrive-Drivemodes-SpeedControl.png?raw=true)
@@ -21,9 +21,9 @@ Based on the requested speed and acceleration, the motor connected to the Indrad
 
 The time between providing the data to the API and reaction of the motor depends on the Operating System (most likely Windows), calculation and creation of the SIS telegram and the baudrate to transfer the telegram. The time to go from the current kinematic point to the requested kinematic point can be determined as the following: 
 
-![t=t_{i+1}-t_i=\frac{v_{target}-v_{current}}{a}](http://www.sciweavers.org/tex2img.php?eq=t%3Dt_%7Bi%2B1%7D-t_i%3D%5Cfrac%7Bv_%7Btarget%7D-v_%7Bcurrent%7D%7D%7Ba%7D&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0)
+![t=t_{i+1}-t_i=\frac{v_{target}-v_{current}}{a}](https://latex.codecogs.com/gif.latex?t%3Dt_%7Bi&plus;1%7D-t_i%3D%5Cfrac%7Bv_%7Btarget%7D-v_%7Bcurrent%7D%7D%7Ba%7D)
 
-whereas ![a](http://www.sciweavers.org/tex2img.php?eq=a&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0) is the acceleration and ![v_{target}-v_{current}](http://www.sciweavers.org/tex2img.php?eq=v_%7Btarget%7D-v_%7Bcurrent%7D&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0) the difference between current and targeted speed.
+whereas ![a](https://latex.codecogs.com/gif.latex?%5Cinline%20a) is the acceleration and ![v_{target}-v_{current}](https://latex.codecogs.com/gif.latex?%5Cinline%20v_%7B%5Ctext%7Btarget%7D%7D-v_%7B%5Ctext%7Bcurrent%7D%7D) the difference between current and targeted speed.
 
 ##### Remarks
 > The Speed Control drive mode cannot be used for real-time applications, since the jitter caused by OS and telegram transmission is unpredictable. Use the Sequencer drive mode for real-time applications instead.
@@ -41,7 +41,7 @@ The Speed Control drive mode is properly controlled in the following order:
 > Speed Control commands the Indradrive to control the next kinematic point. This kinematic operates continuously until the next kinematic point is given or the emergency brake has been used. There is no automatic or time-limited stop system implemented.
 
 
-#### Sequencer
+### Sequencer
 The principle of the Sequencer is depicted below: 
 
 ![Sequencer Principle](https://github.com/Hokyo/BoschRexroth-Indradrive-API/blob/develop/doc/compile/Indradrive-Drivemodes-Sequencer.png?raw=true)
@@ -55,11 +55,11 @@ In contrast to Speed Control, the Sequencer will be pre-programmed with a specif
 ##### Attention
 > If the PLC routine for the Sequencer is neither properly programmed nor running, the Sequencer drive mode cannot correctly operate.
 
-Planning the kinematic sequence premises some calculations to be done for the jerk, if the delay, speed and acceleration is know for each sequence element. The following formula can be used for calculing the respective jerk, ![r](http://www.sciweavers.org/tex2img.php?eq=r&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0):
+Planning the kinematic sequence premises some calculations to be done for the jerk, if the delay, speed and acceleration is know for each sequence element. The following formula can be used for calculing the respective jerk, ![r](https://latex.codecogs.com/gif.latex?%5Cinline%20r):
 
-![r_i=\frac{a_i^2}{a_i(t_i-t_{i-1})-v_i}](http://www.sciweavers.org/tex2img.php?eq=r_i%3D%5Cfrac%7Ba_i%5E2%7D%7Ba_i%28t_i-t_%7Bi-1%7D%29-v_i%7D&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0)
+![r_i=\frac{a_i^2}{a_i(t_i-t_{i-1})-v_i}](https://latex.codecogs.com/gif.latex?r_i%3D%5Cfrac%7Ba_i%5E2%7D%7Ba_i%28t_i-t_%7Bi-1%7D%29-v_i%7D)
 
-whereas ![t_i-t_{i-1}](http://www.sciweavers.org/tex2img.php?eq=t_i-t_%7Bi-1%7D&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0) is the Delay i to get from the previous kinematic point to the next requested kinematic point, ![a_i](http://www.sciweavers.org/tex2img.php?eq=a_i&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0) is the acceleration and ![v_i](http://www.sciweavers.org/tex2img.php?eq=v_i&bc=White&fc=Black&im=jpg&fs=12&ff=modern&edit=0) is the speed. 
+whereas ![t_i-t_{i-1}](https://latex.codecogs.com/gif.latex?%5Cinline%20t_i-t_%7Bi-1%7D) is the Delay i to get from the previous kinematic point to the next requested kinematic point, ![a_i](https://latex.codecogs.com/gif.latex?%5Cinline%20a_i) is the acceleration and ![v_i](https://latex.codecogs.com/gif.latex?%5Cinline%20v_i) is the speed. 
 
 The Sequencer drive mode is properly controlled in the following order:
 1. Check the current drive mode by using `get_drivemode()`
@@ -72,7 +72,7 @@ The Sequencer drive mode is properly controlled in the following order:
 4. Trigger the operation by using `sequencer_softtrigger()`, or use the hardware trigger (refer to Indradrive's User's Manual)
 
 
-### API Modules
+## API Modules
 
 Module | Description
 ------ | -----------
@@ -83,13 +83,15 @@ Sequencer | Programming functions for "Sequencer" drive mode
 Speed Control | Programming functions for "Speed Control" drive mode 
 
 
-## Compilation
+# Building
+
+[![Build status](https://ci.appveyor.com/api/projects/status/vhys1a4jj7ilklwa?svg=true)](https://ci.appveyor.com/project/Hokyo/boschrexroth-indradrive-api)
 
 The API is built for native programming languages such as Python or C#. However, a dedicated LabView variant can be also built, which utilizes specific memory allocation methods needed when the library is used in LabView.
 
 1. Install Visual Studio 2017, or later (alternatively, install Visual Studio 2015 Express for Desktop)
 2. Fetch the source code repository
-3.  If you have LabVIEW installed on your computer, paste the following code into your `UserDirectories.props` file (and adjust the cintools folder to your LabVIEW version):
+3. If you have LabVIEW installed on your computer, paste the following code into your `UserDirectories.props` file (and adjust the cintools folder to your LabVIEW version):
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -116,19 +118,19 @@ The API is built for native programming languages such as Python or C#. However,
    - "ReleaseLabview": Final DLLs are located in the ../ folder
 
 
-## Installation 
+# Installation 
 
-The API package consists of:
-* IndradriveAPI.dll, or IndradriveAPI-LV.dll (for LabVIEW)
-* msvcp140.dll
-* vcruntime140.dll
+First, download the [most recent release files](https://github.com/Hokyo/BoschRexroth-Indradrive-API/releases/latest), or building them by yourself as described above.
 
-As soon as IndradriveAPI.dll or IndradriveAPI-LV.dll has been compiled, copy all DLLs stated above into your binary folder, where your target application will be started from.
+Second, install [Microsoft Visual C++ Redistributable](https://support.microsoft.com/de-de/help/2977003/the-latest-supported-visual-c-downloads), if Visual Studio is not installed or an Operating System lower than Windows 10 is used. 
+In that case, please use *Microsoft Visual C++ Redistributable for Visual Studio 2017*.
+
+Copy the IndradriveAPI.dll into your binary folder, where your target application will be started from.
 
 Examples how the bind in the library are provided for both Python and C#.
 
 
-## Usage
+# Usage
 
 The following tables provides an overview of exported functions that can be accessed through the API DLL:
 
@@ -156,12 +158,12 @@ Status | `get_diagnostic_num()` | Gets diagnostic number of the current Indradri
 Status | `clear_error()` | Clears a latched error in the Indradrive device 
 
 
-## Examples
+# Examples
 
 This sections gives examples for C# and Python how to use to library. However, through the nature of DLL, the API can be also called by other programming languages and development environments, such as LabVIEW, Matlab, etc.
 
 
-### C# Example
+## C# Example
 
 The following code defines a C# class than can be copied in into a seperated .cs file. The Indradrive is accessible within the WpfApplication1 namespace (or whatever namespace you are writing). 
 
@@ -293,7 +295,7 @@ namespace WpfApplication1
 }
 ```
 
-### Python Example
+## Python Example
 
 ```python
 import sys
@@ -402,4 +404,3 @@ def main():
 if __name__ == "__main__":
     sys.exit(int(main() or 0))
 ```
-
