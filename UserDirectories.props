@@ -8,7 +8,7 @@
 <AdditionalIncludeDirectories>sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 </ClCompile>
 <Link>
-<AdditionalLibraryDirectories>serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
 </Link>
 </ItemDefinitionGroup>

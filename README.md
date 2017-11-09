@@ -122,13 +122,10 @@ The API is built for native programming languages such as Python or C#. However,
 
 First, download the [most recent release files](https://github.com/Hokyo/BoschRexroth-Indradrive-API/releases/latest), or building them by yourself as described above.
 
-The API package consists of:
-* IndradriveAPI.dll, or IndradriveAPI-LV.dll (for LabVIEW)
-* msvcp140.dll
-* vcruntime140.dll
-* ucrtbased.dll
+Second, install [Microsoft Visual C++ Redistributable](https://support.microsoft.com/de-de/help/2977003/the-latest-supported-visual-c-downloads), if Visual Studio is not installed or an Operating System lower than Windows 10 is used. 
+In that case, please use *Microsoft Visual C++ Redistributable for Visual Studio 2017*.
 
-Copy all DLLs stated above into your binary folder, where your target application will be started from.
+Copy the IndradriveAPI.dll into your binary folder, where your target application will be started from.
 
 Examples how the bind in the library are provided for both Python and C#.
 
