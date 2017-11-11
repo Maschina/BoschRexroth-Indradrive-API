@@ -99,35 +99,35 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugLabview|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugLabview|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="UserDirectories.props" />
+    <Import Project="IndradriveAPIDefaults.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLabview|Win32'">
@@ -138,11 +138,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
     <TargetName>$(ProjectName)-LV</TargetName>
-    <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|x64'">
     <TargetName>$(ProjectName)-LV</TargetName>
-    <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)</TargetName>
@@ -170,14 +168,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);ucrt.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>lib\ftdi\x86;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib\ftdi\$(Platform);%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x86 2&gt; NUL
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)lib\ftdi\x86\ftd2xx.dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x86\"</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
       <SuppressStartupBanner>false</SuppressStartupBanner>
@@ -190,14 +183,18 @@ copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x86\"
       <Message>
       </Message>
     </CustomBuildStep>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PreBuildEvent>
       <Message>
       </Message>
     </PreBuildEvent>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir $(SolutionDir)bin\$(Platform) 2&gt; NUL
+copy "$(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)lib\ftdi\$(Platform)\ftd2xx.dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\$(Platform)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -216,10 +213,10 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <AdditionalLibraryDirectories>lib\ftdi\x64;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x64)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x64 2&gt; NUL
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)lib\ftdi\x64\ftd2xx64.dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x64\"</Command>
+      <Command>mkdir $(SolutionDir)bin\$(Platform) 2&gt; NUL
+copy "$(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)lib\ftdi\$(Platform)\ftd2xx.dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\$(Platform)\"</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -233,10 +230,7 @@ copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x64\"
       <Message>
       </Message>
     </CustomBuildStep>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PreBuildEvent>
       <Message>
       </Message>
@@ -256,13 +250,13 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);ucrt.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>lib\ftdi\x86;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib\ftdi\$(Platform);%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x86 2&gt; NUL
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)lib\ftdi\x86\ftd2xx.dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x86\"</Command>
+      <Command>mkdir $(SolutionDir)bin\$(Platform) 2&gt; NUL
+copy "$(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)lib\ftdi\$(Platform)\ftd2xx.dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\$(Platform)\"</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -276,10 +270,7 @@ copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x86\"
       <Message>
       </Message>
     </CustomBuildStep>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PreBuildEvent>
       <Message>
       </Message>
@@ -302,10 +293,10 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <AdditionalLibraryDirectories>lib\ftdi\x64;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x64)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x64 2&gt; NUL
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)lib\ftdi\x64\ftd2xx64.dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x64\"</Command>
+      <Command>mkdir $(SolutionDir)bin\$(Platform) 2&gt; NUL
+copy "$(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)lib\ftdi\$(Platform)\ftd2xx.dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\$(Platform)\"</Command>
     </PostBuildEvent>
     <Xdcmake>
       <OutputFile>$(ProjectDir)doc\$(TargetName).xml</OutputFile>
@@ -319,10 +310,7 @@ copy "$(SolutionDir)$(Configuration)\$(TargetName).pdb" "$(SolutionDir)bin\x64\"
       <Message>
       </Message>
     </CustomBuildStep>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PreBuildEvent>
       <Message>
       </Message>
@@ -344,21 +332,14 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ucrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>lib\ftdi\x86;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib\ftdi\$(Platform);%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x86 2&gt; NUL
-copy "$(SolutionDir)lib\ftdi\x86\ftd2xx.dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x86\"</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <Xdcmake>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -379,18 +360,11 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <AdditionalLibraryDirectories>lib\ftdi\x64;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x64)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x64 2&gt; NUL
-copy "$(SolutionDir)lib\ftdi\x64\ftd2xx64.dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x64\"</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <Xdcmake>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|Win32'">
     <ClCompile>
@@ -407,20 +381,13 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ucrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>lib\ftdi\x86;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib\ftdi\$(Platform);%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x86)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x86 2&gt; NUL
-copy "$(SolutionDir)lib\ftdi\x86\ftd2xx.dll" "$(SolutionDir)bin\x86\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x86\"</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <Xdcmake>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLabview|x64'">
     <ClCompile>
@@ -439,18 +406,11 @@ REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(P
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>lib\ftdi\x64;%(AdditionalLibraryDirectories);$(UniversalCRT_LibraryPath_x64)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir $(SolutionDir)bin\x64 2&gt; NUL
-copy "$(SolutionDir)lib\ftdi\x64\ftd2xx64.dll" "$(SolutionDir)bin\x64\"
-copy "$(SolutionDir)$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\x64\"</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <Xdcmake>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)tools\AutoIncreaseBuildNrs.exe $(ProjectDir)version.h
-REM python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="debug.h" />

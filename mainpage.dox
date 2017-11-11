@@ -94,48 +94,25 @@
 /// Installation is very easy, if IndradriveAPI.dll, or IndradriveAPI-LV.dll is already present: Just copy all the mentioned DLLs from above into your binary folder, where your target application will be started from.
 /// 
 /// If the DLL IndradriveAPI.dll, or IndradriveAPI-LV.dll is missing, you have to compile the respective file first by doing the following steps:
-/// -# Install Visual Studio 2015, or later (alternatively, install Visual Studio 2015 Express for Desktop)
+/// -# Install Visual Studio 2017, or later (alternatively, install Visual Studio 2015 Express for Desktop)
+/// -# Install Python 3.3 or higher, and make sure that python.exe is provided in the environment variables
+/// -# Install git 1.9.5 or higher, and make sure that python.exe is provided in the environment variables
 /// -# Fetch the source code repository
 /// -# Open the text editor of your choice and copy in the following text:
-///		- If you have LabVIEW installed on your computer, use this code (and adjust the cintools folder to your LabVIEW version)
+///		- If you have LabVIEW installed on your computer, adjust the cintools folder to your LabVIEW version and adapt the IndradriveAPIDefaults.props as below:
 ///		@code{.xml}
-///		<?xml version="1.0" encoding="utf-8"?>
-///		<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-///		<ImportGroup Label="PropertySheets" />
-///		<PropertyGroup Label="UserMacros" />
-///		<PropertyGroup />
-///		<ItemDefinitionGroup>
+///		...
 ///		<ClCompile>
 ///		<AdditionalIncludeDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 ///		</ClCompile>
+///		...
 ///		<Link>
 ///		<AdditionalLibraryDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 ///		<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
 ///		</Link>
-///		</ItemDefinitionGroup>
-///		<ItemGroup />
-///		</Project>
+///		...
 ///		@endcode
-///		- If LabVIEW is not installed on your computer, use this code:  
-///		@code{.xml}
-///		<?xml version="1.0" encoding="utf-8"?>
-///		<Project ToolsVersion = "4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-///		<ImportGroup Label="PropertySheets" />
-///		<PropertyGroup Label="UserMacros" />
-///		<PropertyGroup />
-///		<ItemDefinitionGroup>
-///		<ClCompile>
-///		<AdditionalIncludeDirectories>sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-///		</ClCompile>
-///		<Link>
-///		<AdditionalLibraryDirectories>serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-///		<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-///		</Link>
-///		</ItemDefinitionGroup>
-///		<ItemGroup />
-///		</Project>
-///		@endcode
-/// -# Save this file as <c>UserDirectories.props</c> to the root directory of the source code (same level as <c>IndradriveAPI.vcxproj</c>)
+///		Save <c>IndradriveAPIDefaults.props</c> to the root directory of the source code (same level as <c>IndradriveAPI.vcxproj</c>)
 /// -# Open the Visual Studio solution called <c>Indradrive.sln</c>
 /// -# Choose configuration "Release" or "ReleaseLabview" (for LabView specific build)
 /// -# Build the solution

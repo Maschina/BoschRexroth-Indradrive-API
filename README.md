@@ -90,30 +90,26 @@ Speed Control | Programming functions for "Speed Control" drive mode
 The API is built for native programming languages such as Python or C#. However, a dedicated LabView variant can be also built, which utilizes specific memory allocation methods needed when the library is used in LabView.
 
 1. Install Visual Studio 2017, or later (alternatively, install Visual Studio 2015 Express for Desktop)
-2. Fetch the source code repository
-3. If you have LabVIEW installed on your computer, paste the following code into your `UserDirectories.props` file (and adjust the cintools folder to your LabVIEW version):
+2. Install Python 3.3 or higher, and make sure that python.exe is provided in the environment variables
+3. Install git 1.9.5 or higher, and make sure that python.exe is provided in the environment variables
+4. Fetch the source code repository
+5. If you have LabVIEW installed on your computer, adjust the cintools folder to your LabVIEW version and adapt the `IndradriveAPIDefaults.props` as below:
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ImportGroup Label="PropertySheets" />
-	<PropertyGroup Label="UserMacros" />
-	<PropertyGroup />
-	<ItemDefinitionGroup>
+		...
 		<ClCompile>
 			<AdditionalIncludeDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 		</ClCompile>
+		...
 		<Link>
 			<AdditionalLibraryDirectories>C:\Program Files\National Instruments\LabVIEW 2015\cintools;serial;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 			<AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
-	</ItemDefinitionGroup>
-	<ItemGroup />
-</Project>
+		...
 ```
-4. Open the Visual Studio solution called Indradrive.sln
-5. Choose configuration "Release" or "ReleaseLabview" (for LabView specific build)
-6. Build the solution using the respective solution configuration
+6. Open the Visual Studio solution called Indradrive.sln
+7. Choose configuration "Release" or "ReleaseLabview" (for LabView specific build)
+8. Build the solution using the respective solution configuration
    - "Release": Final DLLs are located in the bin/ folder
    - "ReleaseLabview": Final DLLs are located in the ../ folder
 
