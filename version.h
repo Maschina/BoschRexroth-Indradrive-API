@@ -5,10 +5,10 @@
 
 // Will be automatically increased by increment-VER_BUILDNO.py
 // cmd: python increment-VER_BUILDNO.py $(MSBuildProjectDirectory) version.h
-#define VER_BUILDNO 27
+#define VER_BUILDNO 28
 // Will be automatically increased by get-git-rev-HEAD.py
 // cmd: python get-git-rev-HEAD.py $(MSBuildProjectDirectory) version.h
-#define VER_BUILD					00a69a3
+#define VER_BUILD					1038c86
 
 
 #define VERSION_MAJOR				0
