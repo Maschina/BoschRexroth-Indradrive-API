@@ -3,17 +3,17 @@
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)
 
-// Will be automatically increased by AutoIncreaseBuildNrs.exe
-// cmd: AutoIncreaseBuildNrs.exe version.h
-#define VER_BUILDNR 13
+// Will be automatically increased by increment-VER_BUILDNO.py
+// cmd: python increment-VER_BUILDNO.py $(MSBuildProjectDirectory) version.h
+#define VER_BUILDNO 28
 // Will be automatically increased by get-git-rev-HEAD.py
-// cmd: python get-git-rev-HEAD.py $(MSBuildProjectDir) version.h
-#define VER_BUILD	0				
+// cmd: python get-git-rev-HEAD.py $(MSBuildProjectDirectory) version.h
+#define VER_BUILD					1038c86
 
 
 #define VERSION_MAJOR				0
 #define VERSION_MINOR				9
-#define VERSION_REVISION			VER_BUILDNR
+#define VERSION_REVISION			VER_BUILDNO
 #define VERSION_BUILD				VER_BUILD
 
 #define VER_FILE_DESCRIPTION_STR	"Rexroth Indradrive API"

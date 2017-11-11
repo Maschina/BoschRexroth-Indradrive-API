@@ -5,13 +5,21 @@ import inspect, os
 from subprocess import call, Popen, PIPE
 import shlex
 
+# Minimum Python 3.3 required
+assert sys.version_info >= (3,3)
+
 target_directory = False
 version_file = False
 arguments = sys.argv[1:]
+
+# 1st argument: target directory
 if len(arguments) > 0:
 	target_directory = arguments[0]
+	
+# 2nd argument: target file to be updated
 if len(arguments) > 1:
 	version_file = arguments[1]
+	
 	
 if target_directory == False:
 	target_directory = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -19,6 +27,8 @@ if version_file == False:
 	version_file = 'version.h'
 	
 print('Target directory: ' + target_directory)
+
+
 
 cmd = 'git -C "' + target_directory + '" rev-parse --short HEAD'
 print(cmd)

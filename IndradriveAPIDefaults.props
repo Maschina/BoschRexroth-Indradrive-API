@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>sis;serial;..\..\sis;..\..\serial;..\..;..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PreBuildEvent>
+      <Command>python $(ProjectDir)tools\increment-VER_BUILDNO.py $(MSBuildProjectDirectory) version.h
+python $(ProjectDir)tools\get-git-rev-HEAD.py $(MSBuildProjectDirectory) $(ProjectDir)version.h</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>mkdir $(SolutionDir)bin\$(Platform) 2&gt; NUL
+copy "$(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll" "$(SolutionDir)bin\$(Platform)\"
+copy "$(SolutionDir)lib\ftdi\$(Platform)\ftd2xx.dll" "$(SolutionDir)bin\$(Platform)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
